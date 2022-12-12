@@ -1,0 +1,251 @@
+#pragma once
+
+#include <scrat/dlconfig.h>
+#include <string>
+#include <vector>
+#include <scrat/encodings/fmtio.h>
+
+namespace scrat
+{
+
+/*!
+
+	@brief Coordinates point class ...
+
+*/
+
+using T = int;
+struct SCRAT_API point
+{
+	
+	T x = 0;
+	T y = 0;
+
+	using list = std::vector<point>;
+	using iterator = point::list::iterator;
+	using const_iterator = point::list::const_iterator;
+
+	point() {};
+	point(point&&) noexcept = default;
+	~point() {}
+
+	point(T x_, T y_) :x(x_), y(y_) {}
+	point(const point& p)
+	{
+		x = p.x;
+		y = p.y;
+	}
+
+
+	point& operator = (const point& p) { x = p.x; y = p.y; return *this; }
+
+	point& operator -= (const point& dxy)
+	{
+		x -= dxy.x;
+		y -= dxy.y;
+		return *this;
+	}
+
+
+	point& operator += (const point& dxy)
+	{
+		x += dxy.x;
+		y += dxy.y;
+		return *this;
+	}
+
+	point operator + (const point& dxy)
+	{
+		return {dxy.x+x, dxy.y+y};
+	}
+
+
+	point operator - (const point& dxy)
+	{
+		return { x - dxy.x, y - dxy.y };
+	}
+
+	point& operator ()(T x_, T y_)
+	{
+		x = x_;
+		y = y_;
+		return *this;
+	}
+
+};
+
+
+struct SCRAT_API dim
+{
+	
+	point limit;
+	T w = 0;
+	T h = 0;
+
+
+	operator bool() { return (w > T{ 0 } || h > T{ 0 }); }
+};
+
+
+struct SCRAT_API rect
+{
+
+	point a;
+	point b;
+	dim   sz;
+
+	using list = std::vector<rect>;
+	using iterator = rect::list::iterator;
+	using const_iterator = rect::list::const_iterator;
+
+	rect() {}
+	~rect() {}
+
+	rect(point a_, point b_)
+	{
+		a = a_;
+		b = b_;
+		sz = { {T{100},T{100}}, T{std::abs(b.x - a.x + 1)}, T{std::abs(b.y - a.y + 1)} };
+	}
+
+	rect(point a_, dim d)
+	{
+		a = a_;
+		sz = d;
+		b = { a + point{sz.w, sz.h} };
+	}
+
+	rect(T x, T y, T bx, T by)
+	{
+		a = { x,y };
+		b = { bx,by };
+		sz = { {T{100},T{100}}, std::abs(b.x - a.x), std::abs(b.y - a.y) };
+	}
+
+	void assign(T x, T y, T w, T h)
+	{
+		a = { x,y };
+		b = { a.x + w - 1, a.y + h - 1 };
+		sz = { {100,100},w,h };
+	}
+
+	void assign(point a_, point b_)
+	{
+		a = a_;
+		b = b_;
+		sz = { {T{100},T{100}}, std::abs(b.x - a.x + 1), std::abs(b.y - a.y + 1) };
+	}
+
+	void assign(point a_, dim dxy)
+	{
+		a = a_;
+		sz = dxy;
+		b = { a.x + dxy.w - 1, a.y + dxy.h - 1 };
+	}
+
+
+	rect& operator += (point dx)
+	{
+		a += dx;
+		b += dx;
+		return *this;
+	}
+
+	void resize(dim new_sz)
+	{
+		assign({ a.x, a.y }, new_sz);
+	}
+
+	void move_at(const point& p)
+	{
+		a.x = p.x;
+		a.y = p.y;
+		b.x = a.x + sz.w - 1;
+		b.y = a.y + sz.h - 1;
+	}
+
+
+	bool in(point p) const
+	{
+		return ((p.x >= a.x) && (p.x <= b.x) && (p.y >= a.y) && (p.y <= b.y));
+	}
+
+
+	void move(point dt)
+	{
+		a += dt;
+		b += dt;
+	}
+
+
+	/*!
+		@brief intersection between this and r
+	*/
+	rect operator & (rect r) const
+	{
+		rect ret;
+		point a_ = { a.x <= r.a.x ? r.a.x : a.x, a.y <= r.a.y ? r.a.y : a.y };
+		point b_ = { b.x <= r.b.x ? r.b.x : b.x, b.y <= r.b.y ? r.b.y : b.y };
+
+		auto c = in(a_) || in(b_);
+		ret.assign(a_, b_);
+		if (!c)
+		{
+			ret.sz = { {0,0},0,0 };
+		}
+
+		return ret;
+	}
+
+	/*!
+		@brief merges this and r
+	*/
+	rect operator | (rect r) const
+	{
+		rect ret;
+		point a_ = { r.a.x <= a.x ? r.a.x : a.x, r.a.y <= a.y ? r.a.y : a.y };
+		point b_ = { r.b.x <= b.x ? r.b.x : b.x, r.b.y <= b.y ? r.b.y : b.y };
+		ret.assign(a_, b_);
+		return ret;
+	}
+
+	std::string to_string();
+	operator std::string()
+	{
+		return std::format("[{{{},{}}} {{{},{}}}]:{{{}*{}}}[{}]", a.x, a.y, b.x, b.y, sz.w, sz.h, sz.w * sz.h);
+	}
+	operator bool()
+	{
+
+		return sz.operator bool();
+	}
+};
+
+
+
+struct SCRAT_API winbuffer
+{
+	std::string* win = nullptr;
+	point cxy;
+	rect r;
+	
+	winbuffer& gotoxy(int x, int y);
+	winbuffer& operator << (point xy);
+	void set_geometry(int w, int h);
+
+	// internal cursor movements:
+	winbuffer& operator ++();
+	winbuffer& operator ++(int);
+	winbuffer& operator --();
+	winbuffer& operator --(int);
+	// --------------------------
+
+	winbuffer& put(const std::string& txt);
+
+	void clear();
+	void release();
+	std::string details();
+	operator std::string() {return win ? *win : "";}
+
+};
+}
