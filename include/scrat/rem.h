@@ -21,7 +21,7 @@
 #include <mutex>
 
 #include <scrat/geometry>
-#include <scrat/encodings/fmtio.h>
+
 
 namespace scrat
 {
@@ -37,7 +37,7 @@ namespace scrat
 #define source_pfn { __PRETTY_FUNCTION__, "", 0 }
 
 #define source_aaa  { __PRETTY_FUNCTION__, __FILE__, __LINE__ }
-	
+
 
 #define source_pfnl {  __PRETTY_FUNCTION__, "",  __LINE__	}
 
@@ -52,7 +52,7 @@ namespace scrat
 	{
 		scrat::source_location _src = {};
 		stracc::list _components;
-		std::string _text;
+		stracc  _text;
 		static attribute_list colors;
 	public:
 		using list = std::vector<rem>;
@@ -102,7 +102,7 @@ namespace scrat
 		static constexpr rem::code begin = 19; ///< begin (sel)section or indent
 		static constexpr rem::code end = 20; ///< end (sel)section or unindent
 		//...
-		// source_location: 
+		// source_location:
 		static constexpr rem::code function = 1000;
 		static constexpr rem::code file = 1001;
 		static constexpr rem::code line = 1002;
@@ -127,19 +127,22 @@ namespace scrat
 		rem& operator = (rem&& m) noexcept = default;
 		rem& operator = (const rem& m);
 
-		// , | || + << < & && += 
+		// , | || + << < & && +=
 		rem& operator < (rem::code c_);
 		rem& operator < (color::type c_);
 		rem& operator < (textattr::pair cf);
 		rem& operator < (const std::string& arg_);
-		rem& operator < (const char* arg_);		
+		rem& operator < (const char* arg_);
 		template<typename T> rem& operator < (const T& arg_)
 		{
-			rem::_components.push_back(std::format("{}", arg_));
+			stracc str;
+			str += arg_;
+			rem::_components.push_back(str());
 			return *this;
 		}
 
-		
+		static std::string now(std::string_view fmt =  "[%d/%m/%Y - %X]");
+
 		static rem& push_error(source_location src_ = {});
 		static rem& push_warning(source_location src_ = {});
 		static rem& push_fatal(source_location src_ = {});

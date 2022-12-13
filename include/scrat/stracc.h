@@ -15,11 +15,9 @@
 #include <functional>
 #include <string>
 #include <string_view>
-#include <format>
 #include <chrono>
 #include <stack>
-
-#include <scrat/encodings/fmtio.h>
+#include <scrat/textattr.h>
 
 
 
@@ -29,109 +27,166 @@ namespace scrat
 
 
 
-	class SCRAT_API stracc final
-	{
-		_decl_objname
+class SCRAT_API stracc final
+{
+    _decl_objname
 
 
-		std::string _d; ///< private std::string instance;
-    public:
-		using list = std::vector<std::string>;
-        using stack = std::stack<std::string>;
+    std::string _d; ///< private std::string instance;
+public:
+    using list = std::vector<std::string>;
+    using stack = std::stack<std::string>;
 
-    private:
-        /*!
-            
-            @ref https://en.cppreference.com/w/cpp/utility/format/format
-        */
-        template <typename... Args> std::string _format(std::string_view rt_fmt_str, Args&&... args) 
-        {
-            return std::vformat(rt_fmt_str, std::make_format_args(args...));
-        }
+private:
+    /*!
 
+        @ref https://en.cppreference.com/w/cpp/utility/format/format
+    */
+    // template <typename... Args> std::string _format(std::string_view rt_fmt_str, Args&&... args)
+    // {
+    //     return std::vformat(rt_fmt_str, std::make_format_args(args...));
+    // }
 
+        // %[flags][width][.precision][Length]specifier
+    struct format_data
+    {
+        uint8_t     F = 0; // Flag ( - + . # 0 ) => if s='s' then '-' => justify right; '+' => justify left; '^' => justify center.
+        uint8_t     W = 0; // Width ( Length ) Value
+        uint8_t     R = 0; // Custom flag set if this format requires floating point spec.
+        uint8_t     P = 6; // Precision (Same as  default).
+        uint8_t     L = 0; // Length modifier ( linenum,ll,h,hh )
+        std::size_t len = 0; // Format Length.
+        std::size_t position = 0; // Arg index position within _d.
+        char        s = 0; // Effective characeter code specifier such as 'd'; 's'; 'f'; 'l'; 'p'...
+        const char* c = nullptr;
 
-	public:
+        format_data(std::string& str_) : c(str_.c_str())
+        {}
 
-		stracc();
-		~stracc();
+        std::string operator()();
 
-        //...
-        stracc& operator << (color::type arg_);
+    };
+    std::string::size_type _arg_pos = std::string::npos;
 
-        template<typename T> stracc& operator << (T arg_)
-        {
-            std::string_view s = _d.c_str();
-            _d = _format(s.data(), arg_);
-            return *this;
-        }
+    std::string::size_type _scan_arg();
+    template<typename T> stracc& _format(const T& _argv);
+public:
 
-        stracc& operator = (const std::string& str) { _d = str; return *this; }
-        stracc& operator = (const char* str) { _d = str; return *this; }
-        stracc& operator = (char* str) { _d = str; return *this; }
-        stracc& operator = (char cc) { _d = cc; return *this; };
-        stracc& operator = (std::string_view str) { _d = str.data(); return *this; }
-        stracc& operator = (std::string_view&& rstr) { _d = std::move(rstr.data()); return *this; }
-
-        template<typename T> stracc& operator , (const T& arg_)
-        {
-            _d = "{}"; // J'ai des doutes. .... 
-            _d = _format(_d.c_str(), arg_);
-            return *this;
-        }
-
-        stracc& operator += (std::string_view str) { _d += str.data(); return *this; };
-        stracc& operator += (std::string_view&& rstr) { _d += std::move(rstr.data()); return *this; }
-        stracc& operator += (std::string str) { _d += str; return *this; }
-        stracc& operator += (const char* str) { _d += str; return *this; }
-        stracc& operator += (char* str) { _d += str; return *this; }
-        stracc& operator += (char cc) { _d += cc; return *this; }
-        stracc& operator += (color::type c_) { _d += attr< textattr::format::ansi256 >::fg(c_); return *this; }
-
-       
-
-        template<typename T> stracc& operator += (const T& arg_)
-        {
-            _d += "{}";
-            _format(_d, _d.c_str(), arg_);
-            return *this;
-        }
-
-            
-        const std::string& operator()() const { return _d; }
+    stracc();
+    stracc(const std::string& instr) { _d = instr;}
+    stracc(const char* instr) { _d = instr;}
+    stracc(std::string_view instr) { _d = instr.data();}
 
 
-        void clear();
-	};
-
-}
-
-
-/*
-    stracc str = " ceci est mon nom: {12s}" ;
-    str << "Serge Lussier";
-
+    ~stracc();
 
     //...
-    stracc& operator<<(std::string_view str)
+    stracc& operator << (color::type arg_);
+
+    template<typename T> stracc& operator << (T arg_)
     {
-        std::format(_d, str);
+        if(_scan_arg() != std::string::npos)
+            return _format(arg_);
+
+        return this->operator+=(arg_);
+    }
+
+    stracc& operator = (const std::string& str) { _d = str; return *this; }
+    stracc& operator = (const char* str) { _d = str; return *this; }
+    stracc& operator = (char* str) { _d = str; return *this; }
+    stracc& operator = (char cc) { _d = cc; return *this; };
+    stracc& operator = (std::string_view str) { _d = str.data(); return *this; }
+    stracc& operator = (std::string_view&& rstr) { _d = std::move(rstr.data()); return *this; }
+
+
+
+    template<typename T> stracc& operator , (const T& arg_)
+    {
+        if(_scan_arg() != std::string::npos)
+            return _format(arg_);
+        return this->operator+=(arg_);
+    }
+
+    template<typename T> stracc& operator + (const T& arg_)
+    {
+        if(_scan_arg() != std::string::npos) return _format(arg_);
+        return this->operator+=(arg_);
+    }
+
+    stracc& operator += (std::string_view str) { _d += str.data(); return *this; };
+    stracc& operator += (std::string_view&& rstr) { _d += std::move(rstr.data()); return *this; }
+    stracc& operator += (std::string str) { _d += str; return *this; }
+    stracc& operator += (const char* str) { _d += str; return *this; }
+    stracc& operator += (char* str) { _d += str; return *this; }
+    stracc& operator += (char cc) { _d += cc; return *this; }
+    stracc& operator += (color::type c_) { _d += attr< textattr::format::ansi256 >::fg(c_); return *this; }
+
+
+
+    template<typename T> stracc& operator += (const T& arg_)
+    {
+        std::ostringstream out;
+        out << arg_;
+        _d += out.str();
         return *this;
+        // return _format(arg_); duh!
     }
 
 
+    template<typename T> static std::string to_binary(T __arg, bool padd = false, int f = 128)
+    {
+        uint8_t seq;
+        int     nbytes = sizeof(T);
 
-    replaces :
+        uint8_t tableau[sizeof(T)];
+        memcpy(tableau, (uint8_t*)&__arg, nbytes);
+        std::string stream = "";
+        int         s = 0;
+        //bool discard = false;
+        for (int x = 1; x <= nbytes; x++)
+        {
+            seq = tableau[nbytes - x];
+            if ((x == 1 && !padd && !seq) || (stream.empty() && !padd && !seq))
+                continue;
+            for (int y = 7; y >= 0; y--)
+            { // est-ce que le bit #y est � 1 ?
+                if (s >= f)
+                {
+                    stream += ' ';
+                    s = 0;
+                }
+                ++s;
+                uint8_t b = 1 << y;
+                if (b & seq)
+                    stream += '1';
+                else
+                    stream += '0';
+            }
+        }
+        /*tableau.Clear();*/
+        return stream;
+    }
 
-template<typename T> String& String::_Format(const T& _argv)
+
+    const std::string& operator()() const { return _d; }
+
+
+    void clear();
+};
+
+
+template<typename T> stracc& stracc::_format(const T& _argv)
 {
-    String::Format fmt = { _mStr };
+    if(_scan_arg() == std::string::npos)
+        return this->operator+=(_argv);
+
+    stracc::format_data fmt = { _d };
     char     buf[256];
     std::memset(buf, 0, 200);
     //LFnl << "\n";
 
     // Commentaires &eacute;crits en anglais seulement pour simplifier le texte.
-    std::string::iterator c = _mStr.begin() + _mArgPos;
+    std::string::iterator c = _d.begin() + _arg_pos;
     std::string::iterator n, beg, l;
     beg = n = c;
     ++c;
@@ -151,7 +206,7 @@ template<typename T> String& String::_Format(const T& _argv)
 
     n = c;
     // %[width]:
-    while ((n != _mStr.end()) && isdigit(*n))
+    while ((n != _d.end()) && isdigit(*n))
         ++n;
     l = n; // save  ahead 'cursor position'
     --n;
@@ -172,7 +227,7 @@ template<typename T> String& String::_Format(const T& _argv)
         fmt.R = fmt.P;
         ++c;
         n = c;
-        while ((n != _mStr.end()) && isdigit(*n))
+        while ((n != _d.end()) && isdigit(*n))
             ++n;
         l = n;
         --n;
@@ -201,40 +256,39 @@ template<typename T> String& String::_Format(const T& _argv)
         {
             std::string BinaryStr;
             bool        pad = fmt.F == '0';
-            BinaryStr = String::to_binary<T>(_argv, pad,
+            BinaryStr = stracc::to_binary<T>(_argv, pad,
                 fmt.W <= 128 ? fmt.W : 128); // Limit grouping digits to 128 ...
 
-            //std::sprintf(buf, "%s", BinaryStr.c_str());
-            fmt.Len = (c + 1) - beg;  //save format substring's Length
-            _mStr.erase(_mArgPos, fmt.Len);
-            _mStr.insert(_mArgPos, BinaryStr.c_str(), BinaryStr.length());
-            _mArgPos = 0;
+            fmt.len = (c + 1) - beg;  //save format substring's Length
+            _d.erase(_arg_pos, fmt.len);
+            _d.insert(_arg_pos, BinaryStr.c_str(), BinaryStr.length());
+            _arg_pos = std::string::npos;
             return *this;
         }
         break;
     }
 
     case 'd': // Decimale ou entier
-    case 'i':fmt.S = *c++;
+    case 'i':fmt.s = *c++;
         break;
     case 'x':
-    case 'X':fmt.S = *c++;
+    case 'X':fmt.s = *c++;
         break;
     case 'f':
     case 'F':
     case 'g':
-    case 'G':fmt.S = *c++;
+    case 'G':fmt.s = *c++;
         break;
     case 's':
-    case 'c':fmt.S = *c++;
+    case 'c':fmt.s = *c++;
         break;
     default:break;
     }
 
-    fmt.Len = c - beg;
+    fmt.len = c - beg;
     //std::cout << __PRETTY_FUNCTION__ << '\n' << __LINE__ << " _D:\n'" << _D << "':\n";
-    std::string ff(_mStr, _mArgPos, fmt.Len);
-    //std::cout << "ff(_mStr, _mArgPos, fmt.Len): '" << ff << "'\n";
+    std::string ff(_d, _arg_pos, fmt.len);
+    //std::cout << "ff(_d, _arg_pos, fmt.len): '" << ff << "'\n";
     // -- Clang-tidy:error: cannot pass object of non-trivial type 'const std::__cxx11::basic_string<char>' through variadic function
     //
     if constexpr (std::is_same<T, const std::string&>::value)
@@ -252,11 +306,32 @@ template<typename T> String& String::_Format(const T& _argv)
         std::sprintf(buf, ff.c_str(), _argv);
         //std::cout << "\nbuffer[argv=T (const T&)]:'" << buf << "'\n";
     }
-    _mStr.erase(_mArgPos, fmt.Len);
-    _mStr.insert(_mArgPos, buf, std::strlen(buf));
-    _mArgPos = 0;
+    _d.erase(_arg_pos, fmt.len);
+    _d.insert(_arg_pos, buf, std::strlen(buf));
+    _arg_pos = std::string::npos;
     return *this;
 };
 
-    */
+
+}
+
+
+/*
+    stracc str = " ceci est mon nom: {12s}" ;
+    str << "Serge Lussier";
+
+
+    //...
+    stracc& operator<<(std::string_view str)
+    {
+        std::format(_d, str);
+        return *this;
+    }
+
+
+
+    replaces :
+*/
+
+
 

@@ -304,7 +304,7 @@ namespace scrat
         std::ostringstream Out;
         const color_data D = ColorDB[(int)C];
         Out << "<span style=\"color: #" << std::hex << std::setw(2) << std::setfill('0') << D.R << D.G << D.B << ";\">";
-        
+
         return Out.str();
     }
 
@@ -314,7 +314,7 @@ namespace scrat
         std::ostringstream Out;
         const color_data D = ColorDB[(int)C];
         Out << "<span style=\"background-color: #" << std::hex << std::setw(2) << std::setfill('0') << D.R << D.G << D.B << ";\">";
-        
+
         return Out.str();
     }
 
@@ -329,9 +329,9 @@ namespace scrat
 
     std::string textattr::pair::operator()()
     {
-        std::string s = textattr::ansi_bk(bg);
-        s += attr<textattr::format::ansi256>::fg(fg);
-        return s;
+        // std::string s = textattr::ansi_bk(bg);
+        // s += attr<textattr::format::ansi256>::fg(fg);
+        return textattr::ansi(*this);
     }
 
     std::string textattr::ansi(color::type aColorID)
@@ -346,12 +346,11 @@ namespace scrat
     std::string textattr::ansi(textattr::pair color_pair_)
     {
         std::ostringstream Out;
-        if (color_pair_.fg == color::Reset)
-            Out << "\033[0m";
-        else
-            Out << "\033[38;5;" << static_cast<int>(color_pair_.fg) << 'm';
-
-        Out << "\033[48;5;" << static_cast<int>(color_pair_.bg) << 'm';
+        Out << "\033[";
+        if ((color_pair_.fg == color::Reset) || (color_pair_.bg == color::Reset)) Out << "0";
+        if(color_pair_.fg != color::Reset)  Out << "38;5;" << static_cast<int>(color_pair_.fg);
+        if(color_pair_.bg != color::Reset) Out <<  ";48;5;" << static_cast<int>(color_pair_.bg);
+        Out << 'm';
 
         return Out.str();
 
@@ -393,7 +392,7 @@ namespace scrat
     {
         return p();
     }
-    
+
 
     attr_item& attribute_list::operator[](const std::string& id_)
     {

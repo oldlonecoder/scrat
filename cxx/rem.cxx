@@ -1,5 +1,7 @@
 #include <scrat/rem.h>
+//#include "rem.h"
 
+#include <scrat/text>
 
 
 namespace scrat
@@ -18,32 +20,32 @@ namespace scrat
 		auto const time = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
 		return std::format("{:%Y-%m-%d %X}", time);
 	}
-	
+
 	*/
 	rem::list rem::_application_message_q;
-	
+
 	attribute_list rem::colors =
 	{
 		"Application Messages Queu",
 		{
-		{"default",		{color::Reset,color::Reset}},
-		{"err",			{color::Reset,color::Red4}},
-		{"separator",	{color::Reset,color::White}},
-		{"warning",		{color::Reset,color::Yellow}},
-		{"fatal",		{color::Reset,color::OrangeRed1}},
-		{"exception",   {color::Reset,color::DodgerBlue1}},
-		{"stamp",       {color::Reset,color::GreenYellow}},
-		{"function",    {color::Reset,color::LightCyan3}},
-		{"filename",    {color::Reset,color::LighcoreateBlue}},
-		{"line",		{color::Reset,color::LightGoldenrod4}},
-		{"debug",		{color::Reset,color::LightSteelBlue3}},
-		{"output",		{color::Reset,color::Reset}},
-		{"message",		{color::Reset,color::White}},
-		{"syntax",		{color::Reset,color::SeaGreen1}},
-		{"status",		{color::Reset,color::Grey42}},
-		{"test",		{color::Reset,color::Yellow}},
-		{"info",		{color::Reset,color::Blue4}},
-		{"comment",		{color::Reset,color::White}}
+		{"default",		{color::Reset,			color::Reset}},
+		{"err",			{color::Red4,			color::Reset}},
+		{"separator",	{color::White,			color::Reset}},
+		{"warning",		{color::Yellow,			color::Reset}},
+		{"fatal",		{color::OrangeRed1,		color::Reset}},
+		{"exception",   {color::DodgerBlue1,	color::Reset}},
+		{"stamp",       {color::GreenYellow,	color::Reset}},
+		{"function",    {color::LightCyan3,		color::Reset}},
+		{"filename",    {color::LighcoreateBlue,color::Reset}},
+		{"line",		{color::LightGoldenrod4,color::Reset}},
+		{"debug",		{color::LightSteelBlue3,color::Reset}},
+		{"output",		{color::Reset,			color::Reset}},
+		{"message",		{color::White,			color::Reset}},
+		{"syntax",		{color::SeaGreen1,		color::Reset}},
+		{"status",		{color::Grey42,			color::Reset}},
+		{"test",		{color::Yellow,			color::Reset}},
+		{"info",		{color::Blue4,			color::Reset}},
+		{"comment",		{color::White,			color::Reset}}
 		}
 
 	};
@@ -51,16 +53,16 @@ namespace scrat
 
 	static std::unordered_map<rem::ctype, std::string_view> attr_map = {
 		{rem::err,     "err"},
-		{rem::warning, "warning"},   
-		{rem::fatal,   "fatal"}, 
-		{rem::except,  "exception"},  
-		{rem::message, "message"},   
-		{rem::output,  "output"},  
-		{rem::debug,   "debug"}, 
+		{rem::warning, "warning"},
+		{rem::fatal,   "fatal"},
+		{rem::except,  "exception"},
+		{rem::message, "message"},
+		{rem::output,  "output"},
+		{rem::debug,   "debug"},
 		{rem::info,    "info"},
-		{rem::comment, "comment"},   
-		{rem::syntax,  "syntax"},  
-		{rem::status,  "status"},  
+		{rem::comment, "comment"},
+		{rem::syntax,  "syntax"},
+		{rem::status,  "status"},
 		{rem::test,    "test"},
 	};
 
@@ -107,42 +109,55 @@ namespace scrat
 
 	std::string rem::cc()
 	{
-		// Build the prefix with the 
+		// Build the prefix with the
 		_text.clear();
 		// Check time stamp :
 		if (_mcode == rem::stamp)
 		{
-			auto const time = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
+
 			_text += rem::colors["stamp"]();
-			_text += std::format("{:%Y/%m/%d %X}", time);
+			_text += rem::now();
 			_text += rem::colors["default"]();
-			_text += ' ';
+			_text += ':';
 		}
 
 		if(!_src._file.empty())
 		{
 			_text += rem::colors["filename"]();
-			_text += _src._file;
+			text_tokenizer::token_t::list words;
+			text_tokenizer tokenizer  = text_tokenizer(_src._file);
+			(void) tokenizer(words, "/",false);
+
+			_text += words.back()();
 			_text += rem::colors["default"]();
-			_text += ' ';
+			_text += ':';
 		}
 		if (!_src._fn.empty())
 		{
 			_text += rem::colors["function"]();
 			_text += _src._fn;
 			_text += rem::colors["default"]();
+			_text += ':';
+		}
+		if(_src.line !=0)
+		{
+			_text += rem::colors["line"]();
+			_text += _src.line;
+			_text += rem::colors["default"]();
 			_text += ' ';
 		}
-
 		if (_mclass != rem::nulltype)
 		{
-			_text += _typenames_[_mclass];
-			_text += ' ';
+			auto n = _typenames_[_mclass];
+			_text += rem::colors[n.data()]();
+			_text +=  _typenames_[_mclass].data();
+			_text += rem::colors["default"]();
+			_text += ':';
 		}
-		
+
 		for (auto item : _components) _text += item;
-		
-		return _text;
+
+		return _text();
 	}
 
 	scrat::rem::~rem()
@@ -150,8 +165,8 @@ namespace scrat
 	}
 
 	rem::rem(const rem& r):
-		_src(r._src), 
-		_components(r._components), 
+		_src(r._src),
+		_components(r._components),
 		_text(r._text),
 		_mclass(r._mclass),
 		_mcode(r._mcode)
@@ -206,8 +221,20 @@ namespace scrat
 		return *this;
 	}
 
-	rem& rem::push_error(source_location src_)
-	{
+    std::string rem::now(std::string_view fmt)
+    {
+
+		auto here = std::chrono::system_clock::now();
+		auto in_time_t = std::chrono::system_clock::to_time_t(here);
+
+		std::stringstream ss;
+		ss << std::put_time(std::localtime(&in_time_t), fmt.data());
+		return ss.str();
+    }
+
+
+    rem &rem::push_error(source_location src_)
+    {
 		rem::_application_message_q.emplace_back(rem{ rem::err, src_ });
 		return rem::_application_message_q.back();
 	}

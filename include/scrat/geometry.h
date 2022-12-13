@@ -3,7 +3,7 @@
 #include <scrat/dlconfig.h>
 #include <string>
 #include <vector>
-#include <scrat/encodings/fmtio.h>
+
 
 namespace scrat
 {
@@ -17,7 +17,7 @@ namespace scrat
 using T = int;
 struct SCRAT_API point
 {
-	
+
 	T x = 0;
 	T y = 0;
 
@@ -77,7 +77,7 @@ struct SCRAT_API point
 
 struct SCRAT_API dim
 {
-	
+
 	point limit;
 	T w = 0;
 	T h = 0;
@@ -210,10 +210,7 @@ struct SCRAT_API rect
 	}
 
 	std::string to_string();
-	operator std::string()
-	{
-		return std::format("[{{{},{}}} {{{},{}}}]:{{{}*{}}}[{}]", a.x, a.y, b.x, b.y, sz.w, sz.h, sz.w * sz.h);
-	}
+	operator std::string();
 	operator bool()
 	{
 
@@ -228,7 +225,7 @@ struct SCRAT_API winbuffer
 	std::string* win = nullptr;
 	point cxy;
 	rect r;
-	
+
 	winbuffer& gotoxy(int x, int y);
 	winbuffer& operator << (point xy);
 	void set_geometry(int w, int h);

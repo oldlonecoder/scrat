@@ -1,5 +1,7 @@
 
 #pragma once
 
-#include <scrat/encodings/textattr.h>
+#include <scrat/textattr.h>
+
+
 

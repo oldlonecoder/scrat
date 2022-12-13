@@ -30,8 +30,6 @@
 #include <functional>
 #include <string>
 #include <string_view>
-#include <format>
-#include <chrono>
 #include <stack>
 #include <unordered_map>
 
@@ -315,7 +313,7 @@ namespace scrat
 		_decl_objname
 
 	public:
-        
+
 
         struct SCRAT_API pair
         {
@@ -326,7 +324,7 @@ namespace scrat
             using set = std::unordered_map<std::string_view,textattr::pair>;
             std::string operator()();
         };
-        
+
         enum class format
         {
             ansi256,

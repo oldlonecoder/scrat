@@ -1,6 +1,7 @@
 
 
 #include <scrat/geometry.h>
+#include <scrat/stracc>
 
 
 
@@ -64,13 +65,17 @@ winbuffer& winbuffer::put(const std::string& txt)
 }
 
 
-
+rect::operator std::string()
+{
+	stracc str = "[{%d,%d} {%d,%d}]:{%d*%d}[%d]";
+	str << a.x , a.y, b.x, b.y, sz.w, sz.h, sz.w * sz.h;
+	return str();
+	// return std::format("[{{{},{}}} {{{},{}}}]:{{{}*{}}}[{}]", a.x, a.y, b.x, b.y, sz.w, sz.h, sz.w * sz.h);
+}
 
 std::string rect::to_string()
 {
-	std::string str;
-	str = std::format("[{{{},{}}} {{{},{}}}]:{{{}*{}}}[{}]", a.x, a.y, b.x, b.y, sz.w, sz.h, sz.w * sz.h);
-	return str;
+	return this->operator std::string();
 }
 
 }

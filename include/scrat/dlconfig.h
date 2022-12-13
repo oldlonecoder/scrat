@@ -9,9 +9,9 @@
 
 #ifdef SCRAT_EXPORT
 	# define SCRAT_API __declspec(dllexport)
-#else 
+#else
 	# define SCRAT_API __declspec(dllimport)
-#endif 
+#endif
 
 
 #include <Windows.h>
@@ -20,7 +20,10 @@
 
 #define __PRETTY_FUNCTION__ __FUNCSIG__
 
-#endif 
+#else
+	#define SCRAT_API __attribute__ ((visibility ("default")))
+#endif
+
 
 # define _decl_objname \
 	public:\
