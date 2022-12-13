@@ -18,6 +18,8 @@ add_library(
         cxx/rem.cxx
         cxx/stracc.cxx
         cxx/text.cxx
+        cxx/accents.fr.cxx
+        cxx/Icons.cxx
 )
 
 

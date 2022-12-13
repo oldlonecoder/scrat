@@ -104,6 +104,9 @@ namespace scrat
 		{rem::leave,			"leave"},
 		{rem::begin,			"begin"},
 		{rem::end,				"end"},
+		{rem::notexist,			"does not exist"},
+		{rem::unexpected,    	"unexpected"},
+		{rem::expected,			"expected"},
 	};
 
 
@@ -191,6 +194,12 @@ namespace scrat
 	}
 	rem& rem::operator<(rem::code c_)
 	{
+		if(c_ == rem::endl)
+		{
+			_components.push_back(_codes_[c_].data());
+			return *this;
+		}
+
 		if (_mcode != rem::nullcode)
 			_components.push_back(_codes_[c_].data());
 		else
@@ -203,12 +212,14 @@ namespace scrat
 		_components.push_back(attr<textattr::format::ansi256>::fg(c_));
 		return *this;
 	}
+
 	rem& rem::operator<(textattr::pair cf)
 	{
 		_components.push_back(cf());
 
 		return *this;
 	}
+
 	rem& rem::operator<(const std::string& arg_)
 	{
 		_components.push_back(arg_);

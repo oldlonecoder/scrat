@@ -14,6 +14,8 @@ public:
 	void run();
 	void texattr();
 	void test_dimension();
+	void test_text();
+
 	scrat::result<scrat::object*> test_result();
 };
 

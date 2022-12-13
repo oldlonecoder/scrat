@@ -323,6 +323,7 @@ namespace scrat
             using list = std::vector<textattr::pair>;
             using set = std::unordered_map<std::string_view,textattr::pair>;
             std::string operator()();
+            textattr::pair& operator >> (std::string& out);
         };
 
         enum class format

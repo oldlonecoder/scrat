@@ -1,4 +1,5 @@
 #include "test.h"
+#include <scrat/text>
 
 
 using scrat::rem;
@@ -37,6 +38,7 @@ void test::run()
 		std::cout << _object->class_name() << '\n';
 		auto r = test_result();
 		test_dimension();
+		test_text();
 	}
 	catch (std::exception e)
 	{
@@ -64,7 +66,15 @@ void test::test_dimension()
 	r.assign({ 5, 6 }, scrat::dim{ {100, 100}, 25, 25 });
 
 	rem::push_output() < "r = " < (std::string)r;
+}
 
+void test::test_text()
+{
+	scrat::text Txt = " <Icon: ArrowRight;> Allo <Color: Yellow, BlueViolet;> &agrave; <Color : Reset> vous <Fg:Yellow;>t<Fg:BlueViolet;>o<Fg:Green;>u<Fg:White;>s<Fg:DeepPink2;>!<Color:Reset;>  ";
+    Txt.Compile();
+    std::string Str;
+    Txt >> Str;
+    rem::push_info(source_fl) < Str;
 }
 
 scrat::result<scrat::object*> test::test_result()

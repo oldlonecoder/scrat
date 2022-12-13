@@ -1,5 +1,6 @@
 #include <scrat/textattr>
 
+
 namespace scrat
 {
 
@@ -332,6 +333,12 @@ namespace scrat
         // std::string s = textattr::ansi_bk(bg);
         // s += attr<textattr::format::ansi256>::fg(fg);
         return textattr::ansi(*this);
+    }
+
+    textattr::pair &textattr::pair::operator>>(std::string &out)
+    {
+        out = textattr::ansi(*this);
+        return *this;
     }
 
     std::string textattr::ansi(color::type aColorID)

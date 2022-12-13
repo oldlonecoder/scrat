@@ -101,6 +101,9 @@ namespace scrat
 		static constexpr rem::code leave = 18; ///< leaving bloc or unindent
 		static constexpr rem::code begin = 19; ///< begin (sel)section or indent
 		static constexpr rem::code end = 20; ///< end (sel)section or unindent
+		static constexpr rem::code notexist = 21; ///< does not exist
+		static constexpr rem::code unexpected = 22; ///< does not exist
+		static constexpr rem::code expected = 23; ///< does not exist
 		//...
 		// source_location:
 		static constexpr rem::code function = 1000;
