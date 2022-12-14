@@ -70,9 +70,9 @@ std::string text_tokenizer::token_t::location()
 
 
 text_tokenizer::s_p_s::s_p_s(std::string_view aStr):
-mStart(aStr.begin()),
-mPos(aStr.begin()),
-mStop(aStr.begin())
+    _begin(aStr.begin()),
+    _pos(aStr.begin()),
+    _end(aStr.begin())
 {
 
 }
@@ -80,81 +80,81 @@ mStop(aStr.begin())
 /*!
     @note Enleveer le code de trop (suivi du num de ligne et de la col).
 */
-bool text_tokenizer::s_p_s::Skip()
+bool text_tokenizer::s_p_s::skip_ws()
 {
-     if(End())
+     if(end())
         return false;
 
-    while(isspace(*mPos))
+    while(isspace(*_pos))
     {
-        switch(*mPos)
+        switch(*_pos)
         {
             case 10:
             {
-                if((++mPos) >= mStop)
+                if((++_pos) >= _end)
                     return false;
-                if(*mPos == 13)
-                    ++mPos;
-                ++mLine;
-                mCol = 1;
+                if(*_pos == 13)
+                    ++_pos;
+                ++_line;
+                _col = 1;
             }
                 break;
             case 13:
             {
-                if((++mPos) >= mStop)
+                if((++_pos) >= _end)
                     return false;
-                if(*mPos == 10)
-                    ++mPos;
-                ++mLine;
-                mCol = 1;
+                if(*_pos == 10)
+                    ++_pos;
+                ++_line;
+                _col = 1;
             }
                 break;
-            case '\t':++mPos;
-                ++mCol;
+            case '\t':++_pos;
+                ++_col;
                 break;
-            default:++mPos;
-                ++mCol;
+            default:++_pos;
+                ++_col;
                 break;
         }
     }
-    return mPos < mStop;
+    return _pos < _end;
 
 }
 
 
-bool text_tokenizer::s_p_s::End() const
+bool text_tokenizer::s_p_s::end() const
 {
-    return mPos >= mStop;
+    return _pos >= _end;
 }
 
 
 bool text_tokenizer::s_p_s::operator++()
 {
-    if(mPos >= mStop)
+    if(_pos >= _end)
         return false;
-    ++mPos;
-    ++mCol;
-    if(mPos >= mStop)
+    ++_pos;
+    ++_col;
+    if(_pos >= _end)
         return false;
-    return Skip();
+    return skip_ws();
 }
 bool text_tokenizer::s_p_s::operator++(int)
 {
-    if(mPos >= mStop)
+    if(_pos >= _end)
         return false;
-    ++mPos;
-    ++mCol;
-    if(mPos >= mStop)
+    ++_pos;
+    ++_col;
+    if(_pos >= _end)
         return false;
-    return Skip();
+    return skip_ws();
 }
 
 text_tokenizer::s_p_s &text_tokenizer::s_p_s::operator>>(text_tokenizer::token_t &aWord)
 {
-    aWord.mStart    = mPos;
-    aWord.mLine     = mLine;
-    aWord.mCol      = mCol;
-    aWord.mPosition = mIndex = (uint64_t) (mPos - mStart);
+    aWord.mStart    = _pos;
+    aWord.mLine     = _line;
+    aWord.mCol      = _col;
+    aWord.mPosition = _index = (uint64_t) (_pos - _begin);
     return *this;
 }
 
@@ -162,7 +162,7 @@ text_tokenizer::iterator text_tokenizer::scan_to(text_tokenizer::iterator aStart
 {
     text_tokenizer::iterator p = aStart;
     ++p;
-    while((p != _mData.end()) && (*p != c))
+    while((p != _d.end()) && (*p != c))
         ++p;
     return p;
 }
@@ -181,15 +181,15 @@ text_tokenizer::iterator text_tokenizer::scan_to(text_tokenizer::iterator aStart
 std::size_t text_tokenizer::operator()(text_tokenizer::token_t::list &Collection, string_view aDelimiters, bool KeepAsWord) const
 {
 
-    auto Crs = text_tokenizer::s_p_s(_mData);
-    if(_mData.empty())
+    auto Crs = text_tokenizer::s_p_s(_d);
+    if(_d.empty())
     {
         std::cout << " --> Contents is Empty!";
         return (std::size_t) 0;
     }
-    Crs.Reset(_mData);
+    Crs.reset(_d);
     string_view token_separators = aDelimiters.empty() ? text_tokenizer::_default_token_separators : aDelimiters;
-    if(!Crs.Skip())
+    if(!Crs.skip_ws())
     {
         //std::cout << " --> Contents Skip is false? (internal?)...\n";
         return (std::size_t) 0;
@@ -197,32 +197,32 @@ std::size_t text_tokenizer::operator()(text_tokenizer::token_t::list &Collection
     token_t w;
     Crs >> w;
 
-    while(!Crs.End())
+    while(!Crs.end())
     {
         //if (!wcollection.empty());
-        text_tokenizer::iterator cc = Crs.mPos;
-        if(token_separators.find(*Crs.mPos) != string_view::npos)
+        text_tokenizer::iterator cc = Crs._pos;
+        if(token_separators.find(*Crs._pos) != string_view::npos)
         {
-            cc = Crs.mPos;
+            cc = Crs._pos;
             if(cc > w.mStart)
             {
                 --cc;
-                Collection.push_back({w.mStart, cc, Crs.mStop, w.mLine, w.mCol, w.mPosition});
+                Collection.push_back({w.mStart, cc, Crs._end, w.mLine, w.mCol, w.mPosition});
                 Crs >> w;
-                cc = Crs.mPos;
+                cc = Crs._pos;
             }
 
             // '//' as one token_t instead of having two consecutive '/'
-            if((*Crs.mPos == '/') && (*(Crs.mPos + 1) == '/'))
+            if((*Crs._pos == '/') && (*(Crs._pos + 1) == '/'))
                 ++Crs;
 
             if(KeepAsWord)
             {
-                Collection.push_back({w.mStart, Crs.mPos, Crs.mStop, w.mLine, w.mCol, w.mPosition});
+                Collection.push_back({w.mStart, Crs._pos, Crs._end, w.mLine, w.mCol, w.mPosition});
             }
             ++Crs;
             //std::cout << "        Iterator eos: " << _Cursor.end() << "\n";
-            if(!Crs.End())
+            if(!Crs.end())
                 Crs >> w;
             else
             {
@@ -230,32 +230,32 @@ std::size_t text_tokenizer::operator()(text_tokenizer::token_t::list &Collection
             }
 
         }
-        else if((*Crs.mPos == '\'') || (*Crs.mPos == '"'))
+        else if((*Crs._pos == '\'') || (*Crs._pos == '"'))
         { // Quoted litteral string...
             Crs >> w;
             if(KeepAsWord)
             {
                 // Create the three parts of the quoted string: (") + (litteral) + (") ( or ' )
                 // So, we save the token_t coords anyway.
-                Collection.push_back({w.mStart, w.mStart, Crs.mStop, w.mLine, w.mCol, w.mPosition});
+                Collection.push_back({w.mStart, w.mStart, Crs._end, w.mLine, w.mCol, w.mPosition});
             }
 
-            text_tokenizer::iterator p = scan_to(w.mStart + (KeepAsWord ? 0 : 1), *Crs.mPos); // w.B is the starting position, _Cursor.m is the quote delim.
-            while(Crs.mPos < p)
+            text_tokenizer::iterator p = scan_to(w.mStart + (KeepAsWord ? 0 : 1), *Crs._pos); // w.B is the starting position, _Cursor.m is the quote delim.
+            while(Crs._pos < p)
                 ++Crs; // compute white spaces!!!
 
             if(KeepAsWord)
             {
                 // then push the litteral that is inside the quotes.
-                Collection.push_back({w.mStart + 1, p - 1, Crs.mStop, w.mLine, w.mCol, w.mPosition});
+                Collection.push_back({w.mStart + 1, p - 1, Crs._end, w.mLine, w.mCol, w.mPosition});
                 //++_Cursor; // _Cursor now on the closing quote
                 Crs >> w; // Litteral is done, update w.
-                Collection.push_back({w.mStart, p, Crs.mStop, w.mLine, w.mCol, w.mPosition});
+                Collection.push_back({w.mStart, p, Crs._end, w.mLine, w.mCol, w.mPosition});
             }
             else
             {
                 // Push the entire quote delims surrounding the litteral as the token_t.
-                Collection.push_back({w.mStart, Crs.mPos, Crs.mStop, w.mLine, w.mCol, w.mPosition});
+                Collection.push_back({w.mStart, Crs._pos, Crs._end, w.mLine, w.mCol, w.mPosition});
             }
             if(++Crs)
                 Crs >> w;
@@ -265,34 +265,34 @@ std::size_t text_tokenizer::operator()(text_tokenizer::token_t::list &Collection
         }
         else
         {
-            cc = Crs.mPos;
+            cc = Crs._pos;
             ++cc;
-            if(cc == Crs.mStop)
+            if(cc == Crs._end)
             {
-                ++Crs.mPos;
+                ++Crs._pos;
                 break;
             }
             if(isspace(*cc))
             {
                 if(w.mStart < cc)
                 {
-                    Collection.push_back({w.mStart, cc - 1, Crs.mStop, w.mLine, w.mCol, w.mPosition});
+                    Collection.push_back({w.mStart, cc - 1, Crs._end, w.mLine, w.mCol, w.mPosition});
                     ++Crs;
                 }
 
-                if(Crs.Skip())
+                if(Crs.skip_ws())
                 {
                     Crs >> w;
                     continue;
                 }
                 return Collection.size();
             }
-            if(!Crs.End())
+            if(!Crs.end())
                 ++Crs; // advance offset to the next separator/white space.
         }
     }
-    if(Crs.mPos > w.mStart)
-        Collection.push_back({w.mStart, Crs.mPos - 1, Crs.mStop, w.mLine, w.mCol, w.mPosition});
+    if(Crs._pos > w.mStart)
+        Collection.push_back({w.mStart, Crs._pos - 1, Crs._end, w.mLine, w.mCol, w.mPosition});
 
     return Collection.size();
 }
@@ -304,56 +304,56 @@ std::size_t text_tokenizer::operator()(text_tokenizer::token_t::list &Collection
 //}
 
 text_tokenizer::text_tokenizer(string_view aStr):
-_mData(aStr)
+    _d(aStr)
 {
 
 }
 text_tokenizer &text_tokenizer::operator=(string_view aStr)
 {
-    _mData = aStr;
+    _d = aStr;
     return *this;
 }
 text_tokenizer &text_tokenizer::operator=(const char *aStr)
 {
-    _mData = aStr;
+    _d = aStr;
     return *this;
 }
-text_tokenizer::text_tokenizer(char *aStr): _mData(aStr)
+text_tokenizer::text_tokenizer(char *aStr): _d(aStr)
 {
 
 }
 text_tokenizer::text_tokenizer(string_view aStr, string_view Delim, bool KeepDelim):
-    _mData(aStr)
+    _d(aStr)
 {
-    mConfig.delimiters = Delim;
-    mConfig.keep = KeepDelim;
+    _cfg.delimiters = Delim;
+    _cfg.keep = KeepDelim;
 }
 
 
 text_tokenizer::text_tokenizer(char* aStr, string_view Delim, bool KeepDelim) :
-    _mData(aStr)
+    _d(aStr)
 {
-    mConfig.delimiters = Delim;
-    mConfig.keep = KeepDelim;
+    _cfg.delimiters = Delim;
+    _cfg.keep = KeepDelim;
 }
 
 
 
 
 text_tokenizer::text_tokenizer(const std::string& aStr, string_view Delim, bool KeepDelim) :
-    _mData(aStr)
+    _d(aStr)
 {
-    mConfig.delimiters = Delim;
-    mConfig.keep = KeepDelim;
+    _cfg.delimiters = Delim;
+    _cfg.keep = KeepDelim;
 }
 
 
 
-text_tokenizer::text_tokenizer(const char* aStr) : _mData(aStr)
+text_tokenizer::text_tokenizer(const char* aStr) : _d(aStr)
 {}
 
 
-text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
+text_tokenizer::text_tokenizer(std::string aStr): _d(aStr.c_str())
 {
 
 }
@@ -411,7 +411,7 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
 
 
 
-    text::token_data text::token_data::Scan(const char* Start)
+    text::token_data text::token_data::scan(const char* Start)
     {
         //Rem::Debug(SourceLocation) << " Entering with Start :[" << *Start << "] -> '" << Start << "':";
         if (!*Start)
@@ -419,7 +419,7 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
 
         for (auto TokenRef : text::token_data::Referential)
         {
-            TokenRef.Loc.SBegin = Start;
+            TokenRef._location.s_begin = Start;
             while (isspace(*Start)) ++Start;
 
             auto crs = Start;
@@ -443,8 +443,8 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
                 } // Il reste les autres non-espace comme les ponctuations, symboles...
                 --crs; // Replacer crs sur le dernier caractere du Token.
                 rem::push_debug(source_fl) < " Scanned to :'" < color::Yellow < *crs < color::Reset < '\'';
-                TokenRef.Loc.Begin = Start;
-                TokenRef.Loc.End = crs; // Fin du Token
+                TokenRef._location.begin = Start;
+                TokenRef._location.end = crs; // Fin du Token
 
                 return TokenRef; // On le retourne.... doh!
             }
@@ -464,22 +464,22 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
         T(r.T), M(r.M), L(r.L)
     {
 
-        Loc = r.Loc;
+        _location = r._location;
         //Rem::Debug(SourceLocation) << " ->[" << (*this)() << "]";
     }
 
-    std::string text::token_data::Mark(const char* Stream)
+    std::string text::token_data::mark(const char* Stream)
     {
         if (!*this)
             return " - Can't mark an invalid token...";
-        const char* B = Loc.Begin;
-        const char* E = Loc.End;
+        const char* B = _location.begin;
+        const char* E = _location.end;
         while ((B >= Stream) && (*B != '\n')) --B;
         ++B;
         while (*E && (*E != '\n')) ++E;
         --E;
 
-        std::string MStr = std::string(Loc.Begin - Stream, ' ');
+        std::string MStr = std::string(_location.begin - Stream, ' ');
 
         MStr += Icon::CArrowUp;
         stracc Str;
@@ -487,17 +487,17 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
         return Str();
     }
 
-    result<> text::Compile()
+    result<> text::compile()
     {
-        text::Compiler Parse{ *this };
-        auto A = Parse.Compile();
+        text::compiler Parse{ *this };
+        auto A = Parse.execute();
 
-        rem::push_debug(source_fl) < " Number of compiled Attribute(s) :" < Attributes.size();
-        for (auto const& A : Attributes)
+        rem::push_debug(source_fl) < " Number of compiled Attribute(s) :" < _attributes.size();
+        for (auto const& A : _attributes)
         {
             rem::push_info() < A();
-            rem::push_output() < color::White < "Fg:" < color::Yellow < static_cast<int>(A.Fg) < color::White < ", Bg:" < color::Yellow < static_cast<int>(A.Bg);
-            rem::push_output() < color::White < "Icon:" < color::Yellow < static_cast<int>(A.Ic) < color::Reset;
+            rem::push_output() < color::White < "Fg:" < color::Yellow < static_cast<int>(A._fg) < color::White < ", Bg:" < color::Yellow < static_cast<int>(A._bg);
+            rem::push_output() < color::White < "Icon:" < color::Yellow < static_cast<int>(A._icn) < color::Reset;
         }
         return rem::accepted;
     }
@@ -511,46 +511,46 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
 
         std::string AttrStr;
 
-        for (auto const& A : Attributes)
+        for (auto const& A : _attributes)
         {
 
-            while (r != A.Begin)
+            while (r != A._begin)
             {
                 Out += *r;
                 r++;
             }
             r += A().length();
-            if(A.Assign.For && A.Assign.Bac)
+            if(A._assign._for && A._assign._bac)
             {
-                textattr::pair{A.Fg, A.Bg} >> AttrStr;
+                textattr::pair{A._fg, A._bg} >> AttrStr;
                 Out += AttrStr;
             }
             else
             {
 
-                if (A.Assign.Bac)
+                if (A._assign._bac)
                 {
-                    AttrStr = _f == textattr::format::ansi256 ? attr<textattr::format::ansi256>::bg(A.Bg) : attr<textattr::format::html>::bg(A.Bg);
+                    AttrStr = _f == textattr::format::ansi256 ? attr<textattr::format::ansi256>::bg(A._bg) : attr<textattr::format::html>::bg(A._bg);
                     Out += AttrStr;
                 }
                 else
-                if (A.Assign.For)
+                if (A._assign._for)
                 {
-                    AttrStr = _f == textattr::format::ansi256 ? attr<textattr::format::ansi256>::bg(A.Fg) : attr<textattr::format::html>::bg(A.Fg);
+                    AttrStr = _f == textattr::format::ansi256 ? attr<textattr::format::ansi256>::bg(A._fg) : attr<textattr::format::html>::bg(A._fg);
                     Out += AttrStr;
                 }
             }
 
-            if (A.Assign.Acc)
+            if (A._assign._acc)
             {
-                AttrStr = scrat::Accent::Data[A.Ac];
+                AttrStr = scrat::Accent::Data[A._accnt];
                 Out += AttrStr;
             }
             else
             {
-                if (A.Assign.Ic)
+                if (A._assign._icn)
                 {
-                    AttrStr = scrat::Icon::Data[A.Ic];
+                    AttrStr = scrat::Icon::Data[A._icn];
                     Out += AttrStr;
                 }
                 //...
@@ -563,12 +563,12 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
         return rem::ok;
     }
 
-    void text::PushAttribute(text::Attribute Attr)
+    void text::push_attribute(text::attribute Attr)
     {
-        Attributes.push_back(Attr);
+        _attributes.push_back(Attr);
     }
 
-    text::token_data text::Scan(text::token_data::mnemonic M)
+    text::token_data text::scan(text::token_data::mnemonic M)
     {
         for (auto iM : text::token_data::Referential)
         {
@@ -588,21 +588,21 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
         if (L == nullptr)
             return { "null" };
 
-        return { Loc.Begin, (std::size_t)(Loc.End - Loc.Begin) + 1 };
+        return { _location.begin, (std::size_t)(_location.end - _location.begin) + 1 };
     }
 
-    text::Compiler::Compiler(text& aTextInstance) :
+    text::compiler::compiler(text& aTextInstance) :
         B(aTextInstance._d.c_str()), C(aTextInstance._d.c_str()), E(aTextInstance._d.c_str()), TextRef(aTextInstance)
     {
         E = B + aTextInstance._d.length() - 1;
     }
 
-    bool text::Compiler::operator ++()
+    bool text::compiler::operator ++()
     {
         return false;
     }
 
-    bool text::Compiler::operator ++(int)
+    bool text::compiler::operator ++(int)
     {
         return false;
     }
@@ -621,24 +621,24 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
 
 
 
-    void text::Compiler::CloseToken(token_data& Info)
+    void text::compiler::close_token(token_data& Info)
     {
-        Info.Loc.Index = static_cast<int>(Info.Loc.End - B);
-        auto sz = Info.Loc.End - Info.Loc.Begin;
+        Info._location.index = static_cast<int>(Info._location.end - B);
+        auto sz = Info._location.end - Info._location.begin;
         C += sz + 1;
 
-        rem::push_debug() < " Token :\n" < Info.Mark(B);
+        rem::push_debug() < " Token :\n" < Info.mark(B);
 
     }
 
-    result<text::token_data> text::Compiler::Scan()
+    result<text::token_data> text::compiler::scan()
     {
-        auto Token = text::token_data::Scan(C);
+        auto Token = text::token_data::scan(C);
         if (!Token)
         {
-            auto R = ScanIdentifier();
+            auto R = scan_identifier();
             if (!R)
-                return rem(rem::syntax) < Token.Mark(TextRef._d.c_str());
+                return rem(rem::syntax) < Token.mark(TextRef._d.c_str());
         }
         return Token;
     }
@@ -655,29 +655,29 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
             loop
         @endcode
     */
-    result<> text::Compiler::Compile()
+    result<> text::compiler::execute()
     {
         // Build tokens stream:
-        while (!Eof())
+        while (!eof())
         {
 
-            auto Token = SkipToAttr();
-            text::Attribute Attr;
-            result<text::Attribute> A;
+            auto Token = skip_to_attribute();
+            text::attribute Attr;
+            result<text::attribute> A;
             if (!Token) return rem::eof;
 
-            rem::push_debug(source_aaa) < rem::endl < Token.Mark(B);
+            rem::push_debug(source_aaa) < rem::endl < Token.mark(B);
 
 
             if (Token.M == text::token_data::mnemonic::AccentSeq)
             {
-                Attr.Begin = Token.Loc.Begin;
-                A = CompileAccent(Attr);
+                Attr._begin = Token._location.begin;
+                A = compile_accent(Attr);
             }
             else if (Token.M == text::token_data::mnemonic::OpenTag)
             {
-                Attr.Begin = Token.Loc.Begin;
-                A = CompileAttribute(Attr);
+                Attr._begin = Token._location.begin;
+                A = compile_attribute(Attr);
             }
 
             if (!A)
@@ -686,7 +686,7 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
                 //Skip();
                 continue;
             }
-            TextRef.PushAttribute(Attr);
+            TextRef.push_attribute(Attr);
 
         }
         return rem::accepted;
@@ -701,36 +701,36 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
 
         @note  "Lexing And Parsing... tout &ccedile;a en m&ecirc;me temps!".
     */
-    result<text::Attribute> text::Compiler::CompileAttribute(text::Attribute& Attr)
+    result<text::attribute> text::compiler::compile_attribute(text::attribute& Attr)
     {
 
         text::token_data Token;
         // On tokenize les elements d'attribut: ( Stop: ClosingTag('>') Token )
-        std::map<text::token_data::mnemonic, text::Compiler::ParserFnPtr> Parsers =
+        std::map<text::token_data::mnemonic, text::compiler::parser_fnptr_t> Parsers =
         {
-            {text::token_data::mnemonic::Fg, &text::Compiler::ParseFg},
-            {text::token_data::mnemonic::Bg, &text::Compiler::ParseBg},
-            {text::token_data::mnemonic::Color, &text::Compiler::ParseColor},
-            {text::token_data::mnemonic::Ic, &text::Compiler::ParseIcon},
+            {text::token_data::mnemonic::Fg, &text::compiler::parse_fg},
+            {text::token_data::mnemonic::Bg, &text::compiler::ParseBg},
+            {text::token_data::mnemonic::Color, &text::compiler::parse_color},
+            {text::token_data::mnemonic::Ic, &text::compiler::parse_icon},
             //... Plus tard, on aura les Grilles et Fenetres
-            {text::token_data::mnemonic::ClosingTag, &text::Compiler::CloseAttribute},
+            {text::token_data::mnemonic::ClosingTag, &text::compiler::close_attribute},
         };
-        while (!Eof())
+        while (!eof())
         {
             // on passe '<'
             //Skip();
             result<> ER;
             // Expecting text::token_data::mnemonic:
-            Token = text::token_data::Scan(C);
+            Token = text::token_data::scan(C);
             if (!Token)
-                return rem::push_syntax(source_pfnl) < " Expected ACM (Attribute Command mnemonic) Token" < rem::endl < Mark();
+                return rem::push_syntax(source_pfnl) < " Expected ACM (Attribute Command mnemonic) Token" < rem::endl < mark();
 
             // Ici c'est obligatoire de faire une boucle qui teste explicitement les mnemonics sp&eacute;cifiques
             // parce qu'on ne prend en charge tous les mnemonics.
             for (auto [M, Fn] : Parsers)
             {
                 if (M != Token.M) continue;
-                Eat(Token);
+                eat_token(Token);
                 ER = (this->*Fn)(Attr);
                 if (!ER)
                     return ER();
@@ -738,8 +738,8 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
             }
             if (Token.M == text::token_data::mnemonic::ClosingTag)
             {
-                Eat(Token);
-                Attr.End = Token.Loc.End;
+                eat_token(Token);
+                Attr._end = Token._location.end;
                 return Attr; // Peut &ecirc;tre vide si on es sur "<>"
             }
         }
@@ -753,44 +753,44 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
 
         @note Encoder un Accent est le plus facile, donc pas besoin d'accumuler les tokens ici: juste "parser" '&' + Id + ';' c'est tout!
     */
-    result<text::Attribute> text::Compiler::CompileAccent(text::Attribute& Attr)
+    result<text::attribute> text::compiler::compile_accent(text::attribute& Attr)
     {
 
         text::token_data Token;
         //Skip();
-        if(Eof())
+        if(eof())
             return rem(rem::syntax) < " Expected identifier.";
 
-        Token = ScanIdentifier();
+        Token = scan_identifier();
         if (!Token)
         {
-            rem(rem::syntax) < " Expected identifier." < rem::endl < Mark();
+            rem(rem::syntax) < " Expected identifier." < rem::endl < mark();
         }
 
         rem::push_debug(source_aaa) < " Identifier: " < Token() < " :";
 
         Accent::Type T = Accent::Code(Token());
         if (T == Accent::Err)
-            return rem::push_syntax(source_fl) < " Unknown Code token(identifier) " < rem::endl < Token.Mark(B);
+            return rem::push_syntax(source_fl) < " Unknown Code token(identifier) " < rem::endl < Token.mark(B);
 
-        Attr = text::Attribute(Token);
-        Attr.Ac = T;
-        Attr.Assign.Acc = 1;
+        Attr = text::attribute(Token);
+        Attr._accnt = T;
+        Attr._assign._acc = 1;
         //Mandatory expect ';'
-        (void)Eat(Token);
-        if(CheckEos(Attr)) return Attr;
-        return rem::push_syntax(source_fl) < " Expected Eos ';' (End Of Statement token)." < rem::endl < Mark();
+        (void)eat_token(Token);
+        if(check_eos(Attr)) return Attr;
+        return rem::push_syntax(source_fl) < " Expected Eos ';' (End Of Statement token)." < rem::endl < mark();
     }
 
     /*!
         @brief Tokenize jusqu'&agrave; '>' ou ';', puis compiler l'attribut.
     */
 
-    text::token_data text::Compiler::SkipToAttr()
+    text::token_data text::compiler::skip_to_attribute()
     {
         text::token_data Token;
 
-        while (!Eof())
+        while (!eof())
         {
             auto c = toupper(*C);
             if (c != token_data::OpenSeq[0])
@@ -810,83 +810,83 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
                 Token.L = text::token_data::OpenSeq;
                 Token.M = text::token_data::mnemonic::OpenTag;
             }
-            Token.Loc.Begin = Token.Loc.End = C;
-            Token.Loc.Index = static_cast<int>(C - TextRef._d.c_str());
-            Eat(Token);
+            Token._location.begin = Token._location.end = C;
+            Token._location.index = static_cast<int>(C - TextRef._d.c_str());
+            eat_token(Token);
             return Token;
         }
         return {};
     }
 
-    bool text::Compiler::Eof() { return C > E; }
+    bool text::compiler::eof() { return C > E; }
 
-   result<> text::Compiler::ParseIcon(text::Attribute& A)
+   result<> text::compiler::parse_icon(text::attribute& A)
    {
-       auto Token = text::token_data::Scan(C);
+       auto Token = text::token_data::scan(C);
        if (Token.T != text::token_data::type::Punctuation)
-           return rem::push_syntax(source_fl) < " Expected Punctuation token ':'" < Mark();
-       Eat(Token);
-       Token = ScanIdentifier();
+           return rem::push_syntax(source_fl) < " Expected Punctuation token ':'" < mark();
+       eat_token(Token);
+       Token = scan_identifier();
        rem::push_debug(source_aaa) < " Icon ID : '" < Token() < "' :";
-        auto R = IconID(Token);
+        auto R = icon_id(Token);
         if (!R)
         {
-            rem::push_syntax(source_fl) < rem::notexist < " Icon ID:\n" < Token.Mark(B);
+            rem::push_syntax(source_fl) < rem::notexist < " Icon ID:\n" < Token.mark(B);
             return {};
         }
-        A.Ic = *R;
-        A.Assign.Ic = 1;
-        return CheckEos(A);
+        A._icn = *R;
+        A._assign._icn = 1;
+        return check_eos(A);
     }
 
 
 
-    result<> text::Compiler::ParseFg(text::Attribute& A)
+    result<> text::compiler::parse_fg(text::attribute& A)
     {
         // C sur 'Fg'; ( Consomm&eacute; )
         // Attendus :  ':' , 'ColorID', '; | >';
 
-        auto Token = text::token_data::Scan(C);
+        auto Token = text::token_data::scan(C);
         if ((Token.T != token_data::type::Punctuation) || (Token.L != text::token_data::ArgSeq))
-            return rem::push_syntax(source_fl) < " Expected token ':' " < rem::endl < Mark();
+            return rem::push_syntax(source_fl) < " Expected token ':' " < rem::endl < mark();
 
-        Eat(Token);
-        Token = ScanIdentifier();
+        eat_token(Token);
+        Token = scan_identifier();
         if (!Token)
-            return rem::push_syntax(source_fl) < " Expected Identifier token." < rem::endl < Mark();
+            return rem::push_syntax(source_fl) < " Expected Identifier token." < rem::endl < mark();
 
-        auto R = ColorID(Token);
+        auto R = color_id(Token);
         if (!R) return R() < " in ParseFg";
-        A.Fg = *R;
-        A.Assign.For = 1;
-        rem::push_output() < " Compiler::ParseFg - Token:" < rem::endl < Token.Mark(B);
-        return CheckEos(A);
+        A._fg = *R;
+        A._assign._for = 1;
+        rem::push_output() < " Compiler::ParseFg - Token:" < rem::endl < Token.mark(B);
+        return check_eos(A);
     }
 
-    result<> text::Compiler::ParseBg(text::Attribute& A)
+    result<> text::compiler::ParseBg(text::attribute& A)
     {
         // C sur 'Fg'; ( Consomm&eacute; )
         // Attendus :  ':' , 'ColorID', '; | >';
-        auto Token = text::token_data::Scan(C);
+        auto Token = text::token_data::scan(C);
         if ((Token.T != token_data::type::Punctuation) || (Token.L != text::token_data::ArgSeq))
-            return rem::push_syntax(source_fl) < " Expected token ':'\n" < Mark();
+            return rem::push_syntax(source_fl) < " Expected token ':'\n" < mark();
 
-        Eat(Token);
+        eat_token(Token);
 
-        Token = ScanIdentifier();
+        Token = scan_identifier();
         if (!Token)
-            return rem::push_syntax(source_fl) < " Expected Identifier token." < rem::endl < Mark();
+            return rem::push_syntax(source_fl) < " Expected Identifier token." < rem::endl < mark();
 
-        auto R = ColorID(Token);
+        auto R = color_id(Token);
         if (!R) return R() < " in ParseFg";
-        A.Bg = *R;
-        A.Assign.Bac = 1;
-        rem::push_output() < " Compiler::ParseFg - Token:" < rem::endl < Token.Mark(B);
+        A._bg = *R;
+        A._assign._bac = 1;
+        rem::push_output() < " Compiler::ParseFg - Token:" < rem::endl < Token.mark(B);
 
-        return CheckEos(A);
+        return check_eos(A);
     }
 
-   std::string text::Compiler::Mark()
+   std::string text::compiler::mark()
    {
        const char* Left = C;
        const char* Right = C;
@@ -908,39 +908,39 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
 
 
 
-    result<> text::Compiler::ParseColor(text::Attribute& A)
+    result<> text::compiler::parse_color(text::attribute& A)
     {
 
-        auto Token = text::token_data::Scan(C);
+        auto Token = text::token_data::scan(C);
 
         if (Token.M != text::token_data::mnemonic::ArgSeq)
-            return rem::push_syntax(source_fl) < rem::unexpected < rem::endl < Token.Mark(B);
+            return rem::push_syntax(source_fl) < rem::unexpected < rem::endl < Token.mark(B);
 
-        Eat(Token);
+        eat_token(Token);
 
-        Token = ScanIdentifier();
+        Token = scan_identifier();
         if(!Token)
-            return rem::push_syntax(source_fl) < " Expected Identifier token." < rem::endl < Mark();
+            return rem::push_syntax(source_fl) < " Expected Identifier token." < rem::endl < mark();
 
-        auto R = ColorID(Token);
+        auto R = color_id(Token);
         if (!R) return R();
 
-        A.Fg = *R;
-        A.Assign.For = 1;
+        A._fg = *R;
+        A._assign._for = 1;
         // Ici on doit verfifer si on a une virgule ou eos ou closing tag;
         // result "," | ';' | '>'.
 
-        Token = text::token_data::Scan(C);
+        Token = text::token_data::scan(C);
         if ((Token.M != text::token_data::mnemonic::ArgSep) && (Token.M != text::token_data::mnemonic::Eos) && (Token.M != text::token_data::mnemonic::ClosingTag))
-            return rem::push_syntax(source_fl) < "Expected ',' (arg separator) or eos (';') or closing tag ('>') " < rem::endl < Token.Mark(B);
+            return rem::push_syntax(source_fl) < "Expected ',' (arg separator) or eos (';') or closing tag ('>') " < rem::endl < Token.mark(B);
 
         if ((Token.M == text::token_data::mnemonic::Eos) || (Token.M == text::token_data::mnemonic::ClosingTag))
         {
-            if (A.Fg == color::Reset)
+            if (A._fg == color::Reset)
             {
-                A.Bg = A.Fg;
+                A._bg = A._fg;
                 if(Token.M == text::token_data::mnemonic::Eos)
-                    Eat(Token);
+                    eat_token(Token);
 
                 return rem::accepted;
             }
@@ -948,50 +948,50 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
         }
         // Ici on a obligatoirement argsep:
 
-        Eat(Token);
+        eat_token(Token);
 
-        Token = ScanIdentifier();
+        Token = scan_identifier();
         //...
-        R = ColorID(Token);
+        R = color_id(Token);
         if (!R) return R();
-        A.Bg = *R;
-        A.Assign.Bac = 1;
-        return CheckEos(A);
+        A._bg = *R;
+        A._assign._bac = 1;
+        return check_eos(A);
     }
 
 
 
-    result<> text::Compiler::ParseLineBreak(text::Attribute& A)
+    result<> text::compiler::parse_br(text::attribute& A)
     {
 
         return rem::notimplemented;
     }
 
-    result<> text::Compiler::CloseAttribute(text::Attribute& A)
+    result<> text::compiler::close_attribute(text::attribute& A)
     {
         //TextRef.PushAttribute(A);
         return rem::accepted;
     }
 
-    result<> text::Compiler::CheckEos(text::Attribute& A)
+    result<> text::compiler::check_eos(text::attribute& A)
     {
         //Skip();
-        auto Token = text::token_data::Scan(C);
+        auto Token = text::token_data::scan(C);
         if ( (!Token) || ((Token.M != text::token_data::mnemonic::Eos) && (Token.M != text::token_data::mnemonic::ClosingTag)))
-            return rem::push_syntax(source_fl) < " Expected ';'" < rem::endl < Token.Mark(B);
+            return rem::push_syntax(source_fl) < " Expected ';'" < rem::endl < Token.mark(B);
 
         if (Token.M == text::token_data::mnemonic::ClosingTag)
         {
 
             return rem::accepted;
         }
-        Eat(Token);
-        A.End = Token.Loc.End;
+        eat_token(Token);
+        A._end = Token._location.end;
         return rem::accepted;
     }
 
 
-    text::token_data text::Compiler::ScanIdentifier()
+    text::token_data text::compiler::scan_identifier()
     {
         const char* Sc = C;
         while (isspace(*Sc)) ++Sc;
@@ -1005,22 +1005,22 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
         text::token_data Token;
         while (*Sc && (isalnum(*Sc) || (*Sc == '_'))) ++Sc;
         --Sc;
-        Token.Loc.Begin = C;
-        Token.Loc.End = Sc;
+        Token._location.begin = C;
+        Token._location.end = Sc;
         Token.L = C;
         Token.T = token_data::type::Identifier;
         return Token;
     }
 
-    result<> text::Compiler::Eat(text::token_data& Token)
+    result<> text::compiler::eat_token(text::token_data& Token)
     {
-        C = Token.Loc.End;
+        C = Token._location.end;
         C++;
         return rem::accepted;
     }
 
 
-    result<color::type> text::Compiler::ColorID(token_data& Token)
+    result<color::type> text::compiler::color_id(token_data& Token)
     {
         auto Str = Token();
         color::type Colr = textattr::scan(Str);
@@ -1028,42 +1028,42 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
         {
             if (Str != "Reset")
                 return rem::push_error() < " Expected color::type name (strict case match). Got '" < color::Yellow < Str < color::White < "' instead:" < rem::endl
-                < Token.Mark(B);
+                < Token.mark(B);
         }
-        Eat(Token);
+        eat_token(Token);
         return Colr;
     }
 
 
 
-    result<Icon::Type> text::Compiler::IconID(token_data& Token)
+    result<Icon::Type> text::compiler::icon_id(token_data& Token)
     {
         auto Str = Token();
         Icon::Type IconId = Icon::Scan(Str);
         if (IconId == Icon::NullPtr)
-            return rem::push_error() < " Expected Icon::type name, got '" < color::Yellow < Str < color::White < "' instead:" < rem::endl < Token.Mark(B);
-        Eat(Token);
+            return rem::push_error() < " Expected Icon::type name, got '" < color::Yellow < Str < color::White < "' instead:" < rem::endl < Token.mark(B);
+        eat_token(Token);
         return IconId;
     }
 
 
-    text::Attribute::Attribute(token_data& aInfo) : Begin(aInfo.Loc.Begin-1), End(aInfo.Loc.End), C(nullptr) {}
+    text::attribute::attribute(token_data& aInfo) : _begin(aInfo._location.begin-1), _end(aInfo._location.end), _crs(nullptr) {}
 
-    std::string text::Attribute::operator()() const
+    std::string text::attribute::operator()() const
     {
-        if (End)
+        if (_end)
         {
-            std::string Str{ Begin, size_t(End - Begin) + 1 };
+            std::string Str{ _begin, size_t(_end - _begin) + 1 };
             return Str;
         }
         else
         {
-            std::string Str{ Begin };
+            std::string Str{ _begin };
             return Str;
         }
     }
 
-    std::string text::Attribute::Infos()
+    std::string text::attribute::informations()
     {
         return "implement";
     }

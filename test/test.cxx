@@ -68,7 +68,7 @@ void test::test_dimension()
 void test::test_text()
 {
 	scrat::text Txt = " <Icon: ArrowRight;> Allo <Color: Yellow, BlueViolet;> &agrave; <Color : Reset> vous <Fg:Yellow;>t<Fg:BlueViolet;>o<Fg:Green;>u<Fg:White;>s<Fg:DeepPink2;>!<Color:Reset;>  ";
-    Txt.Compile();
+    Txt.compile();
     std::string Str;
     Txt >> Str;
     rem::push_info(source_fl) < Str;

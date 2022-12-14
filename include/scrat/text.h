@@ -35,7 +35,7 @@ using std::string_view;
 
 class SCRAT_API text_tokenizer
 {
-    std::string_view _mData;
+    std::string_view _d;
 
     [[maybe_unused]] static string_view _default_token_separators;
     using iterator = string_view::iterator;
@@ -89,37 +89,37 @@ public:
 private:
     struct s_p_s
     {
-        string_view::iterator mStart;
-        string_view::iterator mPos;
-        string_view::iterator mStop; /// ...
+        string_view::iterator _begin;
+        string_view::iterator _pos;
+        string_view::iterator _end; /// ...
 
-        int      mLine  = 1;
-        int      mCol   = 1;
-        uint64_t mIndex = 0;
+        int      _line  = 1;
+        int      _col   = 1;
+        uint64_t _index = 0;
 
         s_p_s() = default;
         ~s_p_s() = default;
 
         explicit s_p_s(string_view str_);
-        bool Skip();
-        [[nodiscard]] bool End() const;
+        bool skip_ws();
+        [[nodiscard]] bool end() const;
         bool operator++();
         bool operator++(int);
-        void Reset(string_view str_)
+        void reset(string_view str_)
         {
-            mPos   = mStart = str_.begin();
-            mLine  = mCol   = 1;
-            mIndex = 0;
-            mStop  = str_.end();
+            _pos   = _begin = str_.begin();
+            _line  = _col   = 1;
+            _index = 0;
+            _end  = str_.end();
         }
         s_p_s &operator>>(text_tokenizer::token_t &word_);
-    } _mCursor;
+    } _cursor;
 public:
     text_tokenizer& operator=(string_view str_);
     text_tokenizer& operator=(const char* str_);
-    string_view operator()(){ return _mData.data(); }
+    string_view operator()(){ return _d.data(); }
 private:
-    config_data mConfig;
+    config_data _cfg;
 
 
 
@@ -148,7 +148,7 @@ public:
             * Destructor
             */
         ~text();
-        result<> Compile();
+        result<> compile();
         result<> operator >> (std::string&);
         struct SCRAT_API token_data
         {
@@ -190,11 +190,11 @@ public:
 
             struct location_data
             {
-                const char* Begin = nullptr;
-                const char* End = nullptr;
-                const char* SBegin = nullptr;
-                int Index = -1;
-            }Loc;
+                const char* begin = nullptr;
+                const char* end = nullptr;
+                const char* s_begin = nullptr;
+                int index = -1;
+            } _location;
 
             using Lexem                       = const char*;
             static constexpr Lexem Fg        = "FG";
@@ -222,7 +222,7 @@ public:
 
             std::string operator()();
 
-            static token_data Scan(const char* Start);
+            static token_data scan(const char* Start);
 
             using list = std::vector <token_data>;
             static list Referential;
@@ -238,7 +238,7 @@ public:
                 T = r.T;
                 M = r.M;
                 L = r.L;
-                Loc = std::move(r.Loc);
+                _location = std::move(r._location);
                 return *this;
             }
             token_data& operator=(const token_data& r)
@@ -246,58 +246,58 @@ public:
                 T = r.T;
                 M = r.M;
                 L = r.L;
-                Loc = r.Loc;
+                _location = r._location;
                 return *this;
             }
 
             operator bool() { return (L != nullptr) || (T != token_data::type::Unset); }
 
-            std::string Mark(const char*);
+            std::string mark(const char*);
             int NParam = 0;
 
         };
 
-        struct SCRAT_API Attribute
+        struct SCRAT_API attribute
         {
             // ============ Indiquer c'est quoi qu'il faut lire!!!!!! ======================
-            color::type Fg  = color::Black;
-            color::type Bg  = color::Black;
-            Icon::Type Ic   = Icon::NullPtr;
-            Accent::Type Ac = Accent::Err;
+            color::type _fg  = color::Black;
+            color::type _bg  = color::Black;
+            Icon::Type _icn   = Icon::NullPtr;
+            Accent::Type _accnt = Accent::Err;
             // =============================================================================
-            const char* Begin = nullptr;
-            const char* End   = nullptr;
-            const char* C     = nullptr;
+            const char* _begin = nullptr;
+            const char* _end   = nullptr;
+            const char* _crs     = nullptr;
 
-            struct Assigned
+            struct assigned
             {
-                int8_t For : 1;
-                int8_t Bac : 1;
-                int8_t Ic : 1;
-                int8_t Acc : 1;
-            }Assign = {0};
+                int8_t _for : 1;
+                int8_t _bac : 1;
+                int8_t _icn : 1;
+                int8_t _acc : 1;
+            } _assign = {0};
 
 
-            Attribute() = default;
-            Attribute(token_data& Info);
-            Attribute(Attribute&&) noexcept = default;
-            Attribute(const Attribute&) = default;
-            ~Attribute() = default;
-            std::string Infos();
+            attribute() = default;
+            attribute(token_data& Info);
+            attribute(attribute&&) noexcept = default;
+            attribute(const attribute&) = default;
+            ~attribute() = default;
+            std::string informations();
             std::string operator()() const;
 
-            Attribute& operator = (Attribute&&) noexcept = default;
-            Attribute& operator = (const Attribute&) = default;
-            using list = std::vector<text::Attribute>;
+            attribute& operator = (attribute&&) noexcept = default;
+            attribute& operator = (const attribute&) = default;
+            using list = std::vector<text::attribute>;
         };
 
-        void PushAttribute(text::Attribute Attr);
+        void push_attribute(text::attribute Attr);
     private:
-        friend class Compiler;
-        friend class Attribute;
-        text::Attribute::list Attributes;
+        friend class compiler;
+        friend class attribute;
+        text::attribute::list _attributes;
 
-        struct Compiler
+        struct compiler
         {
             enum class State : uint8_t {
                 Out,        ///< In outside context state ( normal text ) - Begin Seq is Expected
@@ -324,36 +324,36 @@ public:
             //result<> Skip();
             text& TextRef;
 
-            void CloseToken(token_data& Info);
-            result<> Compile();
-            result<text::Attribute> CompileAttribute(text::Attribute& Attr);
-            result<text::Attribute> CompileAccent(text::Attribute& Attr);
-            result<text::token_data> Scan();
+            void close_token(token_data& Info);
+            result<> execute();
+            result<text::attribute> compile_attribute(text::attribute& Attr);
+            result<text::attribute> compile_accent(text::attribute& Attr);
+            result<text::token_data> scan();
 
-            text::token_data SkipToAttr();
+            text::token_data skip_to_attribute();
 
-            result<color::type> ColorID(token_data& Token);
-            result<Icon::Type> IconID(token_data& Token);
-            text::token_data ScanIdentifier();
-            result<> Eat(text::token_data& Token);
-            Compiler() = delete;
-            Compiler(text& aTextInstance);
-            ~Compiler() = default;
-            bool Eof();
+            result<color::type> color_id(token_data& Token);
+            result<Icon::Type> icon_id(token_data& Token);
+            text::token_data scan_identifier();
+            result<> eat_token(text::token_data& Token);
+            compiler() = delete;
+            compiler(text& aTextInstance);
+            ~compiler() = default;
+            bool eof();
 
-            using ParserFnPtr = result<>(text::Compiler::*)(text::Attribute&);
-            using ParsersTable = std::unordered_map<token_data::mnemonic, text::Compiler::ParserFnPtr>;
+            using parser_fnptr_t = result<>(text::compiler::*)(text::attribute&);
+            using parsers_table_t = std::unordered_map<token_data::mnemonic, text::compiler::parser_fnptr_t>;
 
-            result<> ParseIcon(text::Attribute& A); // Parser pour ':' + 'IconID' + ';'
-            result<> ParseFg(text::Attribute& A); // Parser pour ':' + 'ColorID' + ';'
-            result<> ParseBg(text::Attribute& A); // Parser pour ':' + 'ColorID' + ';'
-            result<> ParseColor(text::Attribute& A); // Parser pour ':' + 'ColorID' + ',' + 'ColorID' + ';'
-            result<> ParseLineBreak(text::Attribute& A); // 'BR'; ( <br; .. > ou <br>)
-            result<> CloseAttribute(text::Attribute& A); // 'BR'; ( <br; .. > ou <br>)
-            result<> CheckEos(text::Attribute& A);
-            std::string Mark();
+            result<> parse_icon(text::attribute& A); // Parser pour ':' + 'IconID' + ';'
+            result<> parse_fg(text::attribute& A); // Parser pour ':' + 'ColorID' + ';'
+            result<> ParseBg(text::attribute& A); // Parser pour ':' + 'ColorID' + ';'
+            result<> parse_color(text::attribute& A); // Parser pour ':' + 'ColorID' + ',' + 'ColorID' + ';'
+            result<> parse_br(text::attribute& A); // 'BR'; ( <br; .. > ou <br>)
+            result<> close_attribute(text::attribute& A); // 'BR'; ( <br; .. > ou <br>)
+            result<> check_eos(text::attribute& A);
+            std::string mark();
         };
 
-        static text::token_data Scan(text::token_data::mnemonic M);
+        static text::token_data scan(text::token_data::mnemonic M);
     };
 }

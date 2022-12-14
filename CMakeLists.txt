@@ -20,6 +20,7 @@ add_library(
         cxx/text.cxx
         cxx/accents.fr.cxx
         cxx/Icons.cxx
+        cxx/scrater/scrater.cxx
 )
 
 
