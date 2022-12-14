@@ -36,16 +36,16 @@ namespace scrat
 
 #define source_pfn { __PRETTY_FUNCTION__, "", 0 }
 
+#define source_pffl  { __PRETTY_FUNCTION__, __FILE__, __LINE__ }
 #define source_aaa  { __PRETTY_FUNCTION__, __FILE__, __LINE__ }
-
 
 #define source_pfnl {  __PRETTY_FUNCTION__, "",  __LINE__	}
 
 #define source_sf {__FUNCTION__, "", 0}
 
 #define source_fl {._fn = "", ._file = __FILE__, .line = __LINE__}
-
-
+#define source_fnl {._fn = __FUNCTION__ , ._file = __FILE__, .line = __LINE__}
+#define source_ffl {._fn = __FUNCTION__ , ._file = __FILE__, .line = __LINE__}
 
 
 	class SCRAT_API rem
@@ -102,7 +102,8 @@ namespace scrat
 		static constexpr rem::code begin = 19; ///< begin (sel)section or indent
 		static constexpr rem::code end = 20; ///< end (sel)section or unindent
 		static constexpr rem::code notexist = 21; ///< does not exist
-		static constexpr rem::code unexpected = 22; ///< does not exist
+		static constexpr rem::code exist = 26; ///< does not exist
+		static constexpr rem::code unexpected = 22; ///< nexpected
 		static constexpr rem::code expected = 23; ///< does not exist
 		static constexpr rem::code blocked = 24; ///< thread trying to lock a mutex has failed because the mutex is already locked in another thread...
 		static constexpr rem::code locked = 25; ///< thread trying to lock a mutex has became the owner of the lock.
@@ -126,10 +127,10 @@ namespace scrat
 		~rem();
 
 		rem(const rem&);
-		rem(rem&& m) noexcept = default;
+		rem(rem&& m) noexcept ;
 		rem(rem::ctype ty, source_location = {});
 
-		rem& operator = (rem&& m) noexcept = default;
+		rem& operator = (rem&& m) noexcept;
 		rem& operator = (const rem& m);
 
 		// , | || + << < & && +=
@@ -138,6 +139,12 @@ namespace scrat
 		rem& operator < (textattr::pair cf);
 		rem& operator < (const std::string& arg_);
 		rem& operator < (const char* arg_);
+
+		rem& operator << (rem::code c_);
+		rem& operator << (color::type c_);
+		rem& operator << (textattr::pair cf);
+		rem& operator << (const std::string& arg_);
+		rem& operator << (const char* arg_);
 		template<typename T> rem& operator < (const T& arg_)
 		{
 			stracc str;
@@ -146,6 +153,13 @@ namespace scrat
 			return *this;
 		}
 
+		template<typename T> rem& operator << (const T& arg_)
+		{
+			stracc str;
+			str += arg_;
+			rem::_components.push_back(str());
+			return *this;
+		}
 		static std::string now(std::string_view fmt =  "[%d/%m/%Y - %X]");
 
 		static rem& push_error(source_location src_ = {});

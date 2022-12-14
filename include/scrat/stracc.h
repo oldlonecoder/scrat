@@ -148,6 +148,14 @@ public:
     stracc& operator += (color::type c_) { _d += attr< textattr::format::ansi256 >::fg(c_); return *this; }
 
 
+    template<typename T> stracc& hexadecimal(T& v)
+    {
+        std::stringstream is(_d.c_str() + 2);
+        //std::cerr << " this:'" << _D.c_str()+2 << "' -> ";
+        is >> std::hex >> v;
+        //std::cerr << v << '\n';
+        return *this;
+    }
 
     template<typename T> stracc& operator += (const T& arg_)
     {
@@ -158,7 +166,7 @@ public:
         // return _format(arg_); duh!
     }
 
-
+    std::string& str() { return _d; }
     template<typename T> static std::string to_binary(T __arg, bool padd = false, int f = 128)
     {
         uint8_t seq;

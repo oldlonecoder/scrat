@@ -3,6 +3,7 @@
 #include <scrat/dlconfig.h>
 #include <string>
 #include <vector>
+#include <scrat/stracc>
 
 
 namespace scrat
@@ -71,7 +72,12 @@ struct SCRAT_API point
 		y = y_;
 		return *this;
 	}
-
+	operator std::string()
+	{
+		stracc str = "{%d,%d}";
+		str << x << y;
+		return str();
+	}
 };
 
 
@@ -100,6 +106,12 @@ struct SCRAT_API rect
 
 	rect() {}
 	~rect() {}
+	rect(rect&& r) noexcept;
+	rect(const rect& r);
+
+
+	rect& operator=(rect&& r) noexcept;
+	rect& operator=(const rect& r) ;
 
 	rect(point a_, point b_)
 	{
@@ -177,6 +189,8 @@ struct SCRAT_API rect
 		b += dt;
 	}
 
+	int width()  { return sz.w; }
+	int height()  { return sz.h; }
 
 	/*!
 		@brief intersection between this and r
@@ -222,7 +236,7 @@ struct SCRAT_API rect
 
 struct SCRAT_API winbuffer
 {
-	std::string* win = nullptr;
+	stracc* win = nullptr;
 	point cxy;
 	rect r;
 
@@ -236,13 +250,22 @@ struct SCRAT_API winbuffer
 	winbuffer& operator --();
 	winbuffer& operator --(int);
 	// --------------------------
+    template<typename T> winbuffer& operator << (T v)
+    {
+        stracc str;
+        str << v;
+        return put(str());
+    }
+
+
+
 
 	winbuffer& put(const std::string& txt);
 
 	void clear();
 	void release();
 	std::string details();
-	operator std::string() {return win ? *win : "";}
+	operator std::string();// {return win ? win->str() : "";}
 
 };
 }
