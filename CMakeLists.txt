@@ -21,6 +21,10 @@ add_library(
         cxx/accents.fr.cxx
         cxx/Icons.cxx
         cxx/scrater/scrater.cxx
+        cxx/lexer/types.cxx
+        cxx/lexer/tokendata.cxx
+        cxx/lexer/lexer.cxx
+        cxx/lexer/lexer_color.cxx
 )
 
 

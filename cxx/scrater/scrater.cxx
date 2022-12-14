@@ -6,15 +6,13 @@
 
 using namespace scrat;
 
+
+
 scrature::scrature()
 {
 
 }
 
-scrature::scrature(const scrature& other)
-{
-
-}
 
 scrature::~scrature()
 {
@@ -23,15 +21,6 @@ scrature::~scrature()
 
 scrature& scrature::operator=(const scrature& other)
 {
-
+    return *this;
 }
 
-bool scrature::operator==(const scrature& other) const
-{
-
-}
-
-bool scrature::operator!=(const scrature& other) const
-{
-
-}

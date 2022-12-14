@@ -23,7 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 
 
-
+#include <scrat/result> ///< the string accumulator util class.
 #include <list>
 #include <map>
 #include <string>
@@ -181,7 +181,7 @@ namespace scrat
                 for (int c = 1; c < argc; c++) m_cmdline_data_raw.push_back(argv[c]);
             }
             ~ccoption();
-            int         process() throw(ccoption<T>::Error);
+            int         process();
             int         initialize_data();
             int         add(const std::string& swKey, ccoption<T>::_switch sw_functor, bool rv = false);
             bool& collect_orphans() { return m_collect_orphans; }
@@ -319,7 +319,7 @@ namespace scrat
         }
 
 
-        template<typename T> int ccoption<T>::process() throw (ccoption<T>::Error)
+        template<typename T> int ccoption<T>::process()
         {
             if (m_cmdline_data_raw.empty() || m_switches.empty()) {
                 return 0;
@@ -334,7 +334,7 @@ namespace scrat
                     if (!(m_processing_object->*(s.m_memfun_ptr))(s.value())) {
                         m_psw = &m_switches[it->first];
                         m_swerr = it->first;
-                        throw Error::Value;
+                        throw rem::push_error(source_aaa) < rem::failed < m_swerr;
                     }
                 }
             }
@@ -344,14 +344,14 @@ namespace scrat
 
 
 
-        template<typename V> V toType(std::string v) throw (std::string)
+        template<typename V> V toType(std::string v)
         {
             V dest;
-            std::istd::stringstream in(v);
+            std::stringstream in(v);
             try {
                 in >> dest;
                 if (in.fail()) {
-                    throw " (part of ) value `" + v + "` cannot be converted by :\n" + __PRETTY_FUNCTION__;
+                    throw rem::push_error(source_fl) < rem::rejected < " (part of ) value `" < v < "` cannot be converted by toType" < rem::endl;
                 }
                 return dest;
             }

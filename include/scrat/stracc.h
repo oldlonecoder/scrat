@@ -83,6 +83,32 @@ public:
     //...
     stracc& operator << (color::type arg_);
 
+    template<typename T> stracc& operator >> (T& out)
+    {
+        std::istringstream in(_d); //  When String was derived from std::string ... Oops!  std::istringstream in(*this);
+
+        if constexpr (
+            std::is_same<float, T>::value || std::is_same<double, T>::value ||
+            std::is_same<long double, T>::value ||
+            std::is_same<int, T>::value || std::is_same<unsigned int, T>::value ||
+            std::is_same<int8_t, T>::value || std::is_same<uint8_t, T>::value ||
+            std::is_same<int16_t, T>::value || std::is_same<uint16_t, T>::value ||
+            std::is_same<int32_t, T>::value || std::is_same<uint32_t, T>::value ||
+            std::is_same<int64_t, T>::value || std::is_same<uint64_t, T>::value
+            )
+        {
+            //in.precision(_mPrecision);
+            out = 0;
+            //in.precision(_mPrecision);
+            in >> out;
+            return *this;
+        }
+        T R;
+        in >> R;
+        out = R;
+        return *this;
+    }
+
     template<typename T> stracc& operator << (T arg_)
     {
         if(_scan_arg() != std::string::npos)

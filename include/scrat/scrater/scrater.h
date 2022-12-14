@@ -1,15 +1,17 @@
 // SPDX-FileCopyrightText: 2022 Serge Lussier <email>
 // SPDX-License-Identifier: BSD-3-Clause
 
-#ifndef SCRAT_SCRATURE_H
-#define SCRAT_SCRATURE_H
+#pragma once
+#include <scrat/cmdargs.h>
 
 namespace scrat {
 
 /**
- * @todo write docs
+    @brief the scrat interpreter.
+
+    @note I know it is bery weird name...( let's it alone for now)
  */
-class scrature
+class SCRAT_API scrature
 {
 public:
     /**
@@ -22,7 +24,7 @@ public:
      *
      * @param other TODO
      */
-    scrature(const scrature& other);
+
 
     /**
      * Destructor
@@ -57,4 +59,4 @@ public:
 
 }
 
-#endif // SCRAT_SCRATURE_H
+
