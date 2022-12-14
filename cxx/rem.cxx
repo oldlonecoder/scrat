@@ -2,7 +2,9 @@
 //#include "rem.h"
 
 #include <scrat/text>
+#include <map>
 
+// ??????????????????
 
 namespace scrat
 {
@@ -23,6 +25,10 @@ namespace scrat
 
 	*/
 	rem::list rem::_application_message_q;
+	std::mutex rem::mtx_app_q;
+    std::mutex rem::_mclasses_lock;
+	std::mutex rem::_mcodes_lock;
+
 
 	attribute_list rem::colors =
 	{
@@ -44,7 +50,7 @@ namespace scrat
 		{"syntax",		{color::SeaGreen1,		color::Reset}},
 		{"status",		{color::Grey42,			color::Reset}},
 		{"test",		{color::Yellow,			color::Reset}},
-		{"info",		{color::Blue4,			color::Reset}},
+		{"info",		{color::DodgerBlue2,    color::Reset}},
 		{"comment",		{color::White,			color::Reset}}
 		}
 
@@ -107,8 +113,20 @@ namespace scrat
 		{rem::notexist,			"does not exist"},
 		{rem::unexpected,    	"unexpected"},
 		{rem::expected,			"expected"},
+		{rem::blocked,			"blocked"},
+		{rem::locked,			"locked"},
 	};
 
+	static std::map<rem::ctype, const char*> _Icons_ =
+	{
+		{rem::fatal, Icon::CDeadHead},
+		{rem::err, Icon::CErr1},
+		{rem::warning, Icon::CWarning},
+		{rem::info, Icon::CInfo},
+		{rem::debug, Icon::CBug},
+
+		//...
+	};
 
 	std::string rem::cc()
 	{
@@ -122,6 +140,19 @@ namespace scrat
 			_text += rem::now();
 			_text += rem::colors["default"]();
 			_text += ':';
+		}
+
+		if ((_mclass != rem::nulltype) && ((_mclass != rem::output)))
+		{
+			auto n = _typenames_[_mclass];
+			_text += rem::colors["default"]();
+			_text += '[';
+			_text += rem::colors[n.data()]();
+			_text += _Icons_[_mclass]; // Want to see the space between the ic and the text :
+			_text +=  _typenames_[_mclass].data();
+			_text += rem::colors["default"]();
+			_text += ']';
+			_text += ' ';
 		}
 
 		if(!_src._file.empty())
@@ -149,14 +180,7 @@ namespace scrat
 			_text += rem::colors["default"]();
 			_text += ' ';
 		}
-		if (_mclass != rem::nulltype)
-		{
-			auto n = _typenames_[_mclass];
-			_text += rem::colors[n.data()]();
-			_text +=  _typenames_[_mclass].data();
-			_text += rem::colors["default"]();
-			_text += ':';
-		}
+
 
 		for (auto item : _components) _text += item;
 
@@ -178,7 +202,7 @@ namespace scrat
 
 
 	rem::rem(rem::ctype ty, source_location src_):
-		_src(src_)
+		_src(src_),_mclass(ty)
 	{
 	}
 
@@ -299,19 +323,32 @@ namespace scrat
 		rem::_application_message_q.emplace_back(rem{ rem::status, src_ });
 		return rem::_application_message_q.back();
 	}
+
+
 	rem& rem::push_test(source_location src_)
 	{
+		if(rem::mtx_app_q.try_lock())
+			rem::push_test(source_aaa) < rem::locked < " !";
+		else
+		{
+			/// sleep on a condition variable here or die...
+			;
+		}
 		rem::_application_message_q.emplace_back(rem{ rem::test, src_ });
+		rem::mtx_app_q.unlock();
 		return rem::_application_message_q.back();
 	}
 	rem::code rem::clear(std::function<void(rem&)> fn_)
 	{
+		//rem::mtx_app_q.try_lock();
+		//if(rem::mtx_app_q)
 		for (auto& r : rem::_application_message_q)
 		{
 			if (fn_)
 				fn_(r);
 		}
 		rem::_application_message_q.clear();
+		rem::mtx_app_q.unlock();
 		return rem::ok;
 	}
 }

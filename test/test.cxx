@@ -10,13 +10,10 @@ auto main() -> int {
 
 	test test;
 
+	test.put_colors();
 	//...
 	test.run();
-	scrat::rem::clear([](rem& r)
-		{
-			std::cout << r.cc() << '\n';
-		}
-	);
+	scrat::rem::clear([](rem& r) { std::cout << r.cc() << '\n'; } );
 	return 0;
 }
 
@@ -76,6 +73,28 @@ void test::test_text()
     Txt >> Str;
     rem::push_info(source_fl) < Str;
 }
+
+void test::put_colors()
+{
+    int C = 0;
+    scrat::stracc Str, Line;
+    for (int l = 0; l < 16; l++)
+    {
+        Line = "%3d";
+        Line << C;
+        for (int cn = 0; cn < 16; cn++)
+        {
+            Str = "%s      ";
+            Str << scrat::attr<scrat::textattr::format::ansi256>::bg(static_cast<scrat::color::type>(C));
+            Line += Str();
+            C++;
+        }
+        rem::push_output() < Line() < color::Reset;
+        Line.clear();
+    }
+}
+
+
 
 scrat::result<scrat::object*> test::test_result()
 {

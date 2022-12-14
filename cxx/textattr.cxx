@@ -1,6 +1,7 @@
 #include <scrat/textattr>
 
 
+
 namespace scrat
 {
 
@@ -400,8 +401,13 @@ namespace scrat
         return p();
     }
 
+    attr_item &attr_item::operator>>(std::string &out)
+    {
+        p >> out;
+        return *this;
+    }
 
-    attr_item& attribute_list::operator[](const std::string& id_)
+    attr_item &attribute_list::operator[](const std::string &id_)
     {
         for (auto& item : items)
             if (item.id == id_) return item;

@@ -15,6 +15,7 @@ public:
 	void texattr();
 	void test_dimension();
 	void test_text();
+	void put_colors();
 
 	scrat::result<scrat::object*> test_result();
 };

@@ -169,12 +169,12 @@ text_tokenizer::iterator text_tokenizer::scan_to(text_tokenizer::iterator aStart
 
 
 /*!
-    * @brief break/split/tokenize,etc... the content of this stracc into pieces.
-    * @param text_tokenizer::token_t::List  OUTPUT reference to the 'Tokens array' containter, filled by this method.
-    * @param aDelimiters Separators in the form of a stracc of ascii-8 characters.
+    * @brief break/split/tokenize,etc... the content of a string into pieces.
+    * @param text_tokenizer::token_t::list  OUTPUT reference to the 'Tokens array' containter, filled by this method.
+    * @param aDelimiters Separators in the form of a std::sting_view of ascii-8 characters.
     * @param keep_as_word if true (or non-zero), the Separators will be put into the collection as they appear
-    * @return number of "Words/tokens" contained into the wcollection.
-    * @notice : After several years of experience and experimentations, offset have determined that
+    * @return number of "Words/tokens" contained into the collection.
+    * @notice : After several years of experience and experimentations, We have determined that
     * white-spaces/ctrl or spacing characters are silent and implicit delimiters, in addition to the ones supplied by \c aDelimiters.
     */
 
@@ -231,11 +231,11 @@ std::size_t text_tokenizer::operator()(text_tokenizer::token_t::list &Collection
 
         }
         else if((*Crs.mPos == '\'') || (*Crs.mPos == '"'))
-        { // Quoted litteral stracc...
+        { // Quoted litteral string...
             Crs >> w;
             if(KeepAsWord)
             {
-                // Create the three parts of the quoted stracc: (") + (litteral) + (") ( or ' )
+                // Create the three parts of the quoted string: (") + (litteral) + (") ( or ' )
                 // So, we save the token_t coords anyway.
                 Collection.push_back({w.mStart, w.mStart, Crs.mStop, w.mLine, w.mCol, w.mPosition});
             }
@@ -442,7 +442,7 @@ text_tokenizer::text_tokenizer(std::string aStr): _mData(aStr.c_str())
                     }
                 } // Il reste les autres non-espace comme les ponctuations, symboles...
                 --crs; // Replacer crs sur le dernier caractere du Token.
-                rem::push_debug(source_fl) < " Scanned to :" < color::Yellow < *crs;
+                rem::push_debug(source_fl) < " Scanned to :'" < color::Yellow < *crs < color::Reset < '\'';
                 TokenRef.Loc.Begin = Start;
                 TokenRef.Loc.End = crs; // Fin du Token
 

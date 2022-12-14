@@ -385,6 +385,7 @@ namespace scrat
 
         using list = std::vector<attr_item>;
         std::string operator()();
+        attr_item& operator >> (std::string& out);
 
     };
 

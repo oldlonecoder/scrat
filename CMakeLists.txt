@@ -12,7 +12,7 @@ message("source dir: " "${CMAKE_CURRENT_SOURCE_DIR}")
 add_library(
         ${PROJECT_NAME}
         SHARED
-        cxx/encodings/textattr.cxx
+        cxx/textattr.cxx
         cxx/geometry.cxx
         cxx/object.cxx
         cxx/rem.cxx

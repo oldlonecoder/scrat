@@ -104,7 +104,9 @@ namespace scrat
 		static constexpr rem::code notexist = 21; ///< does not exist
 		static constexpr rem::code unexpected = 22; ///< does not exist
 		static constexpr rem::code expected = 23; ///< does not exist
-		//...
+		static constexpr rem::code blocked = 24; ///< thread trying to lock a mutex has failed because the mutex is already locked in another thread...
+		static constexpr rem::code locked = 25; ///< thread trying to lock a mutex has became the owner of the lock.
+		//...etc....
 		// source_location:
 		static constexpr rem::code function = 1000;
 		static constexpr rem::code file = 1001;
@@ -164,8 +166,9 @@ namespace scrat
 		rem::ctype _mclass = rem::nulltype;
 		rem::code _mcode = rem::nullcode;
 		std::mutex _mcomponents_lock;
-		std::mutex _mclasses_lock;
-		std::mutex _mcodes_lock;
+		static std::mutex _mclasses_lock;
+		static std::mutex mtx_app_q;
+		static std::mutex _mcodes_lock;
 	};
 }
 
