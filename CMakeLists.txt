@@ -24,9 +24,13 @@ add_library(
         cxx/lexer/tokendata.cxx
         cxx/lexer/lexer.cxx
         cxx/lexer/lexer_color.cxx
-        cxx/scrater/scrater.cxx
-        cxx/scrater/alu.cxx
-        cxx/scrater/xio.cxx
+        cxx/interpret/interpret.cxx
+        cxx/interpret/alu.cxx
+        cxx/interpret/xio.cxx
+        cxx/interpret/variable.cxx
+        cxx/interpret/bloc.cxx
+        cxx/interpret/compiler/compiler.cxx
+        cxx/interpret/compiler/grammar.cxx
 )
 
 

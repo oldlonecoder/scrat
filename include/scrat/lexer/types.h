@@ -63,7 +63,7 @@ constexpr T        bin_format_t   = 0x100000000000;
 
 
 std::string SCRAT_API name(T T_);
-T    SCRAT_API from_str(std::string);
+T    SCRAT_API from_str(const std::string&);
 }
 
 enum class mnemonic : uint16_t

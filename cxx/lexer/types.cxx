@@ -139,6 +139,7 @@ std::string name(T T_)
     return Str_;
 }
 
+
 T SCRAT_API from_str(const std::string& Str )
 {
     T types = 0;
@@ -151,7 +152,9 @@ T SCRAT_API from_str(const std::string& Str )
     return types;
 }
 
-}}
+}
+
+}
 
 namespace script
 {

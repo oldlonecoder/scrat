@@ -36,7 +36,8 @@ class SCRAT_API stracc final
 public:
     using list = std::vector<std::string>;
     using stack = std::stack<std::string>;
-
+    using iterator = stracc::list::iterator;
+    using const_iterator = stracc::list::const_iterator;
 private:
     /*!
 
