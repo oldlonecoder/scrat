@@ -134,9 +134,9 @@ public:
             scrat::script::mnemonic      m;
         }object = {nullptr};
 
-        using collection = std::vector<term>;
-        using iterator = collection::iterator;
-        using const_iterator = collection::const_iterator;
+        using list = std::vector<term>;
+        using iterator = list::iterator;
+        using const_iterator = list::const_iterator;
 
         // pas le choix... 'y faut un parser....
 
@@ -207,11 +207,11 @@ public:
         grammar::term_properties a = {0, 0, 0, 0, 0}; ///< default : punctual, strict match
 
 
-        grammar::term::collection terms;
+        grammar::term::list terms;
 
-        using collection = std::vector<term_seq>;
-        using const_iterator = collection::const_iterator;
-        using iterator = collection::iterator;
+        using list = std::vector<term_seq>;
+        using const_iterator = list::const_iterator;
+        using iterator = list::iterator;
         using stack = std::stack<iterator>;
 
         term_seq() = default;
@@ -240,14 +240,14 @@ public:
 
     struct SCRAT_API rule
     {
-        grammar::term_seq::collection sequences;
+        grammar::term_seq::list sequences;
         // ---------------------------------------
         grammar::term_seq::iterator   seq; // Temporary held for building this rule.
         // ---------------------------------------
         //term_seq::stack seq_stack;
 
-        using collection = std::map<std::string, rule *>;
-        using iterator = collection::const_iterator;
+        using list = std::map<std::string, rule *>;
+        using iterator = list::const_iterator;
 
         grammar::term_properties a      = {0, 0, 0, 0, 0}; /// Volatile attribute infos. ( Copied into the rule's recursion context  )
         grammar::term_properties inject = {0, 0, 0, 0, 0};
@@ -306,7 +306,7 @@ private:
     state_mac               _state = grammar::st_begin;
 
     [[maybe_unused]] int init();
-    rule::collection rules;
+    rule::list rules;
     rule                    *_rule = nullptr;
     rule *query_rule(const std::string &a_id);
 

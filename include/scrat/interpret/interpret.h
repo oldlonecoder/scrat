@@ -14,6 +14,11 @@ namespace scrat::script {
  */
 class SCRAT_API interpret : public bloc
 {
+    struct config_t
+    {
+        std::string_view location_path;
+
+    };
 public:
     /**
      * Default constructor

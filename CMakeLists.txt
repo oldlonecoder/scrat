@@ -31,6 +31,7 @@ add_library(
         cxx/interpret/bloc.cxx
         cxx/interpret/compiler/compiler.cxx
         cxx/interpret/compiler/grammar.cxx
+        cxx/interpret/segment.cxx
 )
 
 

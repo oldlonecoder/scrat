@@ -25,7 +25,7 @@ grammar::Dictionary grammar::grammar_dictionnary = {
 };
 
 
-grammar::rule::collection default_rules;
+grammar::rule::list default_rules;
 static bool      built                            = false;
 
 std::string grammar_text = R"(

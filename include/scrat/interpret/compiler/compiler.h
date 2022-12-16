@@ -46,7 +46,7 @@ private:
     token_data::iterator crs;
     result<xio*> cc_expression(token_data::iterator start, bloc* blk);
     result<xio*> cc_function_call(token_data::iterator start, bloc* blk);
-    result<xio*> cc_identifier(token_data::iterator start, bloc* blk_);
+    result<variable*> cc_identifier(token_data::iterator start, bloc* blk_);
 
     result<xio*> cc_rule(const grammar::rule* rule, token_data::iterator start, bloc* blk_);
     result<xio*> cc_sequence(const grammar::term_seq& s, token_data::iterator start, bloc* blk_);

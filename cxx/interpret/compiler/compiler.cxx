@@ -141,17 +141,16 @@ result<xio *> compiler::cc_function_call(token_data::iterator start, bloc *blk)
 
     As of now (2022-12-5), scrat::script handles simple variables creation and use.
     For forcing duplicated names of variables in nested blocs/scopes, we use declaration rule syntax;
-     - Pour forcer la creation d'une nouvelle variable locale qui prte le meme nom que celle de la portee parent, on utilise la syntaxe declarative...
+     - Pour forcer la creation d'une nouvelle variable locale qui porte le meme nom que celle de la portee parent, on utilise la syntaxe declarative...
     It will eventually handle function declaration, function-call, object instance object::method call, object::attribute instance addressing
 */
-result<xio*> compiler::cc_identifier(token_data::iterator start, bloc* blk_)
+result<variable*> compiler::cc_identifier(token_data::iterator start, bloc* blk_)
 {
     auto var = blk_->query_var(start->text());
     if(!var)
         var = blk_->new_var(&(*start));
 
-    return *var; //dynamic_cast<xio*>(var);
-    //return Rem::Error(SourceName) << " Not implemented." << rem::endl << start->mark();
+    return *var;
 }
 
 result<xio *> compiler::cc_rule(const grammar::rule* rule, token_data::iterator start, bloc *blk_)
