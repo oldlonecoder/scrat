@@ -14,52 +14,20 @@ namespace scrat::script {
  */
 class SCRAT_API interpret : public bloc
 {
-    struct config_t
-    {
-        std::string_view location_path;
-
-    };
-public:
-    /**
-     * Default constructor
-     */
+    std::string _location_path = "./";
+    static interpret* _inst;
     interpret();
+public:
 
-    /**
-     * Copy constructor
-     *
-     * @param other TODO
-     */
-
-
-    /**
-     * Destructor
-     */
-    ~interpret();
-
-    /**
-     * Assignment operator
-     *
-     * @param other TODO
-     * @return TODO
-     */
+    static result<> init();
+    ~interpret() override;
     interpret& operator=(const interpret& other);
-
-    /**
-     * @todo write docs
-     *
-     * @param other TODO
-     * @return TODO
-     */
     bool operator==(const interpret& other) const;
-
-    /**
-     * @todo write docs
-     *
-     * @param other TODO
-     * @return TODO
-     */
     bool operator!=(const interpret& other) const;
+
+    void set_location_path(const std::string& path_);
+
+
 
 };
 

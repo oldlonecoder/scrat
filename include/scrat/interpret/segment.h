@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <scrat/interpret/bloc.h>
+#include <scrat/interpret/compiler/compiler.h>
 #include <map>
 
 namespace scrat {
@@ -21,66 +21,28 @@ class SCRAT_API segment :  public bloc
 {
 
     friend class interpret;
-    std::string _id;
-    char*  _src;
-    std::string_view _source;
+    compiler::unit_data unit;
+    char*  _src = nullptr;
 public:
 
     using list = std::map<std::string_view,segment*>;
 
-    /**
-     * Default constructor
-     */
     segment();
-
     segment(bloc* parent_, const std::string& id_);
-
-    /**
-     * Copy constructor
-     *
-     * @param other TODO
-     */
+    segment(bloc* parent_, compiler::unit_data&& unit_);
     segment(const script::segment& seg_);
 
-    /**
-     * Destructor
-     */
     ~segment() override;
 
-    /*!
-        @brief Derefence directly from the pointer;
-     */
     segment& self() { return *this; }
 
     void set_source(std::string_view src_);
 
-    result<> input_file(std::ifstream& _input_file);
+
 
     alu jsr() override;
 
-    /**
-     * Assignment operator
-     *
-     * @param other TODO
-     * @return TODO
-     */
-    script::segment& operator=(const script::segment& seg_);
-
-    /**
-     * @todo write docs
-     *
-     * @param other TODO
-     * @return TODO
-     */
-    bool operator==(const segment& other) const;
-
-    /**
-     * @todo write docs
-     *
-     * @param other TODO
-     * @return TODO
-     */
-    bool operator!=(const segment& other) const;
+    result<> cc();
 
 };
 

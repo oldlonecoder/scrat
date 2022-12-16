@@ -8,6 +8,10 @@
 namespace scrat::script
 {
 
+
+class segment;
+
+
 class SCRAT_API compiler
 {
      struct context_data
@@ -26,22 +30,37 @@ class SCRAT_API compiler
     // Internal data:
 
     context_data::stack ctx_stack;
-    token_data::collection tokens;
+
     lexer lex;
     grammar  gr; ///< That'it ...no need to ever init something...
     bloc* root_bloc = nullptr;
     context_data ctx;
  public:
-    compiler() = default;
+    struct SCRAT_API unit_data
+    {
+        std::string _id;
+        std::string_view _source;
+        char* _source_ptr = nullptr;
+        token_data::collection tokens;
+        std::string file; ///< Leave empty for implicitely providing the source code in _source; So Open fiel will be bypassed
+        bloc* segment_bloc = nullptr; ///< segment owner;
+        result<> input_file();
+
+    };
+
+
+     compiler() = default;
     ~compiler();
 
     compiler::context_data& context() { return ctx;}
 
-    result<> cc(bloc* blk, grammar::rule const* rule = nullptr);
-    result<> cc(bloc* blk_, std::string_view source);
-    //---- tests ------
-    result<> cc(bloc* blk_, std::string_view rule, std::string_view src);
-    //-----------------
+
+
+    result<> cc(const compiler::unit_data& unit_);
+
+
+    result<segment*> segment_bloc();
+
 private:
     token_data::iterator crs;
     result<xio*> cc_expression(token_data::iterator start, bloc* blk);
@@ -53,6 +72,7 @@ private:
 
     void push_context(compiler::context_data const& ctx_);
     compiler::context_data  pop_context(compiler::context_data const& ctx_);
+    unit_data _u;
 
 };
 

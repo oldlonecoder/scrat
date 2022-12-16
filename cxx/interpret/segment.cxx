@@ -29,25 +29,6 @@ segment::~segment()
 {
     //...
     delete [] _src;
-
-}
-
-
-
-segment& segment::operator=(const segment& seg_)
-{
-    bloc::operator=(seg_);
-    return *this;
-}
-
-bool segment::operator==(const segment& other) const
-{
-    return false;
-}
-
-bool segment::operator!=(const segment& other) const
-{
-    return true;
 }
 
 
@@ -74,6 +55,16 @@ result<> segment::input_file(std::ifstream& _input_file)
     _source = _src;
     rem::push_test(source_ffl) < "source read: '" < color::White < _src < color::Reset < '\'';
     return rem::accepted;
+}
+
+result<> segment::cc()
+{
+    return rem::push_warning(source_ffl) < rem::notimplemented;
+}
+
+void segment::set_source(std::string_view src_)
+{
+    _source = src_;
 }
 
 

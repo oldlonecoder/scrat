@@ -1,5 +1,6 @@
 #include <scrat/interpret/compiler/compiler.h>
 //#include "compiler.h"
+#include <scrat/interpret/segment.h>
 
 
 
@@ -15,57 +16,72 @@ scrat::script::compiler::~compiler()
 }
 
 
-
-
-result<> compiler::cc(bloc* blk, grammar::rule const* rule)
+result<> scrat::script::compiler::cc(const compiler::unit_data& unit_)
 {
-
-    return rem::notimplemented;
-}
-
-
-result<> compiler::cc(bloc* blk_, std::string_view source)
-{
+    _u = unit_;
     lex.config() = {
-        .Source = source.data(),
-        .Tokens = &tokens
+        _u._source.data(),
+        &_u.tokens
     };
-    root_bloc = blk_;
-    //...
-    ///@note -- LAST INPUT HERE --
-    return rem::notimplemented;
+
+    /// starting rule will be "module", then "init>declare_section".
+
+
+    return rem::push_warning(source_ffl) < rem::notimplemented;
 }
 
-result<> compiler::cc(bloc* blk_, std::string_view rule, std::string_view src)
-{
 
-    rem::push_debug(source_ffl) << " rule : '" << color::Yellow << rule << color::Reset << "' :";
 
-    lex.config() = {
-        .Source = src.data(),
-        .Tokens = &tokens
-    };
-    root_bloc = blk_;
-    context() = {
-        .blk = root_bloc,
-        .i = tokens.begin(),
-        .stop = tokens.begin(),
-        .rule = nullptr,
-        .instruction = nullptr
-    };
+// result<> compiler::cc(bloc* blk, grammar::rule const* rule)
+// {
+//
+//     return rem::notimplemented;
+// }
 
-    auto e = lex();
-    if (e != rem::accepted)
-        return rem::push_info() << " Lexical analyse has stopped because of error.";
 
-    for (auto const& T : tokens)
-            rem::push_output() << T.details(true);
+// result<> compiler::cc(bloc* blk_, std::string_view source)
+// {
+//     lex.config() = {
+//         .Source = source.data(),
+//         .Tokens = &tokens
+//     };
+//     root_bloc = blk_;
+//     //...
+//     ///@note -- LAST INPUT HERE --
+//     return rem::notimplemented;
+// }
 
-    crs = tokens.begin();
-    auto x = cc_expression(crs, root_bloc);
+// result<> compiler::cc(bloc* blk_, std::string_view rule, std::string_view src)
+// {
+//
+//     rem::push_debug(source_ffl) << " rule : '" << color::Yellow << rule << color::Reset << "' :";
+//
+//     lex.config() = {
+//         .Source = src.data(),
+//         .Tokens = &tokens
+//     };
+//     root_bloc = blk_;
+//     context() = {
+//         .blk = root_bloc,
+//         .i = _u.tokens.begin(),
+//         .stop = _u.tokens.begin(),
+//         .rule = nullptr,
+//         .instruction = nullptr
+//     };
+//
+//     auto e = lex();
+//     if (e != rem::accepted)
+//         return rem::push_info() << " Lexical analyse has stopped because of error.";
+//
+//     for (auto const& T : tokens)
+//             rem::push_output() << T.details(true);
+//
+//     crs = _u.tokens.begin();
+//     auto x = cc_expression(crs, root_bloc);
+//
+//     return rem::ok;
+// }
 
-    return rem::ok;
-}
 
 result<xio *> compiler::cc_expression(token_data::iterator start, bloc * blk)
 {
@@ -77,9 +93,9 @@ try
 
         xio* xio_root = xio::begin(blk,&(*token));
         xio* xio_node = xio_root;
-        rem::push_debug(source_ffl) <<  " number of tokens: " << tokens.size();
+        rem::push_debug(source_ffl) <<  " number of tokens: " << _u.tokens.size();
 
-        while ((token != tokens.end()) && (token->_flags.V ||  token->s & scrat::script::type::id_t))
+        while ((token != _u.tokens.end()) && (token->_flags.V ||  token->s & scrat::script::type::id_t))
         {
             if (token->t == type::id_t)
             {
@@ -211,6 +227,11 @@ compiler::context_data scrat::script::compiler::pop_context(const compiler::cont
     ctx_stack.pop();
     ///@todo Update
     return cx;
+}
+
+result<segment *> compiler::segment_bloc()
+{
+    return dynamic_cast<segment*>(_u.segment_bloc);
 }
 
 
