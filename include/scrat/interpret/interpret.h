@@ -3,7 +3,7 @@
 
 #pragma once
 #include <scrat/cmdargs.h>
-#include <scrat/interpret/bloc.h>
+#include <scrat/interpret/segment.h>
 
 namespace scrat::script {
 
@@ -12,21 +12,22 @@ namespace scrat::script {
 
     @note I know it is bery weird name...( let's it alone for now)
  */
-class SCRAT_API interpret : public bloc
+class SCRAT_API interpret
 {
     std::string _location_path = "./";
     static interpret* _inst;
+
+    static segment::list units;
+
+
     interpret();
 public:
 
     static result<> init();
-    ~interpret() override;
-    interpret& operator=(const interpret& other);
-    bool operator==(const interpret& other) const;
-    bool operator!=(const interpret& other) const;
+    ~interpret();
 
-    void set_location_path(const std::string& path_);
-
+    static void set_location_path(const std::string& path_);
+    static std::string_view location_path();
 
 
 };

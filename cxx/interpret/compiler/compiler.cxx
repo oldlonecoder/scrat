@@ -20,7 +20,7 @@ result<> scrat::script::compiler::cc(const compiler::unit_data& unit_)
 {
     _u = unit_;
     lex.config() = {
-        _u._source.data(),
+        _u._source_ptr,
         &_u.tokens
     };
 

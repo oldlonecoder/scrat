@@ -39,13 +39,12 @@ class SCRAT_API compiler
     struct SCRAT_API unit_data
     {
         std::string _id;
-        std::string_view _source;
-        char* _source_ptr = nullptr;
+        //std::string_view _source;
+        const char* _source_ptr = nullptr;
         token_data::collection tokens;
         std::string file; ///< Leave empty for implicitely providing the source code in _source; So Open fiel will be bypassed
         bloc* segment_bloc = nullptr; ///< segment owner;
         result<> input_file();
-
     };
 
 

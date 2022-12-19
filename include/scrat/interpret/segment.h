@@ -23,6 +23,8 @@ class SCRAT_API segment :  public bloc
     friend class interpret;
     compiler::unit_data unit;
     char*  _src = nullptr;
+
+
 public:
 
     using list = std::map<std::string_view,segment*>;
@@ -37,10 +39,13 @@ public:
     segment& self() { return *this; }
 
     void set_source(std::string_view src_);
+    /*!
+        @brief read the source content from the given filename located in the path also previously given to the interpret. \see interpret::set_location_path(...).
+     */
+    scrat::result<  > load_source(const std::string& _input_file);
 
 
-
-    alu jsr() override;
+    alu jsr() override; ///< At this level, execution serves to initialize local [static] memory blocs and local [static] variables with const expr arithmetics.
 
     result<> cc();
 
