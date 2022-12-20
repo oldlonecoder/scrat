@@ -16,6 +16,7 @@ public:
 	void test_dimension();
 	void test_text();
 	void put_colors();
+	void test_interpret();
 
 	scrat::result<scrat::object*> test_result();
 };

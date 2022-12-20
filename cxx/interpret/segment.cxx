@@ -28,6 +28,15 @@ scrat::script::segment::segment(scrat::script::bloc* parent_, const std::string&
 
 }
 
+segment::segment(bloc* parent_, compiler::unit_data && unit_):bloc(parent_)
+{
+    unit = std::move(unit_);
+}
+
+
+
+
+
 
 segment::~segment()
 {
@@ -51,7 +60,6 @@ result<> segment::load_source(const std::string& _input_file)
     // Update unit_data:
     unit.file = _input_file;
     std::ifstream file;
-    char* _src = nullptr;
     file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try{
         file.seekg(0, std::ios_base::end);
@@ -61,7 +69,7 @@ result<> segment::load_source(const std::string& _input_file)
         file.seekg(0,std::ios_base::beg);
         file.read(_src,sz); // should throw exception...
         _src[sz]=0;
-        unit._source_ptr = _src;
+        unit._source_ptr = _src; ///< std::string_view takes the address of the _src contents.
         rem::push_test() < "source read:";
         rem::push_output() < rem::endl < color::White < unit._source_ptr < rem::endl < color::Reset;
     }

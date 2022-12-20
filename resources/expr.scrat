@@ -1,0 +1,9 @@
+
+/*
+    The first scrat source file.
+*/
+
+segment main;
+
+f32 a = 0.1 * 42;
+

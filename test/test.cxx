@@ -1,5 +1,6 @@
 #include "test.h"
 #include <scrat/text>
+#include <scrat/interpret/interpret.h>
 
 
 using scrat::rem;
@@ -36,6 +37,7 @@ void test::run()
 		auto r = test_result();
 		test_dimension();
 		test_text();
+		test_interpret();
 	}
 	catch (std::exception e)
 	{
@@ -104,5 +106,12 @@ scrat::result<scrat::object*> test::test_result()
 
 	rem::push_debug(source_pfnl) < " object class name: " < color::Yellow < r->class_name() < "";
 	return r;
+}
+
+void test::test_interpret()
+{
+	using scrat::script::interpret;
+	interpret::set_location("/home/oldlonecoder/App/Work/C++/scrat/resources");
+
 }
 
