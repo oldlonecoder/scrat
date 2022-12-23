@@ -35,7 +35,7 @@ attribute_list rem::colors =
 	"Application Messages Queu",
 	{
 	{"default",		{color::Reset,			color::Reset}},
-	{"err",			{color::Red4,			color::Reset}},
+	{"error",		{color::Red4,			color::Reset}},
 	{"separator",	{color::White,			color::Reset}},
 	{"warning",		{color::Yellow,			color::Reset}},
 	{"fatal",		{color::OrangeRed1,		color::Reset}},
@@ -58,7 +58,7 @@ attribute_list rem::colors =
 
 
 static std::unordered_map<rem::ctype, std::string_view> attr_map = {
-	{rem::err,     "err"},
+	{rem::err,     "error"},
 	{rem::warning, "warning"},
 	{rem::fatal,   "fatal"},
 	{rem::except,  "exception"},
@@ -75,7 +75,7 @@ static std::unordered_map<rem::ctype, std::string_view> attr_map = {
 
 static std::unordered_map<rem::ctype, std::string_view> _typenames_ =
 {
-	{rem::err,		"err"},
+	{rem::err,		"error"},
 	{rem::warning,  "warning"},
 	{rem::fatal,	"fatal"},
 	{rem::except,	"except"},

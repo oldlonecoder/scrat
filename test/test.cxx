@@ -111,7 +111,13 @@ scrat::result<scrat::object*> test::test_result()
 void test::test_interpret()
 {
 	using scrat::script::interpret;
-	interpret::set_location("/home/oldlonecoder/App/Work/C++/scrat/resources");
+	try{
+		interpret::set_location("/home/oldlonecoder/app/dev/c++/scrat/resources");
+	}
+	catch(rem& e)
+	{
+		std::cout << " Oh! rem failure here?\n";
+	}
 
 }
 
