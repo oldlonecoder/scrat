@@ -87,6 +87,12 @@
     <ClInclude Include="include\scrat\textattr.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="include\scrat\ui\console.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\ui\vdc.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cxx\object.cxx">
@@ -147,6 +153,12 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="cxx\textattr.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\ui\console.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\ui\vdc.cxx">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

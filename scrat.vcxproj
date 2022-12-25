@@ -161,6 +161,8 @@
     <ClInclude Include="include\scrat\stracc.h" />
     <ClInclude Include="include\scrat\text.h" />
     <ClInclude Include="include\scrat\textattr.h" />
+    <ClInclude Include="include\scrat\ui\console.h" />
+    <ClInclude Include="include\scrat\ui\vdc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cxx\accents.fr.cxx" />
@@ -183,6 +185,8 @@
     <ClCompile Include="cxx\stracc.cxx" />
     <ClCompile Include="cxx\text.cxx" />
     <ClCompile Include="cxx\textattr.cxx" />
+    <ClCompile Include="cxx\ui\console.cxx" />
+    <ClCompile Include="cxx\ui\vdc.cxx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\scrat\cmdargs" />
