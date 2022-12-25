@@ -45,6 +45,48 @@
     <ClInclude Include="include\scrat\encodings\fmtio.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="include\scrat\accents.fr.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\Icons.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\interpret\alu.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\interpret\bloc.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\interpret\interpret.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\interpret\segment.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\interpret\variable.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\interpret\xio.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\lexer\lexer.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\lexer\lexer_color.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\lexer\tokendata.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\lexer\types.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\text.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="include\scrat\textattr.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cxx\object.cxx">
@@ -53,16 +95,58 @@
     <ClCompile Include="cxx\stracc.cxx">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="cxx\encodings\textattr.cxx">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="cxx\rem.cxx">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="cxx\geometry.cxx">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="cxx\encodings\fmtio.cxx">
+    <ClCompile Include="cxx\Icons.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\accents.fr.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\interpret\alu.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\interpret\bloc.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\interpret\interpret.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\interpret\segment.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\interpret\variable.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\interpret\xio.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\interpret\compiler\compiler.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\interpret\compiler\grammar.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\lexer\lexer.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\lexer\lexer_color.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\lexer\tokendata.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\lexer\types.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\text.cxx">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="cxx\textattr.cxx">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,5 +158,6 @@
     <None Include="include\scrat\result" />
     <None Include="include\scrat\rem" />
     <None Include="include\scrat\cmdargs" />
+    <None Include="include\scrat\text" />
   </ItemGroup>
 </Project>

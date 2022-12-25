@@ -41,7 +41,7 @@
 namespace scrat
 {
 
-    struct color final
+    struct SCRAT_API color final
     {
         _decl_objname
     public:

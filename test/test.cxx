@@ -114,7 +114,7 @@ void test::test_interpret()
 	try{
 		interpret::set_location("/home/oldlonecoder/app/dev/c++/scrat/resources");
 	}
-	catch(rem& e)
+	catch(rem& )
 	{
 		std::cout << " Oh! rem failure here?\n";
 	}

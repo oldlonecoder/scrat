@@ -294,7 +294,7 @@ public:
         void push_attribute(text::attribute Attr);
     private:
         friend class compiler;
-        friend class attribute;
+        friend struct attribute;
         text::attribute::list _attributes;
 
         struct compiler

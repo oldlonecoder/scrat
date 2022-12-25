@@ -45,19 +45,19 @@ namespace scrat
         class token_t {
         public:
             std::vector<std::string> s_tokens;
-            char sep;
+            char sep = ' ';
 
             token_t() {};
             token_t(char sep);
 
             ~token_t() { s_tokens.clear(); }
-            int input(const std::string& data);
+            auto input(const std::string& data);
             std::string operator [] (int);
 
         };
 
 
-        int token_t::input(const std::string& data)
+        auto token_t::input(const std::string& data)
         {
             std::string token = "";
             std::string::const_iterator s, e, i;

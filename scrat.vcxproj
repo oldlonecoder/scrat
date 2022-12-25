@@ -137,24 +137,52 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\scrat\accents.fr.h" />
     <ClInclude Include="include\scrat\cmdargs.h" />
     <ClInclude Include="include\scrat\encodings\fmtio.h" />
     <ClInclude Include="include\scrat\geometry" />
     <ClInclude Include="include\scrat\geometry.h" />
+    <ClInclude Include="include\scrat\Icons.h" />
+    <ClInclude Include="include\scrat\interpret\alu.h" />
+    <ClInclude Include="include\scrat\interpret\bloc.h" />
+    <ClInclude Include="include\scrat\interpret\interpret.h" />
+    <ClInclude Include="include\scrat\interpret\segment.h" />
+    <ClInclude Include="include\scrat\interpret\variable.h" />
+    <ClInclude Include="include\scrat\interpret\xio.h" />
+    <ClInclude Include="include\scrat\lexer\lexer.h" />
+    <ClInclude Include="include\scrat\lexer\lexer_color.h" />
+    <ClInclude Include="include\scrat\lexer\tokendata.h" />
+    <ClInclude Include="include\scrat\lexer\types.h" />
     <ClInclude Include="include\scrat\result.h" />
     <ClInclude Include="include\scrat\dlconfig.h" />
     <ClInclude Include="include\scrat\encodings\textattr.h" />
     <ClInclude Include="include\scrat\object.h" />
     <ClInclude Include="include\scrat\rem.h" />
     <ClInclude Include="include\scrat\stracc.h" />
+    <ClInclude Include="include\scrat\text.h" />
+    <ClInclude Include="include\scrat\textattr.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cxx\encodings\fmtio.cxx" />
-    <ClCompile Include="cxx\encodings\textattr.cxx" />
+    <ClCompile Include="cxx\accents.fr.cxx" />
     <ClCompile Include="cxx\geometry.cxx" />
+    <ClCompile Include="cxx\Icons.cxx" />
+    <ClCompile Include="cxx\interpret\alu.cxx" />
+    <ClCompile Include="cxx\interpret\bloc.cxx" />
+    <ClCompile Include="cxx\interpret\compiler\compiler.cxx" />
+    <ClCompile Include="cxx\interpret\compiler\grammar.cxx" />
+    <ClCompile Include="cxx\interpret\interpret.cxx" />
+    <ClCompile Include="cxx\interpret\segment.cxx" />
+    <ClCompile Include="cxx\interpret\variable.cxx" />
+    <ClCompile Include="cxx\interpret\xio.cxx" />
+    <ClCompile Include="cxx\lexer\lexer.cxx" />
+    <ClCompile Include="cxx\lexer\lexer_color.cxx" />
+    <ClCompile Include="cxx\lexer\tokendata.cxx" />
+    <ClCompile Include="cxx\lexer\types.cxx" />
     <ClCompile Include="cxx\object.cxx" />
     <ClCompile Include="cxx\rem.cxx" />
     <ClCompile Include="cxx\stracc.cxx" />
+    <ClCompile Include="cxx\text.cxx" />
+    <ClCompile Include="cxx\textattr.cxx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\scrat\cmdargs" />
@@ -162,6 +190,7 @@
     <None Include="include\scrat\rem" />
     <None Include="include\scrat\result" />
     <None Include="include\scrat\stracc" />
+    <None Include="include\scrat\text" />
     <None Include="include\scrat\textattr" />
     <None Include="Res\update-target.ps1" />
   </ItemGroup>
