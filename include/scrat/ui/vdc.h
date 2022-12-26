@@ -14,7 +14,7 @@ class SCRAT_API vdc
 	point pos = { 0,0 };
 	scrat::dim wh;
 	
-	rect _peer;
+	rect _peer = {};
 
 	friend class console;
 	friend class painter;
@@ -24,6 +24,8 @@ public:
 
 	vdc() = default;
 	vdc(object* parent_, scrat::dim dimension_ = {});
+	
+	~vdc();
 
 	struct SCRAT_API cell
 	{
@@ -79,9 +81,26 @@ public:
 		std::string render_colors();
 		operator std::string();
 
-
-
+		std::string details();
 	};
+
+	type mem = nullptr;
+	cell::type _cell = 0x20;
+
+	result<vdc::type> alloc(const dim& dim_ = {});
+	result<vdc::type> realloc(const dim& dim_);
+	void dealloc();
+	vdc::type peek(const point& pt_);
+	
+	rect geometry();
+	int width();
+	int height();
+	point crs_pos();
+	result<> set_position(const point& pt_);
+	result<> clear(); ///< clear with current attr
+	result<> clear(const rect& r_); ///< clear sub-region with the current attr;
+	result<> clear(vdc::cell::type a_, const rect& r_ = {});
+
 
 
 };

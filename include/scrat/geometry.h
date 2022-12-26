@@ -72,7 +72,7 @@ struct SCRAT_API point
 		y = y_;
 		return *this;
 	}
-	operator std::string()
+	operator std::string() const
 	{
 		stracc str = "{%d,%d}";
 		str << x << y;
@@ -89,7 +89,9 @@ struct SCRAT_API dim
 	T h = 0;
 
 
-	operator bool() { return (w > T{ 0 } || h > T{ 0 }); }
+	operator bool() const { return (w > T{ 0 } || h > T{ 0 }); }
+	T area() { return w * h; }
+
 };
 
 

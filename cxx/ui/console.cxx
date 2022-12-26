@@ -1,1 +1,12 @@
-#include "console.h"
+#include <scrat/ui/console.h>
+
+
+
+namespace scrat::ui
+{
+
+
+
+
+
+}
