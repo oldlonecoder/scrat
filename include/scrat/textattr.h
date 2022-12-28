@@ -364,7 +364,7 @@ namespace scrat
         static std::string bg(color::type color_);
     };
 
-    template<> class SCRAT_API attr<textattr::format::html> : public textattr
+    template<> class  attr<textattr::format::html> : public textattr
     {
     public:
         static std::string fg(color::type color_);
@@ -373,7 +373,7 @@ namespace scrat
 
 
 
-    inline std::ostream& operator << (std::ostream& stream_, color::type c_)
+    inline std::ostream&  operator << (std::ostream& stream_, color::type c_)
     {
         return stream_ << attr<textattr::format::ansi256>::fg(c_);
     }
