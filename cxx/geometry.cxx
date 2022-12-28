@@ -5,6 +5,7 @@
 
 
 
+
 namespace scrat
 {
 
@@ -165,7 +166,6 @@ winbuffer::operator std::string()
     }
     return str;
 }
-
 
 
 rect::operator std::string()

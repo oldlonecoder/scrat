@@ -32,6 +32,8 @@ add_library(
         cxx/interpret/compiler/compiler.cxx
         cxx/interpret/compiler/grammar.cxx
         cxx/interpret/segment.cxx
+        cxx/ui/vdc.cxx
+        cxx/ui/console.cxx
 )
 
 

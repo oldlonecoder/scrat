@@ -90,7 +90,15 @@ vdc::type vdc::peek(const point& pt_)
 	return p;
 }
 
+std::string vdc::cell::details()
+{
+   stracc str = "Cell Details%s[Char:'%s%d%s'/Fg:'%s%s%s'/Bg:'%s%s%s']";
+    str << color::White << color::Yellow << (int)ascii() << color::White
+        << color::Yellow << textattr::name(fg()) << color::White
+        << color::Yellow << textattr::name(bg()) << color::White;
 
+    return str();
+}
 
 result<> vdc::clear()
 {
@@ -105,6 +113,12 @@ result<> vdc::clear(const rect& r_)
 result<> vdc::clear(vdc::cell::type a_, const rect& r)
 {
 	return rem::notimplemented;
+}
+
+
+vdc::cell & vdc::cell::operator<<(Icon::Type i_)
+{
+    return *this;
 }
 
 }
