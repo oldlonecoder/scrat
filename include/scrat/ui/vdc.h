@@ -4,6 +4,7 @@
 #include <scrat/Icons.h>
 #include <scrat/geometry.h>
 #include <scrat/object.h>
+#include <scrat/textattr>
 
 namespace scrat::ui
 {
@@ -13,7 +14,7 @@ class SCRAT_API vdc
 	object* _owner = nullptr;
 	point pos = { 0,0 };
 	scrat::dim wh;
-	
+
 	rect _peer = {};
 
 	friend class console;
@@ -24,7 +25,7 @@ public:
 
 	vdc() = default;
 	vdc(object* parent_, scrat::dim dimension_ = {});
-	
+
 	~vdc();
 
 	struct SCRAT_API cell
@@ -58,9 +59,9 @@ public:
 
 		vdc::cell& set_fg(color::type fg_);
 		vdc::cell& set_bg(color::type bg_);
-		
+
 		vdc::cell& set_attribute(vdc::cell::type d_);
-		
+
 		vdc::cell& set_color(textattr::pair&& c_);
 		vdc::cell& set_color(const textattr::pair& c_);
 
@@ -70,7 +71,8 @@ public:
 		color::type fg();
 		color::type bg();
 		textattr::pair colors();
-		
+		Icon::Type icon_id();
+		Accent::Type accent_id();
 		uint8_t ascii();
 
 		vdc::cell::type& operator*() { return mem; }
@@ -79,6 +81,7 @@ public:
 		vdc::cell& operator << (Icon::Type i_);
 		vdc::cell& operator << (Accent::Type a_);
 		std::string render_colors();
+		vdc::cell& reset_attributes(vdc::cell::type bits_);
 		operator std::string();
 
 		std::string details();
@@ -91,7 +94,7 @@ public:
 	result<vdc::type> realloc(const dim& dim_);
 	void dealloc();
 	vdc::type peek(const point& pt_);
-	
+
 	rect geometry();
 	int width();
 	int height();

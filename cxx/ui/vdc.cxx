@@ -2,6 +2,7 @@
 
 
 
+
 namespace scrat::ui
 {
 
@@ -102,23 +103,161 @@ std::string vdc::cell::details()
 
 result<> vdc::clear()
 {
-	return rem::notimplemented;
+   if (!mem)
+        throw rem::push_fatal(source_fl) << " Attempt to clear a null VDC";
+
+    //Rem::Debug(SourceLocation) << " Clear " << Color::Yellow << sizeof(_Block) << "bytes;";
+    auto* C = mem;
+    auto blk = wh.w * wh.h;
+    for (int x = 0; x < blk; x++) *C++ = _cell;
+    return rem::accepted;
 }
 
 result<> vdc::clear(const rect& r_)
 {
-	return rem::notimplemented;
+    rect b;
+    if (r_)
+        b = rect({0,0},wh) & r_;
+    else
+        return clear();
+
+    if(!mem)
+        throw rem::push_fatal(source_fl) < " Attempt to clear a null VDC";
+
+
+    if (!b)
+        return rem::rejected;
+
+    for (int y = b.a.y; y <= b.b.y; y++)
+    {
+        cell::type* C = peek({b.a.x,y});
+        for (int x = 0; x < b.width(); x++) *C++ = _cell;
+    }
+    return rem::accepted;
 }
 
 result<> vdc::clear(vdc::cell::type a_, const rect& r)
 {
-	return rem::notimplemented;
+	auto a = _cell;
+    _cell = a_;
+    clear(r);
+    _cell = a;
+
+	return rem::accepted;
 }
 
 
-vdc::cell & vdc::cell::operator<<(Icon::Type i_)
+
+
+//------------------------- vdc::cell : -------------------
+
+vdc::cell::cell(cell::type c_): mem(c_){}
+vdc::cell::cell(vdc::type c_): mem(*c_){}
+
+
+
+
+
+uint16_t vdc::cell::attributes()
 {
+    return (mem & AttrMask) >> ATShift;
+}
+
+
+std::string vdc::cell::render_colors()
+{
+    using Ansi = attr<textattr::format::ansi256>;
+    std::string str;
+    str += Ansi::bg(bg()) += Ansi::fg(fg());
+    return str;
+}
+
+vdc::cell &scrat::ui::vdc::cell::set_fg(color::type fg_)
+{
+	mem = (mem & ~FGMask) | (static_cast<cell::type>(fg_) << FGShift);
+	return *this;
+}
+
+vdc::cell &vdc::cell::set_bg(color::type bg_)
+{
+	mem = (mem & ~BGMask) | (static_cast<cell::type>(bg_) << BGShift);
     return *this;
 }
+vdc::cell &vdc::cell::set_attribute(vdc::cell::type a_)
+{
+	 mem = (mem & ~AttrMask) | a_;
+    return *this;
+}
+vdc::cell &vdc::cell::set_color(textattr::pair &&c_)
+{
+	return set_fg(c_.fg).set_bg(c_.fg);
+}
+
+vdc::cell &vdc::cell::set_color(const textattr::pair &c_)
+{
+    return set_fg(c_.fg).set_bg(c_.fg);
+}
+
+vdc::cell &vdc::cell::operator=(vdc::cell::type d_)
+{
+	mem = d_;
+    return *this;
+}
+
+color::type vdc::cell::fg()
+{
+    return static_cast<color::type>((mem & FGMask) >> FGShift);
+}
+
+color::type vdc::cell::bg()
+{
+    return static_cast<color::type>((mem & BGMask) >> BGShift);
+}
+
+textattr::pair vdc::cell::colors()
+{
+    return {fg(),bg()};
+}
+
+uint8_t vdc::cell::ascii()
+{
+    return mem & ~CharMask;
+
+}
+vdc::cell& vdc::cell::operator << (Icon::Type i_)
+{
+	mem = (mem & ~(cell::AttrMask | cell::CharMask)) | cell::UGlyph | i_;
+	return *this;
+}
+
+vdc::cell& vdc::cell::operator<< (Accent::Type accent_)
+{
+    mem = (mem & ~(cell::UGlyph | cell::CharMask)) | cell::Accent | accent_;
+    return *this;
+}
+
+
+vdc::cell& vdc::cell::reset_attributes(vdc::cell::type bits_)
+{
+    mem = (mem & (CharMask | UGlyph)) | bits_;
+    return *this;
+}
+
+Icon::Type vdc::cell::icon_id()
+{
+    if (!(mem & cell::UGlyph)) return Icon::NullPtr;
+    auto Ic = mem & cell::CharMask;
+    if (Ic > 59) Ic = Icon::Bug;
+    return  Ic;
+}
+
+
+Accent::Type vdc::cell::accent_id()
+{
+    auto AID = mem & cell::CharMask;
+    if (AID > Accent::Ucirc) return Accent::Agrave;
+    return static_cast<Accent::Type>(AID);
+}
+
 
 }

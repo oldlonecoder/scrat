@@ -84,10 +84,10 @@ struct SCRAT_API point
 struct SCRAT_API dim
 {
 
-	point limit;
+	point max;
+	point min;
 	T w = 0;
 	T h = 0;
-
 
 	operator bool() const { return (w > T{ 0 } || h > T{ 0 }); }
 	T area() { return w * h; }
@@ -119,7 +119,8 @@ struct SCRAT_API rect
 	{
 		a = a_;
 		b = b_;
-		sz = { {T{100},T{100}}, T{std::abs(b.x - a.x + 1)}, T{std::abs(b.y - a.y + 1)} };
+		//sz = { {T{100},T{100}}, T{std::abs(b.x - a.x + 1)}, T{std::abs(b.y - a.y + 1)} };
+		sz = { {T{1},T{1}}, {T{b_.x+1 - a_.x},T{b_.y+1 - a_.y}},  T{std::abs(b.x - a.x + 1)}, T{std::abs(b.y - a.y + 1)} };
 	}
 
 	rect(point a_, dim d)
@@ -133,21 +134,21 @@ struct SCRAT_API rect
 	{
 		a = { x,y };
 		b = { bx,by };
-		sz = { {T{100},T{100}}, std::abs(b.x - a.x), std::abs(b.y - a.y) };
+		sz = { {T{1},T{1}}, {T{bx+1 - x},T{by+1 - y}},  T{std::abs(b.x - a.x + 1)}, T{std::abs(b.y - a.y + 1)} };
 	}
 
 	void assign(T x, T y, T w, T h)
 	{
 		a = { x,y };
 		b = { a.x + w - 1, a.y + h - 1 };
-		sz = { {100,100},w,h };
+		sz = { { T{1},T{1} }, { T{w},T{h} },  w,h };
 	}
 
 	void assign(point a_, point b_)
 	{
 		a = a_;
 		b = b_;
-		sz = { {T{100},T{100}}, std::abs(b.x - a.x + 1), std::abs(b.y - a.y + 1) };
+		sz = { {T{1},T{1}}, {T{b_.x+1 - a_.x},T{b_.y+1 - a_.y}},  T{std::abs(b.x - a.x + 1)}, T{std::abs(b.y - a.y + 1)} };
 	}
 
 	void assign(point a_, dim dxy)
@@ -207,7 +208,7 @@ struct SCRAT_API rect
 		ret.assign(a_, b_);
 		if (!c)
 		{
-			ret.sz = { {0,0},0,0 };
+			ret.sz = {  };
 		}
 
 		return ret;
@@ -227,7 +228,7 @@ struct SCRAT_API rect
 
 	std::string to_string();
 	operator std::string();
-	operator bool()
+	operator bool() const
 	{
 
 		return sz.operator bool();

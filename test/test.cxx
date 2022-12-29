@@ -56,13 +56,13 @@ void test::test_dimension()
 {
 	using scrat::dim;
 
-	dim area = { {100,100}, 5,5 };
+	dim area = { {100,100},{1,1}, 5,5 };
 	scrat::stracc str = "[{%d,%d}:[%d]]";
 	str <<  area.w, area.h,  (area.w * area.h);
 	rem::push_debug(source_pfnl) < "dim<>:: area:" < str();
 
 	scrat::rect r;
-	r.assign({ 5, 6 }, scrat::dim{ {100, 100}, 25, 25 });
+	r.assign({ 5, 6 }, scrat::dim{ {100, 100}, {1,1}, 25, 25 });
 
 	rem::push_output() < "r = " < (std::string)r;
 }
