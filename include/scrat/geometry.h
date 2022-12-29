@@ -90,6 +90,7 @@ struct SCRAT_API dim
 	T h = 0;
 
 	operator bool() const { return (w > T{ 0 } || h > T{ 0 }); }
+	operator std::string() const;
 	T area() { return w * h; }
 
 };

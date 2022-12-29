@@ -47,7 +47,12 @@ rect& rect::operator=(const rect& r)
 }
 
 
-
+dim::operator std::string() const
+{
+    stracc str = "{{%d,%d}, {%d,%d}, %d %d}: %d";
+    str << min.x << min.y << max.x << max.y << w << h << w*h;
+    return  str();
+}
 
 winbuffer &winbuffer::gotoxy(int x, int y)
 {
