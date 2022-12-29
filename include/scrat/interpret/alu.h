@@ -23,7 +23,7 @@ namespace scrat::script
 
 struct SCRAT_API alu
 {
-    using collection = std::vector<alu>;
+    using list = std::vector<alu>;
     using linkarray = std::vector<alu*>;
     using shared = std::shared_ptr<alu>;
 

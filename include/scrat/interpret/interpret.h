@@ -7,6 +7,69 @@
 
 namespace scrat::script {
 
+
+class SCRAT_API rtf_base :public bloc
+{
+
+    std::string _id;
+
+public:
+    using dictionary_t = std::map<std::string, rtf_base*>;
+    rtf_base() : bloc(){}
+    rtf_base(xio* a_parent, const std::string& a_id) : bloc(a_parent, 0, 0), _id(a_id) {}
+    ~rtf_base() override;
+
+    std::string& name() { return _id; }
+    virtual alu operator()(const alu::list& args) = 0;
+
+};
+
+template<typename class_, typename ret_, typename ...params_> class rtf : public rbase
+{
+    class_*  rt_obj = nullptr;
+public:
+    using rtf_ptr_t = ret_(class_::*)(params_...);
+private:
+    typename rtf::rtf_ptr_t rtf_ptr = nullptr;
+    rtf() = default;
+    rtf(xio* a_parent, const std::string& a_name, class_& rt_inst, rtfptr_t a_fn) : rtf_base(a_parent, a_name), rt_obj(&rt_inst), rtf_ptr(a_fn) {}
+    ~rtf();
+    /*!
+        @brief rt calls interpreter script source function.
+    */
+    ret_ operator()(const params_& ...args) {
+        auto param = [](auto a) {
+//                logdebugpfn << " a= '" << logger::Yellow << a << ":\n";
+            return alu(a);
+        };
+        alu::list params = { param(args)... };
+        // alu a = call_script_function(_name, params);
+        // return a.value<R>();
+        return ret_();
+    }
+
+    template <std::size_t ... Is> alu accumulate(alu::list const& params, std::index_sequence<Is...> const&){
+        return (rt_obj->*rtf_ptr)(params[Is].value<params_>()...);
+    }
+
+    alu operator()(const alu::list& params) override{
+        //          logdebug << " xio_stack::rt_function(const alu::list_t&):  " << Ends;
+        for (auto a : params) {
+           rem::push_debug() < "arg: [" < color::Yellow << a() << color::Reset << "]";
+           //...
+        }
+        return accumulate(params, std::index_sequence_for<params_...>{});
+    }
+
+    template <std::size_t ... Is> alu accumulate(alu::list& params, std::index_sequence<Is...> const&){
+        return (rt_obj->*rtf_ptr)(params[Is].value<params_>()...);
+    }
+
+};
+
+
+
+
 /**
     @brief the scrat interpreter.
 
@@ -16,7 +79,7 @@ class SCRAT_API interpret : segment
 {
     std::string _location_path = "./";
     static interpret* _inst;
-
+    rtf_base::dictionary_t rtf;
     static segment::list units;
 
 
@@ -34,6 +97,7 @@ class SCRAT_API interpret : segment
     segment* segment_bloc(std::string_view seg_name_);
 
 public:
+
 
     static result<> init();
     ~interpret() override;
