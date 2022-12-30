@@ -11,23 +11,23 @@ class SCRAT_API painter
     vdc* _dc = nullptr;
     rect _r;   ///< Geometrie interne. (Celui du _dc ou un sous-rectangle de _dc)
     vdc::cell _cell;
-    vdc::cell::type* cursor = nullptr;
+    vdc::type _cursor = nullptr;
     bool _wrap = false;
 
     point cpos();
     Justify::Type j_bits = 0;
-    _decl_object
+    _decl_objname
 
 public:
 
     painter() = default;
     ~painter() = default;
 
-    painter(vdc* aOwner, rect aR = rect::Nil);
-    painter(painter&&) = default;
+    painter(vdc* dc_, rect r_ = {});
+    painter(painter&&) noexcept = default;
     painter(const painter&) = default;
 
-    painter& operator = (painter&&) = default noexcept;
+    painter& operator = (painter&&) noexcept = default;
     painter& operator = (const painter&) = default;
 
 
@@ -35,7 +35,7 @@ public:
     painter& operator << (color::type aColorID);
     painter& operator << (Icon::Type aIconID);
     painter& operator << (const std::string& aStr);
-    painter& operator << (const String& aStr);
+    painter& operator << (const stracc& aStr);
     painter& operator << (const point& XY);
     painter& operator << (const char* aStr);
     painter& operator << (Accent::Type aAcc);

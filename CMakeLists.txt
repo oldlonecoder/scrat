@@ -34,6 +34,7 @@ add_library(
         cxx/interpret/segment.cxx
         cxx/ui/vdc.cxx
         cxx/ui/console.cxx
+        cxx/ui/painter.cxx
 )
 
 
