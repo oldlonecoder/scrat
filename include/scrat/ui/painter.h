@@ -41,8 +41,8 @@ public:
     painter& operator << (Accent::Type aAcc);
 
 
-    painter& GotoXY(const point& XY);
-    painter& Home() { return GotoXY({}); }
+    painter& gotoxy(const point& XY);
+    painter& home() { return gotoxy({}); }
 
     template<typename T> painter& operator << (const T& aStr)
     {
@@ -64,5 +64,6 @@ public:
     painter& set_word_wrap(bool S);
     painter& set_bg(color::type aBg);
     painter& set_fg(color::type aFg);
+
 };
 }

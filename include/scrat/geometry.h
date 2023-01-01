@@ -55,13 +55,13 @@ struct SCRAT_API point
 		return *this;
 	}
 
-	point operator + (const point& dxy)
+	point operator + (const point& dxy) const
 	{
 		return {dxy.x+x, dxy.y+y};
 	}
 
 
-	point operator - (const point& dxy)
+	point operator - (const point& dxy) const
 	{
 		return { x - dxy.x, y - dxy.y };
 	}

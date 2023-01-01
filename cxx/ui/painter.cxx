@@ -26,7 +26,7 @@ painter& painter::operator<<(color::type name_)
 
 painter& painter::operator<<(Icon::Type ic_id_)
 {
-    vdc::type c = _cursor;
+    vdc::type mem = _cursor;
     (*_cell) << ic_id_;
     ++_cursor;
     return *this;
@@ -36,58 +36,58 @@ painter& painter::operator<<(Icon::Type ic_id_)
 
 painter& painter::operator << (Accent::Type aAcc)
 {
-    vdc::cell* c = (vdc::cell*)_cursor;
-    (*C) << aAcc;
-    ++Cursor;
+    vdc::cell* mem = (vdc::cell*)_cursor;
+    (*mem) << aAcc;
+    ++_cursor;
     return *this;
 }
 
 
 painter& painter::operator<<(const std::string& aStr)
 {
-    Point P = CPos();
-    auto c = aStr.begin();
-    rem::push_debug() << "painter <<  \"" << aStr << "\" @" << P.ToString() << " -> in " << _R.ToString();
-    while (c != aStr.end() && (P.X <= _R.B.X))
+    point pt = cpos();
+    auto mem = aStr.begin();
+    rem::push_debug() << "painter <<  \"" << aStr << "\" @" << (std::string)pt << " -> in " << _r.to_string();
+    while (mem != aStr.end() && (pt.x <= _r.b.x))
     {
-        *Cursor = (
-            _Cell
+        *_cursor = (
+            _cell
             <<
-            *c++
-            ).C;
-        //rem::push_debug() << VDC::Cell{ *Cursor }.Details() << " @{" << Color::Yellow << CPos().ToString() << Color::White << "}";
-        ++Cursor;
-        P.X++;
+            *mem++
+            ).mem;
+        //rem::push_debug() << VDC::Cell{ *_cursor }.Details() << " @{" << Color::Yellow << cpos().to_string() << Color::White << "}";
+        ++_cursor;
+        pt.x++;
     }
 
     return *this;
 }
 
-painter& painter::operator<<(const String& aStr)
+painter& painter::operator<<(const stracc& aStr)
 {
     return (* this) << aStr();
 }
 
-painter& painter::operator<<(const Point& XY)
+painter& painter::operator<<(const point& XY)
 {
-    Point Pt = XY + _R.A; // + {0,0} by default;
-    if (!_R.Contains(Pt))
-        throw Rem::Exception(SourceLocation) << Rem::Code::End << " : " << XY.ToString() << " is out of range in " << _R.ToString();
+    point Pt = XY + _r.a; // + {0,0} by default;
+    if (!_r.in(Pt))
+        throw rem::push_exception(source_fl) < rem::endl < " : " < (std::string)XY < " is out of range in " < _r.to_string();
 
-    Cursor = (VDC::Cell::Type*)DC->At(Pt);
+    _cursor = (vdc::cell::type*)_dc->peek(Pt);
     return *this;
 }
 
 painter& painter::operator<<(const char* aStr)
 {
-    Point P = CPos();
-    const char* c = aStr;
-    rem::push_debug() << "painter <<  \"" << aStr << "\" @" << P.ToString() << " -> in " << _R.ToString();
-    while (*c && (P.X <= _R.B.X))
+    point pt = cpos();
+    const char* mem = aStr;
+    rem::push_debug() << "painter <<  \"" << aStr << "\" @" << (std::string)pt << " -> in " << _r.to_string();
+    while (*mem && (pt.x <= _r.b.x))
     {
-        *Cursor = (_Cell << *c++).C;
-        ++Cursor;
-        P.X++;
+        *_cursor = (_cell << *mem++).mem;
+        ++_cursor;
+        pt.x++;
     }
 
     return *this;
@@ -97,114 +97,114 @@ painter& painter::operator<<(const char* aStr)
 // ------------------------------- Check Boundaries - end----------------------------------------------------------
 
 
-painter& painter::GotoXY(const Point& XY)
+painter& painter::gotoxy(const point& pt_)
 {
-    //rem::push_debug(SourceLocation) << " @(" << XY.ToString() << "):";
-    Point Pt = XY + _R.A; // + {0,0} by default;
-    if (!_R.Contains(Pt))
-        throw Rem::Exception(SourceLocation) << Rem::Code::End << " : " << XY.ToString() << " is out of range in " << _R.ToString();
+    //rem::push_debug(SourceLocation) << " @(" << XY.to_string() << "):";
+    point pt;
+    pt += pt_ + _r.a; // + {0,0} by default;
+    if (!_r.in(pt))
+        throw rem::push_exception(source_fl) < rem::endl < " : " < (std::string)pt_ < " is out of range in " < _r.to_string();
 
-    Cursor = (VDC::Cell::Type*)DC->At(Pt);
-    //rem::push_debug(SourceLocation) << " :Real coords: " << CPos().ToString() << " <-> Pt{" << Pt.ToString() << "}";
+    _cursor = _dc->peek(pt);
     return *this;
 }
 
 
-painter& painter::ColorSet(const Color::Set& aSet)
+painter& painter::set_colors(const textattr::pair& aSet)
 {
-    _Cell.SetFg(aSet.Fg);
-    _Cell.SetBg(aSet.Bg);
-    *Cursor = (* Cursor & ~VDC::Cell::CMask) | _Cell.C & VDC::Cell::CMask;
+    _cell.set_fg(aSet.fg);
+    _cell.set_bg(aSet.bg);
+    *_cursor = (* _cursor & ~vdc::cell::CMask) | _cell.mem & vdc::cell::CMask;
     return *this;
 }
 
-Expect<> painter::SetupGeometry()
+result<> painter::setup_geometry()
 {
-    rem::push_debug(SourceName) << " painter DC's '" << Color::Chartreuse6 <<  "Geometry: " <<  DC->Geometry().ToString();
+    rem::push_debug(source_fl) << " painter _dc's '" < color::Chartreuse6 <  "Geometry: " <  _dc->geometry().to_string();
 
-    _R = _R ? Rectangle({ 0,0 }, DC->Width(), DC->Height()) & _R : Rectangle({ 0,0 }, DC->Width(), DC->Height());
-    if (!_R)
-        throw Rem::Exception(SourceName) << ": " << Rem::Code::Endl << " - Attempt to < Contruct > a painter object on invalid Geometry : " << _R.ToString();
-    rem::push_debug(SourceName) << " Configured Geometry:" << Color::Yellow << _R.ToString() << Color::Reset << " :";
-    Cursor = DC->At(_R.A);
-    //rem::push_debug(SourceLocation) <<  VDC::Cell{ *Cursor }.Details();
-    return Rem::Code::Ok;
+    _r = _r ? rect({ 0,0 }, {_dc->width(), _dc->height()}) & _r : rect({ 0,0 }, {_dc->width(), _dc->height()});
+    if (!_r)
+        throw rem::push_exception(source_fl) < ": " < rem::endl < " - Attempt to < Contruct > a painter object on invalid Geometry : " < _r.to_string();
+    rem::push_debug(source_fl) < " Configured Geometry:" < color::Yellow < _r.to_string() < color::Reset < " :";
+    _cursor = _dc->peek(_r.a);
+    //rem::push_debug(SourceLocation) <<  VDC::Cell{ *_cursor }.Details();
+    return rem::ok;
 }
 
-painter& painter::Clear()
+painter& painter::clear()
 {
-    auto* CC = Cursor;
-    Cursor = DC->At(_R.A);
-    _Cell << ' ';
-    rem::push_debug(SourceName) << _Cell.Details();
-    Rem::Output() << "Clearing subrect:" << _R.ToString();
-    //int Area = _R.Area();
+    auto* CC = _cursor;
+    _cursor = _dc->peek(_r.a);
+    _cell << ' ';
+    rem::push_debug(source_fl) << _cell.details();
+    rem::push_output() << "Clearing subrect:" << _r.to_string();
+    //int Area = _r.Area();
 //    Rem::Output() << "-> " << Color::Yellow << Area << Color::White << " cells in block";
-    for(int y = 0; y< _R.Height(); y++)
+    for(int y = 0; y< _r.height(); y++)
     {
-        GotoXY({ 0,y });
-        for (int X = 0; X < _R.Width(); X++) *Cursor++ = _Cell.C;
+        gotoxy({ 0,y });
+        for (int X = 0; X < _r.width(); X++) *_cursor++ = _cell.mem;
     }
 
-    Cursor = CC;
+    _cursor = CC;
     return *this;
 }
 
 //void painter::Update()
 //{
-//    Console::RenderDC(DC,_R);
+//    Console::RenderDC(_dc,_r);
 //}
 
 
-Point painter::CPos()
+point painter::cpos()
 {
-    auto* B = DC->Mem();
-    int dx = static_cast<int>((Cursor - B));
-    Point Pt = { dx % DC->Width(), dx / DC->Width() };
-    rem::push_debug(SourceName) << " Cursor @" << Color::Yellow << Pt.ToString() << Color::Reset;
+    auto* B = _dc->mem;
+    int dx = static_cast<int>((_cursor - B));
+    point Pt = { dx % _dc->width(), dx / _dc->width() };
+    rem::push_debug(source_fl) < " _cursor @" < color::Yellow < (std::string)Pt < color::Reset;
     return Pt;
 }
 
 
 
-painter& painter::SetBits(Justify::Type aBits)
+painter& painter::set_bits(Justify::Type aBits)
 {
-    JBits = aBits;
+    j_bits = aBits;
     return *this;
 }
 
-painter& painter::SetHCenter(bool S)
+painter& painter::set_hcenter(bool S)
 {
-    JBits = S ? JBits | Justify::HCenter : JBits & ~Justify::HCenter;
+    j_bits = S ? j_bits | Justify::HCenter : j_bits & ~Justify::HCenter;
     return *this;
 }
 
-painter& painter::SetVCenter(bool S)
+painter& painter::set_vcenter(bool S)
 {
-    JBits = S ? JBits | Justify::VCenter : JBits & ~Justify::VCenter;
+    j_bits = S ? j_bits | Justify::VCenter : j_bits & ~Justify::VCenter;
     return  *this;
 }
 
-painter& painter::SetCenter(bool S)
+painter& painter::set_center(bool S)
 {
-    JBits = S ? JBits | Justify::HCenter | Justify::VCenter : JBits & ~(Justify::HCenter | Justify::VCenter);
+    j_bits = S ? j_bits | Justify::HCenter | Justify::VCenter : j_bits & ~(Justify::HCenter | Justify::VCenter);
     return  *this;
 }
 
-painter& painter::SetWordWrap(bool S)
+painter& painter::set_word_wrap(bool S)
 {
     return  *this;
 }
 
-painter& painter::SetBg(Color::Type aBg)
+painter& painter::set_bg(color::type aBg)
 {
-    _Cell.SetBg(aBg);
+    _cell.set_bg(aBg);
     return *this;
 }
 
-painter& painter::SetFg(Color::Type aFg)
+painter& painter::set_fg(color::type aFg)
 {
-    _Cell.SetFg(aFg);
+    _cell.set_fg(aFg);
     return *this;
 }
 
