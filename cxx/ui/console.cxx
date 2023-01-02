@@ -67,8 +67,8 @@ result<> console::init()
         throw rem::push_fatal(source_fl) < rem::rejected < " Getting screen/console dimensions...";
 
     std::cout << "\033[?1049h";
-    console::GotoXY({});
-    csr_hide();
+    gotoxy({});
+    console::crs_hide();
 
     //... To be continued
 
