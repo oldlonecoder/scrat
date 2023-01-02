@@ -24,66 +24,52 @@ painter& painter::operator<<(color::type name_)
     return *this;
 }
 
+
+/**
+ * @brief Assigns the IconAttr to the cell's attr bitsfield and the the Icon Code ID to the ascci bitsfield
+ *
+ * @param ic_id_
+ * @return painter& ( ref to self )
+ * @author &copy; 2022, Serge Lussier, lussier.serge@gmail.com ( oldlonecoder )
+ */
 painter& painter::operator<<(Icon::Type ic_id_)
 {
-    vdc::type mem = _cursor;
-    (*_cell) << ic_id_;
+    vdc::cell c = _cursor;
+    c << ic_id_;
     ++_cursor;
     return *this;
 }
 
-
-
+/**
+ * @brief Assigns the AccentAttr to the cell's attr bitsfield and the Accent Code ID to the ascii bitsfield
+ *
+ * @param aAcc  Accent Code
+ * @return painter&
+ * @author &copy; 2022, Serge Lussier, lussier.serge@gmail.com ( oldlonecoder )
+ */
 painter& painter::operator << (Accent::Type aAcc)
 {
-    vdc::cell* mem = (vdc::cell*)_cursor;
-    (*mem) << aAcc;
+    vdc::cell c = _cursor;
+    c << aAcc;
     ++_cursor;
     return *this;
 }
 
-
+/**
+ * @brief Writes string \a aStr into the painter's backbuffer vdc
+ *
+ * @param aStr
+ * @return painter& (ref to self )
+ *
+ * @note This painter version does not handle justify flags, nor checks the logical line and columns boundaries - Only the linear-bloc limit.
+ * @author &copy; 2022, Serge Lussier, lussier.serge@gmail.com ( oldlonecoder )
+ */
 painter& painter::operator<<(const std::string& aStr)
 {
     point pt = cpos();
     auto mem = aStr.begin();
     rem::push_debug() << "painter <<  \"" << aStr << "\" @" << (std::string)pt << " -> in " << _r.to_string();
     while (mem != aStr.end() && (pt.x <= _r.b.x))
-    {
-        *_cursor = (
-            _cell
-            <<
-            *mem++
-            ).mem;
-        //rem::push_debug() << VDC::Cell{ *_cursor }.Details() << " @{" << Color::Yellow << cpos().to_string() << Color::White << "}";
-        ++_cursor;
-        pt.x++;
-    }
-
-    return *this;
-}
-
-painter& painter::operator<<(const stracc& aStr)
-{
-    return (* this) << aStr();
-}
-
-painter& painter::operator<<(const point& XY)
-{
-    point Pt = XY + _r.a; // + {0,0} by default;
-    if (!_r.in(Pt))
-        throw rem::push_exception(source_fl) < rem::endl < " : " < (std::string)XY < " is out of range in " < _r.to_string();
-
-    _cursor = (vdc::cell::type*)_dc->peek(Pt);
-    return *this;
-}
-
-painter& painter::operator<<(const char* aStr)
-{
-    point pt = cpos();
-    const char* mem = aStr;
-    rem::push_debug() << "painter <<  \"" << aStr << "\" @" << (std::string)pt << " -> in " << _r.to_string();
-    while (*mem && (pt.x <= _r.b.x))
     {
         *_cursor = (_cell << *mem++).mem;
         ++_cursor;
@@ -93,10 +79,62 @@ painter& painter::operator<<(const char* aStr)
     return *this;
 }
 
+/**
+ * @brief Writes string \a aStr into the painter's backbuffer vdc
+ *
+ * @param aStr
+ * @return painter& (ref to self )
+ *
+ * @note Invokes the std::string overload operator
+ * @author &copy; 2022, Serge Lussier, lussier.serge@gmail.com ( oldlonecoder )
+ */
+painter& painter::operator<<(const char* aStr)
+{
+        return (* this) << std::string(aStr);
+}
+
+/**
+ * @brief Writes string \a aStr into the painter's backbuffer vdc
+ *
+ * @param aStr
+ * @return painter& (ref to self )
+ *
+ * @note Invokes the std::string overload operator
+ * @author &copy; 2022, Serge Lussier, lussier.serge@gmail.com ( oldlonecoder )
+ */
+painter& painter::operator<<(const stracc& aStr)
+{
+    return (* this) << aStr();
+}
+
+
+/**
+ * @brief operator << overload acting as painter::gotoxy
+ *
+ * @param XY coordinate point into the painter's subregion.
+ * @return painter& ( ref to self )
+ * @author &copy; 2022, Serge Lussier, lussier.serge@gmail.com ( oldlonecoder )
+ */
+painter& painter::operator<<(const point& XY)
+{
+    point Pt = XY + _r.a; // + {0,0} by default;
+    if (!_r.in(Pt))
+        throw rem::push_exception(source_fl) < rem::endl < " : " < (std::string)XY < " is out of range in " < _r.to_string();
+
+    _cursor = _dc->peek(Pt);
+    return *this;
+}
+
 
 // ------------------------------- Check Boundaries - end----------------------------------------------------------
 
-
+/**
+ * @brief This the "set cursor position" function.
+ *
+ * @param pt_
+ * @return painter&  ( ref to self )
+ * @author &copy; 2022, Serge Lussier, lussier.serge@gmail.com ( oldlonecoder )
+ */
 painter& painter::gotoxy(const point& pt_)
 {
     //rem::push_debug(SourceLocation) << " @(" << XY.to_string() << "):";
