@@ -5,6 +5,7 @@
 #include <scrat/object>
 #include <map>
 #include <scrat/ui/uidefs.h>
+#include <mutex>
 
 
 
@@ -15,20 +16,15 @@ class SCRAT_API console : object
     _decl_objname
     dim wh;
     std::string _id;
-
     vdc mem;
-
+    static std::mutex io_mtx;
     bool get_term_size();
+    console();
 public:
 
-    using list = std::map<std::string, console*>;
-
-
-    console();
-    console(console* parent_, scrat::dim consize_, const std::string& console_id_);
     ~console();
     //...
-    result<> init();
+    static result<> init();
 
     static void crs_hide();
     static void crs_show();
@@ -39,8 +35,10 @@ public:
     console& operator<<(char C);
     console& operator<<(Icon::Type C);
     console& operator<<(Accent::Type C);
+    console& operator<<(color::type c);
 
     console& render_vdc_row(vdc* mem_, point xy_, int w_);
+    console& render_vdc(vdc* mem_, const rect& r_);
 
 
 

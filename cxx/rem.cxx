@@ -4,6 +4,7 @@
 #include <scrat/text>
 #include <map>
 
+
 // ??????????????????
 
 namespace scrat
@@ -270,7 +271,24 @@ rem& rem::operator<(const char* arg_)
 	return *this;
 }
 
+rem &rem::operator<(const point &pt_)
+{
+	_components.push_back((std::string)pt_);
+	return *this;
+}
 
+rem &rem::operator<(const rect &r_)
+{
+	_components.push_back(r_.to_string());
+	return *this;
+
+}
+
+rem &rem::operator<(const dim &wh_)
+{
+	_components.push_back((std::string)wh_);
+	return *this;
+}
 
 rem& rem::operator<<(rem::code c_)
 {

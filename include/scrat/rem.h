@@ -140,6 +140,10 @@ namespace scrat
 		rem& operator < (const std::string& arg_);
 		rem& operator < (const char* arg_);
 
+		rem& operator < (const point& pt_);
+		rem& operator < (const rect& r_);
+		rem& operator < (const dim& wh_);
+
 		rem& operator << (rem::code c_);
 		rem& operator << (color::type c_);
 		rem& operator << (textattr::pair cf);

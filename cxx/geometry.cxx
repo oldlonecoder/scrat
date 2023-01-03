@@ -173,7 +173,7 @@ winbuffer::operator std::string()
 }
 
 
-rect::operator std::string()
+rect::operator std::string() const
 {
 	stracc str = "[{%d,%d} {%d,%d}]:{%d*%d}[%d]";
 	str << a.x , a.y, b.x, b.y, sz.w, sz.h, sz.w * sz.h;
@@ -181,7 +181,7 @@ rect::operator std::string()
 	// return std::format("[{{{},{}}} {{{},{}}}]:{{{}*{}}}[{}]", a.x, a.y, b.x, b.y, sz.w, sz.h, sz.w * sz.h);
 }
 
-std::string rect::to_string()
+std::string rect::to_string() const
 {
 	return this->operator std::string();
 }

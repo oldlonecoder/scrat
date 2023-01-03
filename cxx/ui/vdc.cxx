@@ -204,6 +204,12 @@ vdc::cell &vdc::cell::operator=(vdc::cell::type d_)
     return *this;
 }
 
+vdc::cell &vdc::cell::operator=(vdc::type d_)
+{
+    mem = *d_;
+    return *this;
+}
+
 color::type vdc::cell::fg()
 {
     return static_cast<color::type>((mem & FGMask) >> FGShift);
