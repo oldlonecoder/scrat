@@ -23,7 +23,9 @@ namespace scrat::ui
 _object_name(console)
 static console* terminal=nullptr;
 
-
+std::mutex console::io_mtx;
+std::mutex console::updates_mtx;
+console::updates_queu::stack console::updates;
 
 console::console()
 {
@@ -72,7 +74,7 @@ result<> console::init()
     if (!R)
         throw rem::push_fatal(source_fl) < rem::rejected < " Getting screen/console dimensions...";
 
-    std::cout << "\033[?1049h";
+    //std::cout << "\033[?1049h";
     terminal->gotoxy({});
     console::crs_hide();
 
@@ -188,6 +190,8 @@ console &console::render_vdc_row(vdc *mem_, point xy_, int w_=0)
     return *this;
 }
 
+
+
 console &console::render_vdc(vdc *mem_, const rect &r_)
 {
     rect me = rect({}, wh);
@@ -223,4 +227,27 @@ console &console::render_vdc(vdc *mem_, const rect &r_)
 }
 
 
+/*!
+    @brief no checks yet...
+ */
+void console::update(vdc* dc_, const rect& area_)
+{
+    console::updates_mtx.lock(); // blocs until unlocked....?
+    console::updates.push({dc_,area_});
+    console::updates_mtx.unlock();
+
+}
+
+
+}
+
+scrat::ui::console & scrat::ui::console::me()
+{
+
+    return *terminal;
+}
+void scrat::ui::console::terminate()
+{
+    //std::cout << "\033[0m\033[?1049l";
+    crs_show();
 }

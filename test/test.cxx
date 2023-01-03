@@ -1,7 +1,7 @@
 #include "test.h"
 #include <scrat/text>
 #include <scrat/interpret/interpret.h>
-
+#include <scrat/ui/console.h>
 
 using scrat::rem;
 using scrat::color;
@@ -22,6 +22,8 @@ test::test()
 {
 }
 
+
+
 test::~test()
 {
 	delete _object;
@@ -38,6 +40,7 @@ void test::run()
 		test_dimension();
 		test_text();
 		test_interpret();
+		test_console();
 	}
 	catch (std::exception e)
 	{
@@ -73,7 +76,7 @@ void test::test_text()
     Txt.compile();
     std::string Str;
     Txt >> Str;
-    rem::push_info(source_fl) < Str;
+    rem::push_info(source_fnl) < Str;
 }
 
 void test::put_colors()
@@ -121,3 +124,12 @@ void test::test_interpret()
 
 }
 
+void test::test_console()
+{
+	using scrat::ui::console;
+	console::init();
+	console::me() << " Test ...\n\n\n\n";
+	console::crs_show();
+
+
+}

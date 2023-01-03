@@ -17,7 +17,7 @@ public:
 	void test_text();
 	void put_colors();
 	void test_interpret();
-
+	void test_console();
 	scrat::result<scrat::object*> test_result();
 };
 

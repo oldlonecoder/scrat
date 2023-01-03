@@ -18,9 +18,17 @@ class SCRAT_API console : object
     std::string _id;
     vdc mem;
     static std::mutex io_mtx;
+    static std::mutex updates_mtx;
     bool get_term_size();
     console();
 public:
+
+    struct updates_queu
+    {
+        vdc* dc;
+        rect r;
+        using stack = std::stack<console::updates_queu>;
+    };
 
     ~console();
     //...
@@ -28,6 +36,8 @@ public:
 
     static void crs_hide();
     static void crs_show();
+
+    static void update(vdc* dc_, const rect& area_);
 
     console& gotoxy(const point& pt_);
 
@@ -39,7 +49,10 @@ public:
 
     console& render_vdc_row(vdc* mem_, point xy_, int w_);
     console& render_vdc(vdc* mem_, const rect& r_);
-
+    static console& me();
+    static void terminate();
+private:
+    static console::updates_queu::stack updates;
 
 
 };
