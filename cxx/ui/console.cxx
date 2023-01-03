@@ -217,10 +217,10 @@ console &console::render_vdc(vdc *mem_, const rect &r_)
                 write(1,&cell.mem,1);
             prev_cell = p++;
             cell = p;
-    }
-
-
+        }
     }
     return *this;
 }
+
+
 }

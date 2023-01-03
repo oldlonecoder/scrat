@@ -35,6 +35,7 @@ add_library(
         cxx/ui/vdc.cxx
         cxx/ui/console.cxx
         cxx/ui/painter.cxx
+        cxx/ui/elements/widget.cxx
 )
 
 
