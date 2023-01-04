@@ -149,7 +149,10 @@ struct SCRAT_API rect
 	{
 		a = a_;
 		b = b_;
-		sz = { {T{1},T{1}}, {T{b_.x+1 - a_.x},T{b_.y+1 - a_.y}},  T{std::abs(b.x - a.x + 1)}, T{std::abs(b.y - a.y + 1)} };
+        sz.w = b.x - a.x;
+        sz.h = b.y - a.y;
+        //if(a.x == 0) sz.w -= 1;
+        //if(a.y == 0) sz.h -= 1;
 	}
 
 	void assign(point a_, dim dxy)
@@ -203,7 +206,7 @@ struct SCRAT_API rect
 	{
 		rect ret;
 		point a_ = { a.x <= r.a.x ? r.a.x : a.x, a.y <= r.a.y ? r.a.y : a.y };
-		point b_ = { b.x <= r.b.x ? r.b.x : b.x, b.y <= r.b.y ? r.b.y : b.y };
+		point b_ = { b.x >= r.b.x ? r.b.x : b.x, b.y >= r.b.y ? r.b.y : b.y };
 
 		auto c = in(a_) || in(b_);
 		ret.assign(a_, b_);

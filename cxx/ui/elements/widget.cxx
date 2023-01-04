@@ -41,8 +41,10 @@ result<> widget::update(const rect& r_)
             return rem::rejected;
 
         console::update(_bloc, r);
+        return rem::accepted;
     }
-    return rem::notimplemented;
+    console::me().render_vdc(_bloc);
+    return rem::accepted;
 }
 
 
@@ -98,8 +100,11 @@ result<painter&> widget::begin_draw(const rect& r_)
 {
     painter* p = new painter(_bloc, r_ ? r_ : geometry());
     p->set_colors(_attr.colors());
+    p->home();
     return *p;
 }
+
+
 result<> widget::end_draw(painter& painter_)
 {
     delete (&painter_);

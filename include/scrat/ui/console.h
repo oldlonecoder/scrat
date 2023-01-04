@@ -37,7 +37,7 @@ public:
     static void crs_hide();
     static void crs_show();
 
-    static void update(vdc* dc_, const rect& area_);
+    static void update(vdc* dc_, const rect& area_ = {});
 
     console& gotoxy(const point& pt_);
 
@@ -48,7 +48,7 @@ public:
     console& operator<<(color::type c);
 
     console& render_vdc_row(vdc* mem_, point xy_, int w_);
-    console& render_vdc(vdc* mem_, const rect& r_);
+    console& render_vdc(vdc* mem_, const rect& r_ = {});
     static console& me();
     static void terminate();
 private:

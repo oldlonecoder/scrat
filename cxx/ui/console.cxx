@@ -194,13 +194,15 @@ console &console::render_vdc_row(vdc *mem_, point xy_, int w_)
 
 console &console::render_vdc(vdc *mem_, const rect &r_)
 {
-    rect me = rect({}, wh);
-    rect r = me & r_;
+    rect cr = rect({}, wh);
+    rect ar = r_ ? r_ : mem_->geometry();
+    rect r = cr & ar;
     if(!r)
     {
         rem::push_error() < rem::rejected < " rect is out of bounds in the terminal: " < r;
         return *this;
     }
+
     using ansi = scrat::attr<textattr::format::ansi256>;
     for(int y = 0; y < r.height(); y++)
     {
@@ -235,7 +237,6 @@ void console::update(vdc* dc_, const rect& area_)
     console::updates_mtx.lock(); // blocs until unlocked....?
     console::updates.push({dc_,area_});
     console::updates_mtx.unlock();
-
 }
 
 
@@ -243,9 +244,11 @@ void console::update(vdc* dc_, const rect& area_)
 
 scrat::ui::console & scrat::ui::console::me()
 {
-
+    if(!terminal)
+        throw rem::push_exception(source_fnl) < " nullptr - using console that is not initialized.";
     return *terminal;
 }
+
 void scrat::ui::console::terminate()
 {
     std::cout << "\033[0m\033[?1049l";

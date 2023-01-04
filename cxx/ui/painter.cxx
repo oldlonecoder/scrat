@@ -158,12 +158,16 @@ painter& painter::set_colors(const textattr::pair& aSet)
 
 result<> painter::setup_geometry()
 {
-    rem::push_debug(source_fl) < " painter _dc's '" < color::Chartreuse6 <  "Geometry: " <  _dc->geometry().to_string();
+    rem::push_debug(source_fl) < " painter _dc's '" < color::Chartreuse6 <  "Geometry: " <  _dc->geometry();
+    if(!_r)
+        _r = _dc->geometry();
+    else
+        _r = _dc->geometry()  & _r;
 
-    _r = _r ? rect({ 0,0 }, {_dc->width(), _dc->height()}) & _r : rect({ 0,0 }, {_dc->width(), _dc->height()});
     if (!_r)
-        throw rem::push_exception(source_fl) < ": " < rem::endl < " - Attempt to < Contruct > a painter object on invalid Geometry : " < _r.to_string();
-    rem::push_debug(source_fl) < " Configured Geometry:" < color::Yellow < _r.to_string() < color::Reset < " :";
+        throw rem::push_exception(source_fl) < ": " < rem::endl < " - Attempt to < Contruct > a painter object on invalid Geometry : " < _r;
+
+    rem::push_debug(source_fl) < " Configured Geometry:" < color::Yellow < _r < color::Reset < " :";
     _cursor = _dc->peek(_r.a);
     //rem::push_debug(SourceLocation) <<  VDC::Cell{ *_cursor }.Details();
     return rem::ok;

@@ -80,6 +80,7 @@ public:
 
 		vdc::cell& operator << (Icon::Type i_);
 		vdc::cell& operator << (Accent::Type a_);
+        vdc::cell& operator << (char c) { mem = mem & ~(CharMask) | c; return *this; }
 		std::string render_colors();
 		vdc::cell& reset_attributes(vdc::cell::type bits_);
 		operator std::string();

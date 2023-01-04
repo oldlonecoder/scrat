@@ -143,6 +143,9 @@ void test::test_console()
     w.update();
 
     //...
+    char c;
+    std::cout << "enter char+ret...:";
+    std::cin >> c;
 	console::terminate();
 
 
