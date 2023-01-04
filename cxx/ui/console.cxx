@@ -158,13 +158,13 @@ console& console::operator<<(color::type c)
  * @brief Output to the terminal the contents of the vdc row given by xy_.y, starting at column xy_.x .
  *
  * @param mem_  pointer to the vdc.
- * @param xy_   xy (vdc's coords) coordinates into the vdm mem bloc. ( xy_.y is the row # to render on the terminal) Thus, xy_ must be vdc's inner computed offset.
+ * @param xy_   xy (vdc's coords) coordinates into the vdc mem bloc. ( xy_.y is the row # to render on the terminal) Thus, xy_ must be vdc's inner computed offset.
  * @param w_    length of the row relative to xy_x. If 0, then from column xy_.x to the end of the vdc row ( w_: { w_ >= 0 || w_<= vdc::width() - xy_.x} )
  * @return console& (ref to self )
  * @note To be called only when one line of a vdc bloc is needed to be rendered on the terminal.
  * @author &copy; 2022, Serge Lussier, lussier.serge@gmail.com ( oldlonecoder )
  */
-console &console::render_vdc_row(vdc *mem_, point xy_, int w_=0)
+console &console::render_vdc_row(vdc *mem_, point xy_, int w_)
 {
     vdc::type p = mem_->peek(xy_);
     w_ = w_ == 0 ? mem_->width() - xy_.x : w_;

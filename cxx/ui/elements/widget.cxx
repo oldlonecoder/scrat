@@ -99,7 +99,7 @@ result<painter*> widget::begin_draw(const rect& r_)
     return p;
 }
 
-result<> end_draw(painter* painter_)
+result<> widget::end_draw(painter* painter_)
 {
     delete painter_;
     //...
