@@ -174,7 +174,6 @@ console &console::render_vdc_row(vdc *mem_, point xy_, int w_)
     using ansi = scrat::attr<textattr::format::ansi256>;
     for(int x = 0; x< w_; x++)
     {
-
         if (prev_cell.bg() != cell.bg()) (*terminal) << ansi::bg(cell.bg());
         if (prev_cell.fg() != cell.fg()) (*terminal) << ansi::fg(cell.fg());
         if (cell.mem & vdc::cell::UGlyph)
@@ -184,6 +183,7 @@ console &console::render_vdc_row(vdc *mem_, point xy_, int w_)
         }
         else
             write(1,&cell.mem,1);
+
         prev_cell = p++;
         cell = p;
     }
