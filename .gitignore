@@ -80,6 +80,11 @@ _Chutzpah*
 
 .DS_Store
 *.swp
+*.swap
+*.kate-swp
+*.*swp
+*swap
+*swp
 
 # Visual C++ cache files
 ipch/
