@@ -32,6 +32,7 @@
 #include <string_view>
 #include <stack>
 #include <unordered_map>
+#include <map>
 
 
 
@@ -320,10 +321,10 @@ namespace scrat
             color::type fg = color::White;
             color::type bg = color::Grey11;
 
-            using list = std::vector<textattr::pair>;
-            using set = std::unordered_map<std::string_view,textattr::pair>;
+
             std::string operator()();
             textattr::pair& operator >> (std::string& out);
+
         };
 
         enum class format

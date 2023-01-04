@@ -15,19 +15,20 @@ _object_name(widget)
 widget::widget():object()
 {
     // no flags, no parent. Thus this is set to toplevel widget by default.
-
+    _attr.set_color(colors::db::data["default"]["widget"][State::Active]);
 }
 
 widget::widget(object* parent_, WClass::Type f_): object(parent_),
 _widget_class_bits(f_)
 {
-
+    _attr.set_color(colors::db::data["default"]["widget"][State::Active]);
 }
 
 
 widget::~widget()
 {
-
+    if(_widget_class_bits & WClass::TopLevel) delete _bloc;
+    //...
 }
 
 result<> widget::update(const rect& r_)
@@ -86,22 +87,22 @@ result<> widget::setup_backbuffer()
 
 
 /*!
-    @brief Generates a painter object for drawing(writting) contents onto this widget
+    @brief Generates a painter object (on the heap, using new) for drawing(writting) contents onto this widget
 
     @param subregion, default is the entire widget's geometry into the vdc bloc.
-    @return pointer to the painter instance.
+    @return Reference to the painter instance.
 
     @author &copy; 2018,2023; Serge Lussier;oldlonecoder (lussier.serge@gmail.com)
 */
-result<painter*> widget::begin_draw(const rect& r_)
+result<painter&> widget::begin_draw(const rect& r_)
 {
     painter* p = new painter(_bloc, r_ ? r_ : geometry());
-    return p;
+    p->set_colors(_attr.colors());
+    return *p;
 }
-
-result<> widget::end_draw(painter* painter_)
+result<> widget::end_draw(painter& painter_)
 {
-    delete painter_;
+    delete (&painter_);
     //...
     return rem::accepted;
 }

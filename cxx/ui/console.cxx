@@ -74,7 +74,7 @@ result<> console::init()
     if (!R)
         throw rem::push_fatal(source_fl) < rem::rejected < " Getting screen/console dimensions...";
 
-    //std::cout << "\033[?1049h";
+    std::cout << "\033[?1049h";
     terminal->gotoxy({});
     console::crs_hide();
 
@@ -248,6 +248,6 @@ scrat::ui::console & scrat::ui::console::me()
 }
 void scrat::ui::console::terminate()
 {
-    //std::cout << "\033[0m\033[?1049l";
+    std::cout << "\033[0m\033[?1049l";
     crs_show();
 }

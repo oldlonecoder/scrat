@@ -1,5 +1,9 @@
 #pragma once
+
+
 #include <cstdint>
+#include <map>
+#include <scrat/textattr>
 
 namespace scrat::ui
 {
@@ -65,5 +69,21 @@ namespace State
 	static constexpr Type Warning = 0x10;
 	static constexpr Type Illegal = 0x20;
 }
+
+namespace colors
+{
+
+struct SCRAT_API db
+{
+    using components= std::map<State::Type,textattr::pair>;
+    using elements  = std::map<std::string_view, db::components>;
+    using themes    = std::map<std::string_view, db::elements>;
+    //using theme     = std::map<std::string_view, db::dictionary>;
+    static db::themes data;
+};
 }
 
+
+
+
+}

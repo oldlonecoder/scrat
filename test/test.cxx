@@ -133,9 +133,17 @@ void test::test_console()
 
 	widget w = widget(nullptr, WClass::TopLevel);
 	w.set_geometry({{1,1},{4000,4000},30,3});
+    auto r = w.begin_draw();
+    if(!r) return;
+    painter& paint = *r;
+    paint.clear();
+    paint.gotoxy({1,1});
+    paint << "test...";
+    w.end_draw(paint);
+    w.update();
 
-
-	console::crs_show();
+    //...
+	console::terminate();
 
 
 }

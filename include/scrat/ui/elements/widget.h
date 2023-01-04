@@ -22,7 +22,7 @@ protected:
     result<> setup_backbuffer(); ///< sous reserve
     dim   _wh; ///< dimensions
     point _xy; ///< relative position into the parent's geometry...
-
+    vdc::cell _attr = ' ';
 public:
     widget();
     widget(object* parent_, WClass::Type class_ = 0);
@@ -33,8 +33,8 @@ public:
 
     virtual result<> update(const rect& r_ = {});
     virtual rect geometry();
-    virtual result<painter*> begin_draw(const rect& r_ = {});
-    virtual result<> end_draw(painter* painter_);
+    virtual result<painter&> begin_draw(const rect& r_ = {});
+    virtual result<> end_draw(painter& painter_);
 
 };
 

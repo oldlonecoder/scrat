@@ -6,10 +6,8 @@ namespace scrat
 {
 	template<typename T = rem::code>  class  result final
 	{
-		union {
-			rem* fail;
-			T    value;
-		};
+		rem* fail;
+        T value;
 		bool good = false;
 
 
@@ -28,11 +26,7 @@ namespace scrat
 			fail = &msg;
 		}
 		
-		result(T value_)
-		{
-			value = value_;
-			good = true;
-		}
+		result(T value_):value(value_),good(true) {}
 
 		result(result&& r) noexcept
 		{
