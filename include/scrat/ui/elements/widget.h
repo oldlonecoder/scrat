@@ -5,6 +5,7 @@
 #include <scrat/object>
 #include <scrat/ui/vdc.h>
 #include <scrat/ui/uidefs.h>
+#include <scrat/ui/painter.h>
 
 namespace scrat::ui {
 
@@ -32,6 +33,8 @@ public:
 
     virtual result<> update(const rect& r_ = {});
     virtual rect geometry();
+    virtual result<painter*> begin_draw(const rect& r_ = {});
+    virtual result<> end_draw(painter* painter_);
 
 };
 

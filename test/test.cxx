@@ -2,6 +2,7 @@
 #include <scrat/text>
 #include <scrat/interpret/interpret.h>
 #include <scrat/ui/console.h>
+#include <scrat/ui/elements/widget.h>
 
 using scrat::rem;
 using scrat::color;
@@ -126,9 +127,14 @@ void test::test_interpret()
 
 void test::test_console()
 {
-	using scrat::ui::console;
+	using namespace scrat::ui;
 	console::init();
 	console::me() << " Test ...\n\n\n\n";
+
+	widget w = widget(nullptr, WClass::TopLevel);
+	w.set_geometry({{1,1},{4000,4000},30,3});
+
+
 	console::crs_show();
 
 

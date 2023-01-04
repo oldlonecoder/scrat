@@ -12,7 +12,11 @@ _object_name(widget)
 
 
 
-widget::widget():object(){}
+widget::widget():object()
+{
+    // no flags, no parent. Thus this is set to toplevel widget by default.
+
+}
 
 widget::widget(object* parent_, WClass::Type f_): object(parent_),
 _widget_class_bits(f_)
@@ -50,7 +54,7 @@ rect widget::geometry()
 result<> widget::set_geometry(const dim& wh_)
 {
     _wh = wh_;
-    return rem::accepted;
+    return setup_backbuffer();
 }
 
 void widget::set_location(const point& xy_)
@@ -81,6 +85,26 @@ result<> widget::setup_backbuffer()
 }
 
 
+/*!
+    @brief Generates a painter object for drawing(writting) contents onto this widget
+
+    @param subregion, default is the entire widget's geometry into the vdc bloc.
+    @return pointer to the painter instance.
+
+    @author &copy; 2018,2023; Serge Lussier;oldlonecoder (lussier.serge@gmail.com)
+*/
+result<painter*> widget::begin_draw(const rect& r_)
+{
+    painter* p = new painter(_bloc, r_ ? r_ : geometry());
+    return p;
+}
+
+result<> end_draw(painter* painter_)
+{
+    delete painter_;
+    //...
+    return rem::accepted;
+}
 
 }
 

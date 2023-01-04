@@ -152,13 +152,13 @@ painter& painter::set_colors(const textattr::pair& aSet)
 {
     _cell.set_fg(aSet.fg);
     _cell.set_bg(aSet.bg);
-    *_cursor = (* _cursor & ~vdc::cell::CMask) | _cell.mem & vdc::cell::CMask;
+    *_cursor = (* _cursor & ~vdc::cell::CMask) | (_cell.mem & vdc::cell::CMask);
     return *this;
 }
 
 result<> painter::setup_geometry()
 {
-    rem::push_debug(source_fl) << " painter _dc's '" < color::Chartreuse6 <  "Geometry: " <  _dc->geometry().to_string();
+    rem::push_debug(source_fl) < " painter _dc's '" < color::Chartreuse6 <  "Geometry: " <  _dc->geometry().to_string();
 
     _r = _r ? rect({ 0,0 }, {_dc->width(), _dc->height()}) & _r : rect({ 0,0 }, {_dc->width(), _dc->height()});
     if (!_r)
@@ -188,12 +188,14 @@ painter& painter::clear()
     return *this;
 }
 
-//void painter::Update()
-//{
-//    Console::RenderDC(_dc,_r);
-//}
+/*!
+    @brief Computes coordinates within the painter's bloc from the linear index (cursor) location.
 
-
+    @param none
+    @return computed point.
+    @note none
+    @author &copy; 2018,2023; Serge Lussier;oldlonecoder (lussier.serge@gmail.com)
+*/
 point painter::cpos()
 {
     auto* B = _dc->mem;
@@ -204,42 +206,99 @@ point painter::cpos()
 }
 
 
+/*!
+    @brief set the justify bits.
 
+    @param bits.
+    @return ref to self.
+    @note Justification bit values are not implemented yet ...
+    @author &copy; 2018,2023; Serge Lussier;oldlonecoder (lussier.serge@gmail.com)
+*/
 painter& painter::set_bits(Justify::Type aBits)
 {
     j_bits = aBits;
     return *this;
 }
 
+/*!
+ *  @brief set the justify bits.
+ *
+ *  @param bits.
+ *  @return ref to self.
+ *  @note Justification bit values are not implemented yet ...
+ *  @author &copy; 2018,2023; Serge Lussier;oldlonecoder (lussier.serge@gmail.com)
+ */
 painter& painter::set_hcenter(bool S)
 {
     j_bits = S ? j_bits | Justify::HCenter : j_bits & ~Justify::HCenter;
     return *this;
 }
 
+/*!
+ *  @brief set the justify bits.
+ *
+ *  @param bits.
+ *  @return ref to self.
+ *  @note Justification bit values are not implemented yet ...
+ *  @author &copy; 2018,2023; Serge Lussier;oldlonecoder (lussier.serge@gmail.com)
+ */
 painter& painter::set_vcenter(bool S)
 {
     j_bits = S ? j_bits | Justify::VCenter : j_bits & ~Justify::VCenter;
     return  *this;
 }
 
+/*!
+ *  @brief set the justify bits.
+ *
+ *  @param bits.
+ *  @return ref to self.
+ *  @note Justification bit values are not implemented yet ...
+ *  @author &copy; 2018,2023; Serge Lussier;oldlonecoder (lussier.serge@gmail.com)
+ */
 painter& painter::set_center(bool S)
 {
     j_bits = S ? j_bits | Justify::HCenter | Justify::VCenter : j_bits & ~(Justify::HCenter | Justify::VCenter);
     return  *this;
 }
 
+/*!
+ *  @brief set the word_wrap flag
+ *
+ *  @param S ( true or false)
+ *  @return ref to self.
+ *  @note Word-Wrapping is not implemented yet ...
+ *  @author &copy; 2018,2023; Serge Lussier;oldlonecoder (lussier.serge@gmail.com)
+ */
 painter& painter::set_word_wrap(bool S)
 {
     return  *this;
 }
 
+/*!
+ *  @brief Set the current background color
+ *
+ *  @param color type code.
+ *  @return ref to self.
+ *
+ *  @author &copy; 2018,2023; Serge Lussier;oldlonecoder (lussier.serge@gmail.com)
+ */
 painter& painter::set_bg(color::type aBg)
 {
     _cell.set_bg(aBg);
     return *this;
 }
 
+
+
+/*!
+ *  @brief Set the current foreground color
+ *
+ *  @param color type code.
+ *  @return ref to self.
+ *
+ *  @author &copy; 2018,2023; Serge Lussier;oldlonecoder (lussier.serge@gmail.com)
+ */
 painter& painter::set_fg(color::type aFg)
 {
     _cell.set_fg(aFg);
