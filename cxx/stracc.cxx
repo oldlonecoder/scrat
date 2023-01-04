@@ -26,7 +26,8 @@ stracc::~stracc()
 
 stracc& stracc::operator<<(color::type arg_)
 {
-    if(_arg_pos != std::string::npos) return _format(attr<textattr::format::ansi256>::fg(arg_));
+
+    if(_scan_arg() != std::string::npos) return _format(attr<textattr::format::ansi256>::fg(arg_));
     //_d = _format(_d, attr<textattr::format::ansi256>::fg(arg_).c_str());
     _d += attr<textattr::format::ansi256>::fg(arg_);
     return *this;

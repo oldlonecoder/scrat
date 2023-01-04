@@ -2,11 +2,8 @@
 
 
 
-
 namespace scrat::ui
 {
-
-
 
 
 vdc::vdc(object* parent_, scrat::dim dimension_):
@@ -190,12 +187,12 @@ vdc::cell &vdc::cell::set_attribute(vdc::cell::type a_)
 }
 vdc::cell &vdc::cell::set_color(textattr::pair &&c_)
 {
-	return set_fg(c_.fg).set_bg(c_.fg);
+	return set_fg(c_.fg).set_bg(c_.bg);
 }
 
 vdc::cell &vdc::cell::set_color(const textattr::pair &c_)
 {
-    return set_fg(c_.fg).set_bg(c_.fg);
+    return set_fg(c_.fg).set_bg(c_.bg);
 }
 
 vdc::cell &vdc::cell::operator=(vdc::cell::type d_)
@@ -207,6 +204,12 @@ vdc::cell &vdc::cell::operator=(vdc::cell::type d_)
 vdc::cell &vdc::cell::operator=(vdc::type d_)
 {
     mem = *d_;
+    return *this;
+}
+
+vdc::cell &vdc::cell::operator=(char d_)
+{
+    mem &= ~CharMask | d_;
     return *this;
 }
 

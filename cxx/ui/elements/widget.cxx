@@ -16,12 +16,16 @@ widget::widget():object()
 {
     // no flags, no parent. Thus this is set to toplevel widget by default.
     _attr.set_color(colors::db::data["default"]["widget"][State::Active]);
+    _attr = ' ';
+    rem::push_debug(source_fnl) < " widget initial cell attribute:" < rem::endl < _attr.details();
 }
 
 widget::widget(object* parent_, WClass::Type f_): object(parent_),
 _widget_class_bits(f_)
 {
     _attr.set_color(colors::db::data["default"]["widget"][State::Active]);
+    _attr = ' ';
+    rem::push_debug(source_fnl) < " widget initial cell attribute:" < rem::endl < _attr.details();
 }
 
 

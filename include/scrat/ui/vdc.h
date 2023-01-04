@@ -67,6 +67,7 @@ public:
 
 		vdc::cell& operator=(vdc::cell::type d_);
 		vdc::cell& operator=(vdc::type d_);
+		vdc::cell& operator=(char d_);
 
 		color::type fg();
 		color::type bg();

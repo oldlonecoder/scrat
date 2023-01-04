@@ -13,6 +13,7 @@ painter::painter(vdc* parent_, rect r_):
 {
     rem::push_debug(source_fl) << color::Fuchsia <<  " Receiving Geometry: " << color::Yellow << _r.to_string();
     setup_geometry();
+    _cell = ' ';
     //...
 }
 
@@ -150,6 +151,7 @@ painter& painter::gotoxy(const point& pt_)
 
 painter& painter::set_colors(const textattr::pair& aSet)
 {
+
     _cell.set_fg(aSet.fg);
     _cell.set_bg(aSet.bg);
     *_cursor = (* _cursor & ~vdc::cell::CMask) | (_cell.mem & vdc::cell::CMask);
