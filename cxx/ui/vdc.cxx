@@ -209,7 +209,7 @@ vdc::cell &vdc::cell::operator=(vdc::type d_)
 
 vdc::cell &vdc::cell::operator=(char d_)
 {
-    mem &= ~CharMask | d_;
+    mem = (mem & ~CharMask) | d_;
     return *this;
 }
 
