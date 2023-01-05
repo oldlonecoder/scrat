@@ -10,9 +10,10 @@ class SCRAT_API painter
 {
     vdc* _dc = nullptr;
     rect _r;   ///< Geometrie interne. (Celui du _dc ou un sous-rectangle de _dc)
-    vdc::cell _cell;
+    vdc::cell _cell = ' ';
+    vdc::type _def_attr = nullptr;
     vdc::type _cursor = nullptr;
-    bool _wrap = false;
+    bool _wrap = false; ///< @note already defined in the justify_bits field...
 
     point cpos();
     Justify::Type j_bits = 0;
@@ -23,7 +24,7 @@ public:
     painter() = default;
     ~painter() = default;
 
-    painter(vdc* dc_, rect r_ = {});
+    painter(vdc* dc_, vdc::type def_attr_, rect r_ = {});
     painter(painter&&) noexcept = default;
     painter(const painter&) = default;
 

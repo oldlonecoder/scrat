@@ -8,12 +8,13 @@ namespace scrat::ui
 
 _object_name(painter)
 
-painter::painter(vdc* parent_, rect r_):
-    _dc(parent_), _r(r_)
+painter::painter(vdc* parent_, vdc::type def_attr_, rect r_):
+    _dc(parent_), _def_attr(def_attr_), _r(r_)
 {
+    _cell = *_def_attr;
     rem::push_debug(source_fl) << color::Fuchsia <<  " Receiving Geometry: " << color::Yellow << _r.to_string();
     setup_geometry();
-    _cell = ' ';
+    _cell << ' ';
     //...
 }
 
@@ -180,8 +181,8 @@ painter& painter::clear()
     auto* CC = _cursor;
     _cursor = _dc->peek(_r.a);
     _cell << ' ';
-    rem::push_debug(source_fl) << _cell.details();
-    rem::push_output() << "Clearing subrect:" << _r.to_string();
+    rem::push_debug(source_fl) < _cell.details();
+    rem::push_output() < "Clearing subrect:" < _r;
     //int Area = _r.Area();
 //    Rem::Output() << "-> " << Color::Yellow << Area << Color::White << " cells in block";
     for(int y = 0; y< _r.height(); y++)

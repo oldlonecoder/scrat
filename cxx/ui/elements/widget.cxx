@@ -37,17 +37,20 @@ widget::~widget()
 
 result<> widget::update(const rect& r_)
 {
+    rect r = geometry();
+
     if(!r_)
     {
         // update the entire widget geometry
-        auto r = _bloc->geometry() & geometry();
+        r = _bloc->geometry() & r;
         if(!r)
             return rem::rejected;
-
-        console::update(_bloc, r);
-        return rem::accepted;
     }
-    console::me().render_vdc(_bloc);
+    else
+        r = r & r_;
+
+    _bloc->update_rect(r);// -- Disabled
+    //console::me().render_vdc(_bloc);
     return rem::accepted;
 }
 
@@ -66,7 +69,10 @@ result<> widget::set_geometry(const dim& wh_)
 
 void widget::set_location(const point& xy_)
 {
-    _xy = xy_; // ...
+    _xy = xy_;
+    if(_widget_class_bits& WClass::TopLevel)
+        _bloc->set_location(_xy);
+     // ...
 }
 
 result<> widget::setup_backbuffer()
@@ -102,7 +108,7 @@ result<> widget::setup_backbuffer()
 */
 result<painter&> widget::begin_draw(const rect& r_)
 {
-    painter* p = new painter(_bloc, r_ ? r_ : geometry());
+    painter* p = new painter(_bloc, &_attr.mem, r_ ? r_ : rect());
     p->set_colors(_attr.colors());
     p->home();
     return *p;

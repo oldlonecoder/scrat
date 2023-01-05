@@ -1,4 +1,5 @@
 #include <scrat/ui/vdc.h>
+#include <scrat/ui/console.h>
 
 
 
@@ -98,6 +99,17 @@ std::string vdc::cell::details()
     return str();
 }
 
+result<> vdc::update_rect(const rect &r_)
+{
+    // rect r = r_ & geometry();
+    // if(!r)
+    //     return rem::rejected;
+
+
+    console::update(this, location(), r_);
+
+    return rem::accepted;
+}
 result<> vdc::clear()
 {
    if (!mem)
@@ -209,7 +221,7 @@ vdc::cell &vdc::cell::operator=(vdc::type d_)
 
 vdc::cell &vdc::cell::operator=(char d_)
 {
-    mem = (mem & ~CharMask) | d_;
+    mem = mem & (~CharMask) | d_;
     return *this;
 }
 
@@ -230,7 +242,7 @@ textattr::pair vdc::cell::colors()
 
 uint8_t vdc::cell::ascii()
 {
-    return mem & ~CharMask;
+    return mem & CharMask;
 
 }
 vdc::cell& vdc::cell::operator << (Icon::Type i_)

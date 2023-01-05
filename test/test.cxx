@@ -42,6 +42,7 @@ void test::run()
 		test_text();
 		test_interpret();
 		test_console();
+		test_alu();
 	}
 	catch (std::exception e)
 	{
@@ -129,10 +130,11 @@ void test::test_console()
 {
 	using namespace scrat::ui;
 	console::init();
-	console::me() << " Test ...\n\n\n\n";
+	//console::me() << " Test ...\n\n\n\n";
 
 	widget w = widget(nullptr, WClass::TopLevel);
 	w.set_geometry({{1,1},{4000,4000},30,3});
+	w.set_location({0,0});
     auto r = w.begin_draw();
     if(!r) return;
     painter& paint = *r;
@@ -149,4 +151,15 @@ void test::test_console()
 	console::terminate();
 
 
+}
+
+void test::test_alu()
+{
+	using scrat::script::alu;
+	alu a = -1;
+	alu b = 30;
+	alu c = b-a;
+	rem::push_info() < "b{" < b() < "} - a{" < a() < "} = c{" < c() <"};";
+
+	rem::push_info() < "1/3=" < (int)1/(int)3;
 }

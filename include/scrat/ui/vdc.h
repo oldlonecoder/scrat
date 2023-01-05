@@ -14,7 +14,7 @@ class SCRAT_API vdc
 	object* _owner = nullptr;
 	point pos = { 0,0 };
 	scrat::dim wh;
-
+	point _location; ///< coords location on the terminal!!!
 	rect _peer = {};
 
 	friend class console;
@@ -81,7 +81,7 @@ public:
 
 		vdc::cell& operator << (Icon::Type i_);
 		vdc::cell& operator << (Accent::Type a_);
-        vdc::cell& operator << (char c) { mem = mem & ~(CharMask) | c; return *this; }
+        vdc::cell& operator << (char c) { mem = mem & (~CharMask) | c; return *this; }
 		std::string render_colors();
 		vdc::cell& reset_attributes(vdc::cell::type bits_);
 		operator std::string();
@@ -102,6 +102,10 @@ public:
 	int height();
 	point crs_pos();
 	result<> set_position(const point& pt_);
+	void set_location(const point& pt_) { _location = pt_;}
+	point location() { return _location;}
+	result<> update_rect(const rect& r_);
+
 	result<> clear(); ///< clear with current attr
 	result<> clear(const rect& r_); ///< clear sub-region with the current attr;
 	result<> clear(vdc::cell::type a_, const rect& r_ = {});

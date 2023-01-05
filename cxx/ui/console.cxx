@@ -17,6 +17,8 @@
 
 
 
+
+
 namespace scrat::ui
 {
 
@@ -196,12 +198,17 @@ console &console::render_vdc(vdc *mem_, const rect &r_)
 {
     rect cr = rect({}, wh);
     rect ar = r_ ? r_ : mem_->geometry();
+    ar += mem_->location();
     rect r = cr & ar;
     if(!r)
     {
         rem::push_error() < rem::rejected < " rect is out of bounds in the terminal: " < r;
         return *this;
     }
+    rem::push_debug(source_fnl) < " vdc geometry:" < mem_->geometry() < " :";
+    rem::push_output() < " console geometry:" < cr;
+    rem::push_output() < " vdc's exposed geometry:" < ar;
+    rem::push_output() < "intersection geometry: " < r;
 
     using ansi = scrat::attr<textattr::format::ansi256>;
     for(int y = 0; y < r.height(); y++)
@@ -210,6 +217,12 @@ console &console::render_vdc(vdc *mem_, const rect &r_)
         auto w_ = r.width();
         vdc::cell cell=p;
         vdc::cell prev_cell=p;
+        terminal->gotoxy({r.a.x,r.a.y+y});
+        (*terminal) << ansi::bg(cell.bg()) << ansi::fg(cell.fg());
+        point pt = r.a;
+        pt += {0,y};
+        rem::push_output() < " vdc line#" < y < " " < pt;
+
         for(int x = 0; x< w_; x++)
         {
             if (prev_cell.bg() != cell.bg()) (*terminal) << ansi::bg(cell.bg());
@@ -224,6 +237,7 @@ console &console::render_vdc(vdc *mem_, const rect &r_)
             prev_cell = p++;
             cell = p;
         }
+        write(1,"\033[0m",4);
     }
     return *this;
 }
@@ -232,25 +246,106 @@ console &console::render_vdc(vdc *mem_, const rect &r_)
 /*!
     @brief no checks yet...
  */
-void console::update(vdc* dc_, const rect& area_)
+void console::update(vdc* dc_, const point& cxy_, const rect& area_)
 {
+    // not exposition check/compute yet. (too much load if rejected, so it shall be rejected during the exposure loop /(thread?))
+
     console::updates_mtx.lock(); // blocs until unlocked....?
-    console::updates.push({dc_,area_});
+    console::updates.push({dc_,cxy_,area_});
     console::updates_mtx.unlock();
 }
 
+void console::draw_vdc(const console::updates_queu& q)
+{
+    using ansi = attr<textattr::format::ansi256>;
+    for(int y = 0; y < q.r.height(); y++)
+    {
+        vdc::type p = q.dc->peek({q.r.a.x, q.r.a.y+y});
+        auto w_ = q.r.width();
+        vdc::cell cell=p;
+        vdc::cell prev_cell=p;
+        terminal->gotoxy({q.r.a.x+q.xy.x, q.r.a.y+q.xy.y+y});
+        (*terminal) << ansi::bg(cell.bg()) << ansi::fg(cell.fg());
+        point pt = q.r.a;
+        pt += {0,y};
+        rem::push_output() < " vdc line#" < y < " " < pt;
 
+        for(int x = 0; x< w_; x++)
+        {
+            if (prev_cell.bg() != cell.bg()) (*terminal) << ansi::bg(cell.bg());
+            if (prev_cell.fg() != cell.fg()) (*terminal) << ansi::fg(cell.fg());
+            if (cell.mem & vdc::cell::UGlyph)
+            {
+                auto Ic =  cell.icon_id();
+                write(1, Icon::Data[Ic], std::strlen(Icon::Data[Ic]));
+            }
+            else
+                write(1,&cell.mem,1);
+            prev_cell = p++;
+            cell = p;
+        }
+        write(1,"\033[0m",4);
+    }
 }
 
-scrat::ui::console & scrat::ui::console::me()
+
+
+
+result<int> console::draw()
+{
+    console::updates_mtx.lock(); // blocs until unlocked....?
+    while(!console::updates.empty())
+    {    auto upd = console::updates.top();
+
+        // get the terminal dimensions:
+        rect cr = rect({}, terminal->wh);
+        // get exposed vdc subregion at the coords on the terminal:
+        rect er = rect(upd.xy, upd.r.sz);
+        // intersect exposed dimension on terminal :
+        rect ecr = cr & er;
+        if(!ecr)
+        {
+            rem::push_output() < " skipping vdc update :" < er;
+            continue;
+        }
+
+        // back offset.
+        ecr -= upd.xy;
+        // intersect with dc's exposed subregion again.
+        ecr = ecr & upd.r;
+        if(!ecr)
+        {
+            // again, if not exposed then leave.
+            rem::push_output() < " skipping vdc update :" < er;
+            continue;
+        }
+
+        //re-offset to the terminal coords:
+        ecr += upd.xy;
+        rect inr = ecr;
+        inr -= upd.xy;
+        draw_vdc({upd.dc, upd.xy, inr});
+
+        console::updates.pop();
+    }
+    console::updates_mtx.unlock();
+    return 0;
+}
+
+
+console &console::me()
 {
     if(!terminal)
         throw rem::push_exception(source_fnl) < " nullptr - using console that is not initialized.";
     return *terminal;
 }
 
-void scrat::ui::console::terminate()
+void console::terminate()
 {
     std::cout << "\033[0m\033[?1049l";
+    while(!console::updates.empty()) console::updates.pop();
     crs_show();
+}
+
+
 }

@@ -18,6 +18,7 @@ public:
 	void put_colors();
 	void test_interpret();
 	void test_console();
+	void test_alu();
 	scrat::result<scrat::object*> test_result();
 };
 

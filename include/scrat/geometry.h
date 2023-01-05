@@ -121,38 +121,43 @@ struct SCRAT_API rect
 		a = a_;
 		b = b_;
 		//sz = { {T{100},T{100}}, T{std::abs(b.x - a.x + 1)}, T{std::abs(b.y - a.y + 1)} };
-		sz = { {T{1},T{1}}, {T{b_.x+1 - a_.x},T{b_.y+1 - a_.y}},  T{std::abs(b.x - a.x + 1)}, T{std::abs(b.y - a.y + 1)} };
+		//sz = { {T{1},T{1}}, {T{b_.x+1 - a_.x},T{b_.y+1 - a_.y}},  T{std::abs(b.x - a.x + 1)}, T{std::abs(b.y - a.y + 1)} };
+		sz.w = b.x-a.x + a.x==0?1:0;
+		sz.h = b.y-a.y + a.y==0?1:0;
+		sz.min = {1,1};
+		sz.max = {10000,10000};
 	}
 
 	rect(point a_, dim d)
 	{
 		a = a_;
 		sz = d;
-		b = { a + point{sz.w, sz.h} };
+		b = { a + point{a.x==0?sz.w-1:sz.w, a.y==0? sz.h-1:sz.h} };
 	}
 
 	rect(T x, T y, T bx, T by)
 	{
 		a = { x,y };
 		b = { bx,by };
-		sz = { {T{1},T{1}}, {T{bx+1 - x},T{by+1 - y}},  T{std::abs(b.x - a.x + 1)}, T{std::abs(b.y - a.y + 1)} };
+		sz.min = {1,1};
+		sz.max = {10000,10000};
+		sz.w = bx+1 - x;
+		sz.h = by+1 - y;
 	}
 
 	void assign(T x, T y, T w, T h)
 	{
 		a = { x,y };
-		b = { a.x + w - 1, a.y + h - 1 };
-		sz = { { T{1},T{1} }, { T{w},T{h} },  w,h };
+		b = { x + w - 1, y + h - 1 };
+		sz = { {1,1},{10000,10000}, w,h};
 	}
 
 	void assign(point a_, point b_)
 	{
 		a = a_;
 		b = b_;
-        sz.w = b.x - a.x;
-        sz.h = b.y - a.y;
-        //if(a.x == 0) sz.w -= 1;
-        //if(a.y == 0) sz.h -= 1;
+        sz.w = (b.x+1) - a.x;
+        sz.h = (b.y+1) - a.y;
 	}
 
 	void assign(point a_, dim dxy)
@@ -169,7 +174,12 @@ struct SCRAT_API rect
 		b += dx;
 		return *this;
 	}
-
+	rect& operator -= (point dx)
+	{
+		a -= dx;
+		b -= dx;
+		return *this;
+	}
 	void resize(dim new_sz)
 	{
 		assign({ a.x, a.y }, new_sz);
@@ -196,8 +206,8 @@ struct SCRAT_API rect
 		b += dt;
 	}
 
-	int width()  { return sz.w; }
-	int height()  { return sz.h; }
+	int width()  const { return sz.w; }
+	int height() const  { return sz.h; }
 
 	/*!
 		@brief intersection between this and r
