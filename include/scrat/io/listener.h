@@ -18,11 +18,12 @@ public:
     listener_base(object* parent_ = nullptr);
     virtual ~listener_base();
 
+    virtual result<> listen();
 
 private:
     //listener_base(object* parent_);
-    virtual result<> on_ready_read(ifd&) = 0;
-    virtual result<> on_write_read(ifd&) = 0;
+    virtual result<> on_read_ready(ifd&) = 0;
+    virtual result<> on_write_ready(ifd&) = 0;
 
 };
 
@@ -34,9 +35,10 @@ template<typename T> class SCRAT_API listener : public listener_base
 public:
 
     using io_delegate = result<> (T::*)(ifd&);
-    listener(T* parent_);
+    listener(T* parent_): listener_base(parent_){_obj = parent_;}
 
-    ~listener() override;
+    ~listener() override
+    {}
 
     result<> set_read_delegate(listener::io_delegate d_ )
     {
@@ -53,8 +55,17 @@ public:
 
 private:
 
-    result<> on_ready_read(ifd&) override;
-    result<> on_write_read(ifd&) override;
+    result<> on_read_ready(ifd& if_) override
+    {
+        if(_read_delegate) return (_obj->*_read_delegate)(if_);
+        return rem::notimplemented;
+    }
+    result<> on_write_ready(ifd& if_) override
+    {
+        if(_write_delegate) return (_obj->*_write_delegate)(if_);
+        return rem::notimplemented;
+
+    }
 
 
     typename listener::io_delegate _write_delegate = nullptr;

@@ -3,6 +3,7 @@
 #include <scrat/interpret/interpret.h>
 #include <scrat/ui/console.h>
 #include <scrat/ui/elements/widget.h>
+#include <scrat/io/listener.h>
 
 using scrat::rem;
 using scrat::color;
@@ -43,6 +44,7 @@ void test::run()
 		test_interpret();
 		test_console();
 		test_alu();
+		test_io_listener();
 	}
 	catch (std::exception e)
 	{
@@ -163,3 +165,44 @@ void test::test_alu()
 
 	rem::push_info() < "1/3=" < (int)1/(int)3;
 }
+
+class test_listener : public scrat::object
+{
+
+public:
+	scrat::io::listener<test_listener>* listener = nullptr;
+
+
+	test_listener(){
+		listener = new scrat::io::listener<test_listener>(this);
+		listener->set_read_delegate(&test_listener::_read);
+		listener->set_write_delegate(&test_listener::_write);
+
+	}
+
+	~test_listener()
+	{
+		delete listener;
+	}
+private:
+	scrat::result<> _read(scrat::io::ifd& if_)
+	{
+		scrat::rem::push_debug(source_fnl) < " here we are... :)";
+		return rem::accepted;
+	}
+
+	scrat::result<> _write(scrat::io::ifd& if_)
+	{
+		scrat::rem::push_debug(source_fnl) < " here we are... :)";
+		return rem::accepted;
+	}
+
+};
+
+void test::test_io_listener()
+{
+	test_listener l;
+	l.listener->listen();
+	//...
+}
+

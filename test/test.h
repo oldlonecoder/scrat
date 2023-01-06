@@ -19,6 +19,8 @@ public:
 	void test_interpret();
 	void test_console();
 	void test_alu();
+	void test_io_listener();
+
 	scrat::result<scrat::object*> test_result();
 };
 
