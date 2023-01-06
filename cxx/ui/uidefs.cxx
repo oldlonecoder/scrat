@@ -13,7 +13,7 @@ db::themes db::data =
             {
                 "widget",
                 {
-                    {State::Active, {color::Blue1,color::Grey23}},
+                    {State::Active, {color::Blue1,color::DarkSeaGreen5}},
                     //...
                 }
             },

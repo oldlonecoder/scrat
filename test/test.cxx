@@ -134,7 +134,7 @@ void test::test_console()
 
 	widget w = widget(nullptr, WClass::TopLevel);
 	w.set_geometry({{1,1},{4000,4000},30,3});
-	w.set_location({0,0});
+	w.set_location({1,1});
     auto r = w.begin_draw();
     if(!r) return;
     painter& paint = *r;

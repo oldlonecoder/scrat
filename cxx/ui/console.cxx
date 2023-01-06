@@ -253,11 +253,15 @@ void console::update(vdc* dc_, const point& cxy_, const rect& area_)
     console::updates_mtx.lock(); // blocs until unlocked....?
     console::updates.push({dc_,cxy_,area_});
     console::updates_mtx.unlock();
+
+    // --- Just call console::draw(...) as of current dev status does not use threads yet :
+    (void) console::draw(); // Kind of screen::refresh
 }
 
 void console::draw_vdc(const console::updates_queu& q)
 {
     using ansi = attr<textattr::format::ansi256>;
+    rem::push_debug(source_fnl) < " vdc geometry: " < q.r < " at " < q.xy;
     for(int y = 0; y < q.r.height(); y++)
     {
         vdc::type p = q.dc->peek({q.r.a.x, q.r.a.y+y});
@@ -319,12 +323,9 @@ result<int> console::draw()
             rem::push_output() < " skipping vdc update :" < er;
             continue;
         }
-
         //re-offset to the terminal coords:
-        ecr += upd.xy;
-        rect inr = ecr;
-        inr -= upd.xy;
-        draw_vdc({upd.dc, upd.xy, inr});
+
+        draw_vdc({upd.dc, upd.xy, ecr});
 
         console::updates.pop();
     }

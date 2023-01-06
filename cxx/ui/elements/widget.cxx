@@ -31,25 +31,25 @@ _widget_class_bits(f_)
 
 widget::~widget()
 {
-    if(_widget_class_bits & WClass::TopLevel) delete _bloc;
+    if(_widget_class_bits & WClass::TopLevel) delete _dc;
     //...
 }
 
 result<> widget::update(const rect& r_)
 {
     rect r = geometry();
-
+    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < ":Geometry: " < color::Yellow < r < color::Reset;
     if(!r_)
     {
         // update the entire widget geometry
-        r = _bloc->geometry() & r;
+        r = _dc->geometry() & r;
         if(!r)
             return rem::rejected;
     }
     else
         r = r & r_;
 
-    _bloc->update_rect(r);// -- Disabled
+    _dc->update_rect(r);// -- Disabled
     //console::me().render_vdc(_bloc);
     return rem::accepted;
 }
@@ -57,7 +57,7 @@ result<> widget::update(const rect& r_)
 
 rect widget::geometry()
 {
-    return {_xy,_wh};
+    return {{},_wh};
 }
 
 
@@ -71,7 +71,7 @@ void widget::set_location(const point& xy_)
 {
     _xy = xy_;
     if(_widget_class_bits& WClass::TopLevel)
-        _bloc->set_location(_xy);
+        _dc->set_location(_xy);
      // ...
 }
 
@@ -82,12 +82,12 @@ result<> widget::setup_backbuffer()
 
     if(_widget_class_bits & WClass::TopLevel)
     {
-        if(_bloc)
-            _bloc->realloc(_wh);
+        if(_dc)
+            _dc->realloc(_wh);
         else
         {
-            _bloc = new vdc(this,_wh);
-            _bloc->alloc();
+            _dc = new vdc(this,_wh);
+            _dc->alloc();
         }
     }
     else
@@ -108,7 +108,7 @@ result<> widget::setup_backbuffer()
 */
 result<painter&> widget::begin_draw(const rect& r_)
 {
-    painter* p = new painter(_bloc, &_attr.mem, r_ ? r_ : rect());
+    painter* p = new painter(_dc, &_attr.mem, r_ ? r_ : rect());
     p->set_colors(_attr.colors());
     p->home();
     return *p;

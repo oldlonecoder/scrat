@@ -100,7 +100,7 @@ namespace scrat
 		static constexpr rem::code enter = 17; ///< enter bloc or indent
 		static constexpr rem::code leave = 18; ///< leaving bloc or unindent
 		static constexpr rem::code begin = 19; ///< begin (sel)section or indent
-		static constexpr rem::code end = 20; ///< end (sel)section or unindent
+		static constexpr rem::code end = 20; ///< end (sel)section, attribute ( auto- color::Reset ) and unindent
 		static constexpr rem::code notexist = 21; ///< does not exist
 		static constexpr rem::code exist = 26; ///< does not exist
 		static constexpr rem::code unexpected = 22; ///< nexpected

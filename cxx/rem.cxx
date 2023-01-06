@@ -235,7 +235,15 @@ rem& rem::operator<(rem::code c_)
 {
 	if(c_ == rem::endl)
 	{
+		_components.push_back(attr<textattr::format::ansi256>::fg(color::Reset));
 		_components.push_back(_codes_[c_].data());
+		return *this;
+	}
+
+	if(c_ == rem::end)
+	{
+		_components.push_back(attr<textattr::format::ansi256>::fg(color::Reset));
+		//...
 		return *this;
 	}
 

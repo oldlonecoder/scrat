@@ -15,7 +15,7 @@ class SCRAT_API vdc
 	point pos = { 0,0 };
 	scrat::dim wh;
 	point _location; ///< coords location on the terminal!!!
-	rect _peer = {};
+	rect _geo = {};
 
 	friend class console;
 	friend class painter;

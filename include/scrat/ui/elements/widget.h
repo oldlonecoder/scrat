@@ -17,7 +17,7 @@ class widget : public object
     _decl_objname
 protected:
     WClass::Type _widget_class_bits = 0;
-    vdc* _bloc = nullptr; ///< point to the instance of the widget's vdc. Whoever is the owner (WClass::Type flags)
+    vdc* _dc = nullptr; ///< point to the instance of the widget's vdc. Whoever is the owner (WClass::Type flags)
 
     result<> setup_backbuffer(); ///< sous reserve
     dim   _wh; ///< dimensions

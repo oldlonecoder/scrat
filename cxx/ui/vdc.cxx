@@ -11,6 +11,7 @@ vdc::vdc(object* parent_, scrat::dim dimension_):
 	_owner(parent_),
 	wh(dimension_)
 {
+    _geo = rect({}, wh);
 }
 
 vdc::~vdc()
@@ -39,6 +40,7 @@ result<vdc::type> vdc::realloc(const dim& dim_)
 		return rem::push_error() < rem::null_ptr < " cannot re-allocate undefined or invalide dimension.";
 
 	wh = dim_;
+    _geo.assign({},wh);
 	if (mem)
 		delete[] mem;
 	mem = mem = new vdc::cell::type[wh.w * wh.h + 1];
@@ -48,12 +50,13 @@ result<vdc::type> vdc::realloc(const dim& dim_)
 void vdc::dealloc()
 {
 	wh = {};
+    _geo = {};
 	delete[] mem;
 }
 
 rect vdc::geometry()
 {
-	return { {0,0}, wh };
+	return _geo;
 }
 
 int vdc::width()
@@ -74,16 +77,15 @@ point vdc::crs_pos()
 result<> vdc::set_position(const point& pt_)
 {
 	pos = pt_;
-	if (!rect{ {0, 0}, wh}.in(pt_))
+	if (!_geo.in(pt_))
 		return rem::push_error() < rem::rejected < " vdc::set_position : out of bounds :[" < (std::string)pt_ < ']';
 	return rem::ok;
 }
 
 vdc::type vdc::peek(const point& pt_)
 {
-	rect r = { {0,0}, wh };
 	auto* p = mem + (pt_.x + pt_.y * wh.w);
-	if (!r.in(pt_))
+	if (!_geo.in(pt_))
 		return nullptr;
 
 	return p;

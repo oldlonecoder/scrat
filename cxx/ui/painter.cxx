@@ -145,6 +145,7 @@ painter& painter::gotoxy(const point& pt_)
     if (!_r.in(pt))
         throw rem::push_exception(source_fl) < rem::endl < " : " < (std::string)pt_ < " is out of range in " < _r.to_string();
 
+    rem::push_debug(source_fnl) < color::Yellow < pt < rem::end;
     _cursor = _dc->peek(pt);
     return *this;
 }
