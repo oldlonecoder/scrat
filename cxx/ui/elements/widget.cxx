@@ -49,6 +49,7 @@ result<> widget::update(const rect& r_)
     else
         r = r & r_;
 
+    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < " Exposed geometry: " < color::Yellow < r < color::Reset;
     _dc->update_rect(r);// -- Disabled
     //console::me().render_vdc(_bloc);
     return rem::accepted;

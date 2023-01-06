@@ -19,6 +19,7 @@ class SCRAT_API vdc
 
 	friend class console;
 	friend class painter;
+	_decl_objname
 
 public:
 	using type = uint32_t*;

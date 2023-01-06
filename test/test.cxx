@@ -148,7 +148,7 @@ void test::test_console()
 
     //...
     char c;
-    std::cout << "enter char+ret...:";
+    std::cout << "\nenter char+ret...:";
     std::cin >> c;
 	console::terminate();
 

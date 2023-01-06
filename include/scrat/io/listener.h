@@ -4,6 +4,20 @@
 #include <scrat/result>
 #include <scrat/object>
 
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <signal.h>
+#include <sys/epoll.h>
+
+#include <fcntl.h>
+// #include <ifd.h>
+// #include <ethreads.h>
+
+
 namespace scrat::io
 {
 

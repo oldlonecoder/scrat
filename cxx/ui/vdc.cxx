@@ -6,6 +6,8 @@
 namespace scrat::ui
 {
 
+_object_name(vdc)
+
 
 vdc::vdc(object* parent_, scrat::dim dimension_):
 	_owner(parent_),
@@ -107,7 +109,7 @@ result<> vdc::update_rect(const rect &r_)
     // if(!r)
     //     return rem::rejected;
 
-
+    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < " Exposed geometry: " < color::Yellow < r_ < color::Reset;
     console::update(this, location(), r_);
 
     return rem::accepted;

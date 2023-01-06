@@ -111,8 +111,9 @@ console&  console::gotoxy(const point &pt_)
         rem::push_error() < rem::rejected < " coord '" < pt_ < "' is out of console's geometry.";
         return *this;
     }
-    std::cout << "\033[" << pt_.y << ';' << pt_.x << "H";
-    std::flush(std::cout);
+
+    std::cout << "\033[" << pt_.y + 1 << ';' << pt_.x + 1 << 'H';
+    fflush(stdout);
 
     return *this;
 }
@@ -120,36 +121,36 @@ console&  console::gotoxy(const point &pt_)
 
 console& console::operator<<(const std::string& aStr)
 {
-    write(1, aStr.c_str(), aStr.length());
+    write(STDOUT_FILENO,  aStr.c_str(), aStr.length());
     return *this;
 }
 
 
 console& console::operator<<(char C)
 {
-    write(1, &C, 1);
+    write(STDOUT_FILENO, &C, 1);
     return *this;
 }
 
 console& console::operator<<(Icon::Type C)
 {
     std::string str = Icon::Data[C];
-    write(1, str.c_str(), str.length());
+    write(STDOUT_FILENO, str.c_str(), str.length());
     return *this;
 }
 
 console& console::operator<<(Accent::Type A)
 {
     std::string str = Accent::Data[A];
-    write(1, str.c_str(), str.length());
+    write(STDOUT_FILENO, str.c_str(), str.length());
     return *this;
 }
 
 console& console::operator<<(color::type c)
 {
     auto s = scrat::attr<textattr::format::ansi256>::bg(c);
-    write(1,s.c_str(),s.length());
-    std::flush(std::cout);
+    write(STDOUT_FILENO,s.c_str(),s.length());
+    fflush(stdout);
     return *this;
 }
 
@@ -262,13 +263,13 @@ void console::draw_vdc(const console::updates_queu& q)
 {
     using ansi = attr<textattr::format::ansi256>;
     rem::push_debug(source_fnl) < " vdc geometry: " < q.r < " at " < q.xy;
+    auto w_ = q.r.width();
     for(int y = 0; y < q.r.height(); y++)
     {
-        vdc::type p = q.dc->peek({q.r.a.x, q.r.a.y+y});
-        auto w_ = q.r.width();
+        vdc::type p = q.dc->peek({q.r.a.x, q.r.a.y + y});
         vdc::cell cell=p;
         vdc::cell prev_cell=p;
-        terminal->gotoxy({q.r.a.x+q.xy.x, q.r.a.y+q.xy.y+y});
+        terminal->gotoxy({q.xy.x, q.xy.y + y});
         (*terminal) << ansi::bg(cell.bg()) << ansi::fg(cell.fg());
         point pt = q.r.a;
         pt += {0,y};
@@ -281,14 +282,15 @@ void console::draw_vdc(const console::updates_queu& q)
             if (cell.mem & vdc::cell::UGlyph)
             {
                 auto Ic =  cell.icon_id();
-                write(1, Icon::Data[Ic], std::strlen(Icon::Data[Ic]));
+                write(STDOUT_FILENO, Icon::Data[Ic], std::strlen(Icon::Data[Ic]));
             }
             else
-                write(1,&cell.mem,1);
+                write(STDOUT_FILENO,&cell.mem,1);
             prev_cell = p++;
             cell = p;
         }
-        write(1,"\033[0m",4);
+        write(STDOUT_FILENO,"\033[0m",4);
+        fflush(stdout);
     }
 }
 
