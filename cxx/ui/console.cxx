@@ -19,6 +19,7 @@
 
 
 
+
 namespace scrat::ui
 {
 
@@ -252,7 +253,7 @@ void console::update(vdc* dc_, const point& cxy_, const rect& area_)
     // not exposition check/compute yet. (too much load if rejected, so it shall be rejected during the exposure loop /(thread?))
 
     console::updates_mtx.lock(); // blocs until unlocked....?
-    console::updates.push({dc_,cxy_,area_});
+    console::updates.push({dc_,area_});
     console::updates_mtx.unlock();
 
     // --- Just call console::draw(...) as of current dev status does not use threads yet :
@@ -262,14 +263,16 @@ void console::update(vdc* dc_, const point& cxy_, const rect& area_)
 void console::draw_vdc(const console::updates_queu& q)
 {
     using ansi = attr<textattr::format::ansi256>;
-    rem::push_debug(source_fnl) < " vdc geometry: " < q.r < " at " < q.xy;
+    rem::push_debug(source_fnl) < " vdc geometry: " < q.r ;
 
     for(int y = 0; y < q.r.height(); y++)
     {
-        vdc::type p = q.dc->peek({q.r.a.x, q.r.a.y + y});
+        auto vr = q.r;
+        vr -= q.r.a;
+        vdc::type p = q.dc->peek({vr.a.x, vr.a.y + y});
         vdc::cell cell=p;
         vdc::cell prev_cell=p;
-        terminal->gotoxy({q.xy.x, q.xy.y + y});
+        terminal->gotoxy({q.r.a.x, q.r.a.y + y});
         (*terminal) << ansi::bg(cell.bg()) << ansi::fg(cell.fg());
         point pt = q.r.a;
         pt += {0,y};
@@ -285,7 +288,7 @@ void console::draw_vdc(const console::updates_queu& q)
                 {
                     auto Ic =  cell.icon_id();
                     write(STDOUT_FILENO, Icon::Data[Ic], std::strlen(Icon::Data[Ic]));
-                    terminal->gotoxy({q.xy.x+x+1, q.xy.y + y});
+                    terminal->gotoxy({q.r.a.x+x+1, q.r.a.y + y});
                 }
                 if (cell.mem & vdc::cell::Accent)
                 {
@@ -311,34 +314,9 @@ result<int> console::draw()
 {
     console::updates_mtx.lock(); // blocs until unlocked....?
     while(!console::updates.empty())
-    {    auto upd = console::updates.top();
-
-        // get the terminal dimensions:
-        rect cr = rect({}, terminal->wh);
-        // get exposed vdc subregion at the coords on the terminal:
-        rect er = rect(upd.xy, upd.r.sz);
-        // intersect exposed dimension on terminal :
-        rect ecr = cr & er;
-        if(!ecr)
-        {
-            rem::push_output() < " skipping vdc update :" < er;
-            continue;
-        }
-
-        // back offset.
-        ecr -= upd.xy;
-        // intersect with dc's exposed subregion again.
-        ecr = ecr & upd.r;
-        if(!ecr)
-        {
-            // again, if not exposed then leave.
-            rem::push_output() < " skipping vdc update :" < er;
-            continue;
-        }
-        //re-offset to the terminal coords:
-
-        draw_vdc({upd.dc, upd.xy, ecr});
-
+    {
+        auto upd = console::updates.top();
+        draw_vdc(upd);
         console::updates.pop();
     }
     console::updates_mtx.unlock();
@@ -360,5 +338,9 @@ void console::terminate()
     crs_show();
 }
 
+rect console::geometry()
+{
+    return {{0,0},terminal->wh};
+}
 
 }

@@ -103,17 +103,7 @@ std::string vdc::cell::details()
     return str();
 }
 
-result<> vdc::update_rect(const rect &r_)
-{
-    // rect r = r_ & geometry();
-    // if(!r)
-    //     return rem::rejected;
 
-    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < " Exposed geometry: " < color::Yellow < r_ < color::Reset;
-    console::update(this, location(), r_);
-
-    return rem::accepted;
-}
 result<> vdc::clear()
 {
    if (!mem)

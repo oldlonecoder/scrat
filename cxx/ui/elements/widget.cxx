@@ -6,6 +6,8 @@
 
 
 
+
+
 namespace scrat::ui
 {
 _object_name(widget)
@@ -49,39 +51,21 @@ result<> widget::update(const rect& r_)
     if(!_dc)
         throw rem::push_exception(source_pffl) < " this widget '" < class_name() < "' has no vdc!!!";
 
-    rect r = geometry();
-    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < ":Geometry: " < color::Yellow < r < color::Reset;
-    if(!r_)
-    {
-        // update the entire widget geometry
-        r = _dc->geometry() & r;
-        if(!r)
-            return rem::rejected;
-    }
-    else
-        r = r & r_;
+    auto rr = expose(r_);
+    rect r = *rr;
 
+    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < ":Geometry: " < color::Yellow < r < color::Reset;
+    if(!r)
+        return rem::rejected;
     rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < " Exposed geometry: " < color::Yellow < r < color::Reset;
-    _dc->update_rect(r);// -- Disabled
-    //console::me().render_vdc(_bloc);
+    console::update(_dc,{},r);
     return rem::accepted;
 }
+
+
 result<> widget::update()
 {
-    if(!_dc)
-        throw rem::push_exception(source_pffl) < " this widget '" < class_name() < "' has no vdc!!!";
-
-    rect r = geometry();
-    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < ":Geometry: " < color::Yellow < r < color::Reset;
-        // update the entire widget geometry
-
-    if(!(_dc->geometry() & r))
-        return rem::rejected;
-
-    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < " Exposed geometry: " < color::Yellow < r < color::Reset;
-    _dc->update_rect(r);// -- Disabled
-    //console::me().render_vdc(_bloc);
-    return rem::accepted;
+    return update(geometry());
 }
 
 
@@ -159,17 +143,19 @@ result<> widget::setup_backbuffer()
        A{2,2}
        B{5,1}
        C{16,2}
+       D{3,0}
 
        C->B {16,2}
        C->A {21,3}
        C->Terminal{25,7}
+
        +========================================================+
        |                            A                           |
        |     +====================================+             |
        |     |                 B                  |             |
        |     |                                    |             |
        |     |                +===================|             |
-       |     |                |         C         |             |
+       |     |                |   D     C         |             |
        |     |                +===================|             |
        |     +====================================+             |
        |                                                        |
@@ -219,5 +205,51 @@ void widget::draw()
     end_draw(paint);
 }
 
+result<rect> widget::expose(const rect &local_sub_r)
+{
+
+    auto r = geometry();
+    if(local_sub_r)
+    {
+        r = r & local_sub_r;
+        if(!r) return r;
+    }
+
+    // offset:
+    r += _xy;
+
+    if(is_toplevel() || is_floating() )
+    {
+        //final offset compute here:
+        r =  console::geometry() & r;
+        if(!r)
+            return r;
+
+        return r;
+    }
+    else
+    {
+        auto * par = parent<widget>();
+        if(par) return par->expose(r);
+    }
+
+    // no expose; (no parent, this widget is not toplevel nor floating -- Logistic Bug ...)
+    return {};
 }
 
+
+bool widget::is_toplevel()
+{
+    return _widget_class_bits & WClass::TopLevel;
+}
+
+bool widget::is_child()
+{
+    return  _widget_class_bits & WClass::Child;
+}
+
+bool widget::is_floating()
+{
+    return  _widget_class_bits & WClass::Floating;
+}
+}

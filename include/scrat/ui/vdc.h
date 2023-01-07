@@ -106,8 +106,6 @@ public:
 	result<> set_position(const point& pt_);
 	void set_location(const point& pt_) { _location = pt_;}
 	point location() { return _location;}
-	result<> update_rect(const rect& r_);
-
 	result<> clear(); ///< clear with current attr
 	result<> clear(const rect& r_); ///< clear sub-region with the current attr;
 	result<> clear(vdc::cell::type a_, const rect& r_ = {});

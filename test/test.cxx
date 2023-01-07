@@ -147,7 +147,7 @@ void test::test_console()
 
     //...
     char c;
-    std::cout << "\nenter char+ret...:";
+    std::cout << "\n\n\n\nenter char+ret...:";
     std::cin >> c;
 	console::terminate();
 	delete lbl;

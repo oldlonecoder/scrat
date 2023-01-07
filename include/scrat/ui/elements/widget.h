@@ -42,6 +42,13 @@ public:
 
     virtual void draw();
 
+
+    result<rect> expose(const rect& local_sub_r = {});
+
+    bool is_toplevel();
+    bool is_child();
+    bool is_floating();
+
 };
 
 }

@@ -26,7 +26,7 @@ public:
     struct updates_queu
     {
         vdc* dc; ///< video display (cells/context)...
-        point xy; ///< vdc's coords on screen/terminal/console...
+        //point xy; ///< vdc's coords on screen/terminal/console...
         rect r; ///< subregion to 'expose'.
         using stack = std::stack<console::updates_queu>;
     };
@@ -57,10 +57,12 @@ public:
 
     static console& me();
     static void terminate();
+    static rect geometry();
 private:
     static console::updates_queu::stack updates;
 
     static void  draw_vdc(const console::updates_queu& q);
+
 
 
 };
