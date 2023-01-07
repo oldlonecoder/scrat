@@ -21,6 +21,7 @@ listener_base::~listener_base()
 
 result<> scrat::io::listener_base::listen()
 {
+    rem::push_debug(source_pffl) < " intentionally call the delegates:";
     on_read_ready(_ifds.back());
     on_write_ready(_ifds.back());
     return rem::notimplemented;

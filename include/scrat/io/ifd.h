@@ -36,15 +36,15 @@ struct SCRAT_API ifd final
         uint8_t write : 1; ///< ready to write
         uint8_t del   : 1; ///< to be deleted/closed/destroyed;
         uint8_t active: 1; ///< active or not.
-
+        uint8_t autoread : 1; ///< Immediate read (eg.: keyboard input), then signal after; 0: signal then let the owner read.
     }bits;
 
-    int seglength = 0; ///< segment length to be read;
-
-
+    uint32_t seglength = 0; ///< segment length to be read;
+    std::vector<uint8_t> buffer; ///< limited indexable bytes buffer ( such as keyboard input sequence and  application network control protocole sequence )
     ifd(int fd_=-1);
     ~ifd();
 
+    uint32_t to_read();
 
 
 };

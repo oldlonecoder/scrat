@@ -25,7 +25,12 @@ namespace scrat::io
 class SCRAT_API listener_base: public object
 {
 
-    ifd::list _ifds;
+    ifd::list   _ifds;
+    int         _maxifd = -1;
+    epoll_event _epoll_event;
+    int         _epollfd = -1;
+    int         _epollnumfd = -1;
+    bool        _terminate_set = false; /// gtk looooooong naming style...
 
 public:
 
@@ -71,12 +76,22 @@ private:
 
     result<> on_read_ready(ifd& if_) override
     {
-        if(_read_delegate) return (_obj->*_read_delegate)(if_);
+        if(_read_delegate)
+        {
+            if(_obj) return (_obj->*_read_delegate)(if_);
+            return rem::null_ptr;
+        }
         return rem::notimplemented;
     }
+
+
     result<> on_write_ready(ifd& if_) override
     {
-        if(_write_delegate) return (_obj->*_write_delegate)(if_);
+        if(_write_delegate)
+        {
+            if(_obj) return (_obj->*_write_delegate)(if_);
+            return rem::null_ptr;
+        }
         return rem::notimplemented;
 
     }
