@@ -92,6 +92,20 @@ struct SCRAT_API Icon final
     static constexpr T CInfo                 = "כֿ ";
     static constexpr T CWarning              = " ";
 
+    static constexpr T CEditPencilBR         = "✎ ";
+    static constexpr T CEditPencilR          = "✏ ";
+    static constexpr T CEditPencilUR         = "✐ ";
+    static constexpr T CNegCrossCheck        = "❎ ";
+    static constexpr T CShadowedCheckBox     = "❏ ";
+    static constexpr T CSpinArrowSpin0       = "➩ ";
+    static constexpr T CSpinArrowSpin1       = "➪ ";
+    static constexpr T CSpinArrowSpin2       = "➫ ";
+    static constexpr T CSpinArrowSpin3       = "➬ ";
+    static constexpr T CSpinArrowSpin4       = "➭ ";
+    static constexpr T CSpinArrowSpin5       = "➮ ";
+    static constexpr T CSpinArrowSpin6       = "➯ ";
+    static constexpr T CSpinArrowSpin7       = "➱ ";
+
     static constexpr Type NullPtr            = 0;
     static constexpr Type ArrowRight         = 1;
     static constexpr Type ArrowLeft          = 2;

@@ -240,6 +240,10 @@ struct SCRAT_API rect
 		return ret;
 	}
 
+	rect operator + (const point& xy)const {
+		return {{a.x + xy.x, a.y + xy.y}, sz};
+	}
+
 	std::string to_string() const;
 	operator std::string() const ;
 	operator bool() const

@@ -20,8 +20,8 @@
 
 #include <scrat/result.h>
 
-/* 
- !! notes  
+/*
+ !! notes
 
 
  https://learn.microsoft.com/en-us/powershell/scripting/samples/creating-a-custom-input-box?view=powershell-7.3
@@ -107,26 +107,27 @@ namespace scrat
 	class SCRAT_API object
 	{
 		_decl_objname
-		
+
 	public:
-	
+
 		using list = std::vector<object*>;
 		using iterator = object::list::iterator;
 
 		object();
-		object(object* _parent);
+		object(object* parent_);
 
 		virtual ~object();
 
 		template<typename T> T* parent()
 		{
 			if (_parent) return dynamic_cast<T*>(_parent);
+            return nullptr;
 		}
 
 		object::iterator query(object* obj);
 
 	protected:
-		  
+
 		object::list _children;
 
 		void detach(object* obj);
@@ -134,7 +135,7 @@ namespace scrat
 
 		object* _parent = nullptr;
 
-	 
+
 	};
 
 }

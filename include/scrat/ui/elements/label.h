@@ -23,7 +23,8 @@ public:
     label(widget* parent_, const std::string& txt_);
 
     ~label() override;
-
-
+    void draw() override;
 };
+
+
 }

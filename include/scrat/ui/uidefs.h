@@ -70,6 +70,7 @@ namespace State
 	static constexpr Type Error   = 0x08;
 	static constexpr Type Warning = 0x10;
 	static constexpr Type Illegal = 0x20;
+	static constexpr Type Visible = 0x40;
 }
 
 namespace colors

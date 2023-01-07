@@ -1,21 +1,24 @@
 #include <scrat/object>
-namespace scrat 
+namespace scrat
 {
 
 
 
 	_object_name(object)
-	
-		
+
+
 	scrat::object::object()
 	{
 
 	}
 
-	scrat::object::object(object* _parent)
+	scrat::object::object(object* parent_)
 	{
-		if (_parent != nullptr)
+		if (parent_ != nullptr)
+		{
+			_parent = parent_;
 			_parent->add_child(this);
+		}
 	}
 
 	scrat::object::~object()

@@ -22,19 +22,25 @@ protected:
     result<> setup_backbuffer(); ///< sous reserve
     dim   _wh; ///< dimensions
     point _xy; ///< relative position into the parent's geometry...
-    vdc::cell _attr = ' ';
+    vdc::cell _attr     = ' ';
+    State::Type _state  = State::Normal|State::Visible;
+
 public:
     widget();
     widget(object* parent_, WClass::Type class_ = 0);
     ~widget() override;
 
     virtual result<> set_geometry(const dim& wh_);
+    virtual result<> set_geometry(const rect& r_);
     virtual void set_location(const point &xy_);
 
-    virtual result<> update(const rect& r_ = {});
+    virtual result<> update(const rect& r_);
+    virtual result<> update();
     virtual rect geometry();
     virtual result<painter&> begin_draw(const rect& r_ = {});
     virtual result<> end_draw(painter& painter_);
+
+    virtual void draw();
 
 };
 

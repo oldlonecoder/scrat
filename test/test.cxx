@@ -2,7 +2,7 @@
 #include <scrat/text>
 #include <scrat/interpret/interpret.h>
 #include <scrat/ui/console.h>
-#include <scrat/ui/elements/widget.h>
+#include <scrat/ui/elements/label.h>
 #include <scrat/io/listener.h>
 
 using scrat::rem;
@@ -135,22 +135,22 @@ void test::test_console()
 	//console::me() << " Test ...\n\n\n\n";
 
 	widget w = widget(nullptr, WClass::TopLevel);
-	w.set_geometry({{1,1},{4000,4000},30,3});
+	w.set_geometry({{1,1},{4000,4000},50,3});
 	w.set_location({1,1});
-    auto r = w.begin_draw();
-    if(!r) return;
-    painter& paint = *r;
-    paint.clear();
-    paint.gotoxy({1,1});
-    paint << scrat::Icon::Arch << " test..." << scrat::Accent::agrave << ' ' << scrat::Icon::ArrowDownLeft;
-    w.end_draw(paint);
+    w.draw();
     w.update();
+    label *lbl = new label(&w, "Hello, scrat::ui!!!");
+
+    lbl->set_geometry({1,1, 40,1});
+    lbl->draw();
+    lbl->update();
 
     //...
     char c;
     std::cout << "\nenter char+ret...:";
     std::cin >> c;
 	console::terminate();
+	delete lbl;
 
 
 }
