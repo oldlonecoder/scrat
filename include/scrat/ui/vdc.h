@@ -40,16 +40,17 @@ public:
 		static constexpr uint32_t BGMask	= 0x00FF0000;
 		static constexpr uint32_t CMask		= 0x00FFFF00;
 		static constexpr uint32_t AttrMask	= 0xFF000000;
+		static constexpr uint32_t UTFMASK	= 0x11000000;
+		// ==================Attributes==========================
+		static constexpr uint32_t  UGlyph 	= 0x01000000;
+		static constexpr uint32_t  Underline= 0x02000000;
+		static constexpr uint32_t  Stroke 	= 0x04000000;
+		static constexpr uint32_t  Blink 	= 0x08000000;
+		static constexpr uint32_t  Accent 	= 0x10000000;
 		// ==============Bit Shift ============================
 		static constexpr int FGShift = 0x08;
 		static constexpr int BGShift = 0x10;
 		static constexpr int ATShift = 0x18;
-		// ==================Attributes==========================
-		static constexpr uint32_t  UGlyph = 0x01000000;
-		static constexpr uint32_t  Underline = 0x02000000;
-		static constexpr uint32_t  Stroke = 0x04000000;
-		static constexpr uint32_t  Blink = 0x08000000;
-		static constexpr uint32_t  Accent = 0x10000000;
 
 
 		cell() = default;

@@ -37,6 +37,7 @@ add_library(
         cxx/ui/console.cxx
         cxx/ui/painter.cxx
         cxx/ui/elements/widget.cxx
+        cxx/ui/elements/label.cxx
         cxx/io/ifd.cxx
         cxx/io/listener.cxx
 )

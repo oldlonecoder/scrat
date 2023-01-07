@@ -36,8 +36,8 @@ painter& painter::operator<<(color::type name_)
  */
 painter& painter::operator<<(Icon::Type ic_id_)
 {
-    vdc::cell c = _cursor;
-    c << ic_id_;
+    vdc::cell c = _cell;
+    *_cursor = (c << ic_id_).mem;
     ++_cursor;
     return *this;
 }
@@ -51,8 +51,8 @@ painter& painter::operator<<(Icon::Type ic_id_)
  */
 painter& painter::operator << (Accent::Type aAcc)
 {
-    vdc::cell c = _cursor;
-    c << aAcc;
+    vdc::cell c = _cell;
+    *_cursor = (c << aAcc).mem;
     ++_cursor;
     return *this;
 }

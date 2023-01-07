@@ -16,12 +16,14 @@ namespace scrat::ui
 namespace Justify
 {
 using Type = uint8_t;
-static constexpr uint8_t HCenter = 0x01;
-static constexpr uint8_t VCenter = 0x02;
-static constexpr uint8_t Center = 0x03;
-static constexpr uint8_t WordWRap = 0x08;
-static constexpr uint8_t Prefix = 0x10;
-static constexpr uint8_t Suffix = 0x20;
+static constexpr uint8_t Left 		= 0x01;
+static constexpr uint8_t Right 		= 0x02;
+static constexpr uint8_t HCenter 	= 0x04;
+static constexpr uint8_t VCenter 	= 0x08;
+static constexpr uint8_t Center 	= 0x0C;
+static constexpr uint8_t WordWRap 	= 0x10;
+static constexpr uint8_t Prefix 	= 0x20;
+static constexpr uint8_t Suffix 	= 0x40;
 }
 
 

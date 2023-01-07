@@ -251,20 +251,20 @@ uint8_t vdc::cell::ascii()
 }
 vdc::cell& vdc::cell::operator << (Icon::Type i_)
 {
-	mem = (mem & ~(cell::AttrMask | cell::CharMask)) | cell::UGlyph | i_;
+	mem = (mem & ~(cell::UTFMASK | cell::CharMask)) | cell::UGlyph | i_;
 	return *this;
 }
 
 vdc::cell& vdc::cell::operator<< (Accent::Type accent_)
 {
-    mem = (mem & ~(cell::UGlyph | cell::CharMask)) | cell::Accent | accent_;
+    mem = (mem & ~(cell::UTFMASK | cell::CharMask)) | cell::Accent | accent_;
     return *this;
 }
 
 
 vdc::cell& vdc::cell::reset_attributes(vdc::cell::type bits_)
 {
-    mem = (mem & (CharMask | UGlyph)) | bits_;
+    mem = (mem & (CharMask | AttrMask|UTFMASK)) | bits_;
     return *this;
 }
 

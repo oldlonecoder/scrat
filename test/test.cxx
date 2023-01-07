@@ -142,7 +142,7 @@ void test::test_console()
     painter& paint = *r;
     paint.clear();
     paint.gotoxy({1,1});
-    paint << "test...";
+    paint << scrat::Icon::Arch << " test..." << scrat::Accent::agrave << ' ' << scrat::Icon::ArrowDownLeft;
     w.end_draw(paint);
     w.update();
 

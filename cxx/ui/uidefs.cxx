@@ -22,6 +22,7 @@ db::themes db::data =
                 {
                     {State::Active, {color::Blue1, color::White}},
                     {State::Disable,{color::Grey19, color::White}},
+                    {State::Normal,{color::Blue1, color::White}},
                     //...
                 }
             }

@@ -263,7 +263,7 @@ void console::draw_vdc(const console::updates_queu& q)
 {
     using ansi = attr<textattr::format::ansi256>;
     rem::push_debug(source_fnl) < " vdc geometry: " < q.r < " at " < q.xy;
-    auto w_ = q.r.width();
+
     for(int y = 0; y < q.r.height(); y++)
     {
         vdc::type p = q.dc->peek({q.r.a.x, q.r.a.y + y});
@@ -274,15 +274,25 @@ void console::draw_vdc(const console::updates_queu& q)
         point pt = q.r.a;
         pt += {0,y};
         rem::push_output() < " vdc line#" < y < " " < pt;
-
+        auto w_ = q.r.width();
         for(int x = 0; x< w_; x++)
         {
             if (prev_cell.bg() != cell.bg()) (*terminal) << ansi::bg(cell.bg());
             if (prev_cell.fg() != cell.fg()) (*terminal) << ansi::fg(cell.fg());
-            if (cell.mem & vdc::cell::UGlyph)
+            if(cell.mem & vdc::cell::UTFMASK)
             {
-                auto Ic =  cell.icon_id();
-                write(STDOUT_FILENO, Icon::Data[Ic], std::strlen(Icon::Data[Ic]));
+                if (cell.mem & vdc::cell::UGlyph)
+                {
+                    auto Ic =  cell.icon_id();
+                    write(STDOUT_FILENO, Icon::Data[Ic], std::strlen(Icon::Data[Ic]));
+                    terminal->gotoxy({q.xy.x+x+1, q.xy.y + y});
+                }
+                if (cell.mem & vdc::cell::Accent)
+                {
+                    //w_ -= 1;
+                    auto Ic =  cell.accent_id();
+                    write(STDOUT_FILENO, Accent::Data[Ic], std::strlen(Accent::Data[Ic]));
+                }
             }
             else
                 write(STDOUT_FILENO,&cell.mem,1);
