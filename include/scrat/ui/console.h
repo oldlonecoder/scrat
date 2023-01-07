@@ -28,7 +28,7 @@ public:
         vdc* dc; ///< video display (cells/context)...
         //point xy; ///< vdc's coords on screen/terminal/console...
         rect r; ///< subregion to 'expose'.
-        using stack = std::stack<console::updates_queu>;
+        using stack = std::vector<console::updates_queu>;
     };
 
     ~console();

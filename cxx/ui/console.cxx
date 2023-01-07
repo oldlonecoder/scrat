@@ -253,7 +253,7 @@ void console::update(vdc* dc_, const point& cxy_, const rect& area_)
     // not exposition check/compute yet. (too much load if rejected, so it shall be rejected during the exposure loop /(thread?))
 
     console::updates_mtx.lock(); // blocs until unlocked....?
-    console::updates.push({dc_,area_});
+    console::updates.push_back({dc_,area_});
     console::updates_mtx.unlock();
 
     // --- Just call console::draw(...) as of current dev status does not use threads yet :
@@ -313,11 +313,9 @@ void console::draw_vdc(const console::updates_queu& q)
 result<int> console::draw()
 {
     console::updates_mtx.lock(); // blocs until unlocked....?
-    while(!console::updates.empty())
+    for( auto upd : console::updates)
     {
-        auto upd = console::updates.top();
         draw_vdc(upd);
-        console::updates.pop();
     }
     console::updates_mtx.unlock();
     return 0;
@@ -334,7 +332,7 @@ console &console::me()
 void console::terminate()
 {
     std::cout << "\033[0m\033[?1049l";
-    while(!console::updates.empty()) console::updates.pop();
+    console::updates.clear();
     crs_show();
 }
 

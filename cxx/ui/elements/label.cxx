@@ -33,7 +33,7 @@ void label::draw()
 {
     widget::draw();
     try{
-        auto & p = *begin_draw({_xy, _wh});
+        auto & p = *begin_draw({{0,0}, _wh});
         p.home();
         p << _text;
         end_draw(p);

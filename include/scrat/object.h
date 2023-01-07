@@ -125,6 +125,7 @@ namespace scrat
 		}
 
 		object::iterator query(object* obj);
+		template<typename T> T* to() { return dynamic_cast<T*>(this); }
 
 	protected:
 

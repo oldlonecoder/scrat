@@ -59,12 +59,19 @@ result<> widget::update(const rect& r_)
         return rem::rejected;
     rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < " Exposed geometry: " < color::Yellow < r < color::Reset;
     console::update(_dc,{},r);
+    // for(auto * c : _children)
+    // {
+    //     widget* w = c->to<widget>();
+    //     if(w) w->update();
+    // }
+
     return rem::accepted;
 }
 
 
 result<> widget::update()
 {
+
     return update(geometry());
 }
 
@@ -203,6 +210,11 @@ void widget::draw()
     auto& paint = *begin_draw();
     paint.clear();
     end_draw(paint);
+    for(auto* c : _children)
+    {
+        widget* w = c->to<widget>();
+        if(w) w->draw();
+    }
 }
 
 result<rect> widget::expose(const rect &local_sub_r)
