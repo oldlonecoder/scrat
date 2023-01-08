@@ -92,7 +92,6 @@ struct SCRAT_API dim
 	operator bool() const { return (w > T{ 0 } || h > T{ 0 }); }
 	operator std::string() const;
 	T area() { return w * h; }
-
 };
 
 
@@ -135,14 +134,15 @@ struct SCRAT_API rect
 		b = { a + point{a.x==0?sz.w-1:sz.w, a.y==0? sz.h-1:sz.h} };
 	}
 
-	rect(T x, T y, T bx, T by)
+
+	rect(T x, T y, T dx, T dy)
 	{
 		a = { x,y };
-		b = { bx,by };
+		b = { x+dx, y+dy };
 		sz.min = {1,1};
 		sz.max = {10000,10000};
-		sz.w = bx+1 - x;
-		sz.h = by+1 - y;
+		sz.w = dx;
+		sz.h = dy;
 	}
 
 	void assign(T x, T y, T w, T h)

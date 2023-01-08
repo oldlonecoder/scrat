@@ -24,7 +24,7 @@ protected:
     point _xy; ///< relative position into the parent's geometry...
     vdc::cell _attr     = ' ';
     State::Type _state  = State::Normal|State::Visible;
-    painter _paint;
+    //painter _paint;
 
 public:
     widget();

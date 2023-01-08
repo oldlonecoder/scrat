@@ -182,14 +182,16 @@ result<painter&> widget::begin_draw(const rect& r_)
 
 
     }
-
+    rem::push_debug(source_ffl) < " draw Geometry : " < r < ":";
+    if(r_)
+        r = r & r_;
 
     if(!r)
     {
         _state &= ~(State::Visible);
         throw rem(rem::message, source_pffl) < " skipping " < class_name() < " update: " < geometry();
     }
-    painter* p = new painter(_dc, &_attr.mem, r_ ? r_ : rect());
+    painter* p = new painter(_dc, &_attr.mem, r);
     p->set_colors(_attr.colors());
     p->home();
     return *p;
@@ -208,11 +210,7 @@ result<> widget::end_draw(painter& painter_)
 void widget::draw()
 {
     rem::push_debug(source_pffl) < " class '" < color::Orange3 < this->class_name() < color::Reset <"' geometry:[" < color::Yellow < geometry() < color::Reset < "] :";
-    if(!_dc)
-        throw rem::push_exception(source_pffl) < " this widget '" < class_name() < "' has no vdc!!!";
-    auto& paint = *begin_draw();
-    paint.clear();
-    end_draw(paint);
+
     for(auto* c : _children)
     {
         widget* w = c->to<widget>();
@@ -230,7 +228,6 @@ result<rect> widget::expose(const rect &local_sub_r)
         if(!r) return r;
     }
 
-    // offset:
     r += _xy;
 
     if(is_toplevel() || is_floating() )
