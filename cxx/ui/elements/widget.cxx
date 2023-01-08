@@ -182,7 +182,17 @@ result<painter&> widget::begin_draw(const rect& r_)
 
 
     }
-    rem::push_debug(source_ffl) < " draw Geometry : " < r < ":";
+    else
+    {
+        r += _xy;
+        widget* par = parent<widget>();
+        while(par)
+        {
+            if(!par->is_toplevel()) r += par->_xy;
+            par = par->parent<widget>();
+        }
+    }
+    rem::push_debug(source_ffl) < " draw Geometry [ " < color::Orange3 < class_name() < color::Reset < "]:" < r < ":";
     if(r_)
         r = r & r_;
 
@@ -210,6 +220,9 @@ result<> widget::end_draw(painter& painter_)
 void widget::draw()
 {
     rem::push_debug(source_pffl) < " class '" < color::Orange3 < this->class_name() < color::Reset <"' geometry:[" < color::Yellow < geometry() < color::Reset < "] :";
+    auto &paint = *begin_draw();
+    paint.clear();
+    end_draw(paint);
 
     for(auto* c : _children)
     {
@@ -220,7 +233,7 @@ void widget::draw()
 
 result<rect> widget::expose(const rect &local_sub_r)
 {
-
+    rem::push_debug() < color::Orange3 < class_name() < color::Reset < " exposed rect " < local_sub_r < ":";
     auto r = geometry();
     if(local_sub_r)
     {

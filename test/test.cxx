@@ -140,19 +140,26 @@ void test::test_console()
 	w.set_location({1,1});
 
     label *lbl = new label(&w, "Hello, scrat::ui!!!");
-    lbl->set_geometry({1,1, 40,1});
+    lbl->set_geometry({0,0, 40,1});
+	lbl->set_location({1,1});
 
 	scrat::ui::icon* icn = new scrat::ui::icon(lbl, scrat::Icon::Success);
 	icn->set_location({1,0});
-
-	w.draw();
-	w.update();
+	try{
+		w.draw();
+		w.update();
+	}
+	catch(rem e)
+	{
+		;
+	}
     //...
     char c;
     std::cout << "\n\n\n\nenter char+ret...:";
     std::cin >> c;
 	console::terminate();
 	delete lbl;
+	delete icn;
 
 
 }

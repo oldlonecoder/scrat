@@ -139,9 +139,10 @@ painter& painter::operator<<(const point& XY)
  */
 painter& painter::gotoxy(const point& pt_)
 {
-    //rem::push_debug(SourceLocation) << " @(" << XY.to_string() << "):";
+
     point pt;
     pt += pt_ + _r.a; // + {0,0} by default;
+    rem::push_debug(source_ffl) < " on _dc: @(" < pt_ < "):";
     if (!_r.in(pt))
         throw rem::push_exception(source_fl) < rem::endl < " : " < (std::string)pt_ < " is out of range in " < _r.to_string();
 

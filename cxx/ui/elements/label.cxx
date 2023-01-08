@@ -31,17 +31,11 @@ label::~label()
 */
 void label::draw()
 {
-    try{
-        auto & p = *begin_draw({{0,0}, _wh});
-        p.clear().home();
-        p << _text;
-        end_draw(p);
-        widget::draw();
-    }
-    catch(rem e)
-    {
-        rem::push_info() < rem::endl < "[" < e.cc() < "]";
-    }
+    widget::draw();
+    auto & p = *begin_draw();
+    p.gotoxy({3,0}); ///< abritrary positionning for not erasing the icon child widget;
+    p << _text;
+    end_draw(p);
 }
 
 
