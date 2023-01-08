@@ -155,7 +155,8 @@ void test::test_console()
 	}
     //...
     char c;
-    std::cout << "\n\n\n\nenter char+ret...:";
+	console::me().gotoxy({1, 6});
+	console::me() << scrat::Icon::PencilDr <<  "Enter anykey + " << scrat::Icon::KeyEnter << " :";
     std::cin >> c;
 	console::terminate();
 	delete lbl;

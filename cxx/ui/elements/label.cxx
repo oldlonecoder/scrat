@@ -1,8 +1,5 @@
 #include <scrat/ui/elements/label.h>
 
-
-
-
 namespace scrat::ui
 {
 
@@ -38,5 +35,18 @@ void label::draw()
     end_draw(p);
 }
 
+result<> label::set_prefix_icon(Icon::Type c_)
+{
+    return result<>();
+}
 
+result<> label::set_suffix_icon(Icon::Type c_)
+{
+    return result<>();
+}
+
+result<> label::set_shortkey(char c_)
+{
+    return result<>();
+}
 }

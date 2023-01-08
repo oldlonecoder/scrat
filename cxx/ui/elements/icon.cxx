@@ -13,13 +13,13 @@ _object_name(icon)
 
 icon::icon() : widget()
 {
-    _attr.set_color(colors::db::data["default"]["icon"][State::Normal]);
+    _attr.set_color(colors::db::data["default"]["icon"][State::Focus]);
 }
 
 icon::icon(widget* parent_, Icon::Type ic_): widget(parent_),
 _ic(ic_)
 {
-    _attr.set_color(colors::db::data["default"]["icon"][State::Normal]);
+    _attr.set_color(colors::db::data["default"]["icon"][State::Focus]);
     set_geometry({0,0, 1,1});
 }
 

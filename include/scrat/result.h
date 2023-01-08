@@ -6,7 +6,7 @@ namespace scrat
 {
 	template<typename T = rem::code>  class  result final
 	{
-		rem* fail;
+		rem* fail = nullptr;
         T value;
 		bool good = false;
 
@@ -19,13 +19,13 @@ namespace scrat
 		}
 
 		~result() {}
-		
+
 		result(rem& msg)
 		{
 			good = false;
 			fail = &msg;
 		}
-		
+
 		result(T value_):value(value_),good(true) {}
 
 		result(result&& r) noexcept
@@ -66,7 +66,7 @@ namespace scrat
 				value = r.value;
 
 		}
-		
+
 		result operator=(rem& r)
 		{
 			good = false;
@@ -90,7 +90,7 @@ namespace scrat
 			return value;
 		}
 
-		auto operator->() -> T 
+		auto operator->() -> T
 		{
 			if(!good)
 				throw rem(rem::except) < " invalid call to result::operator '->', instance is in fail state.";

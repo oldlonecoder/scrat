@@ -98,7 +98,7 @@ namespace scrat
             *
             * I've started to get curious about command-line args processing, and this class is what I think can be interresting to write a simple
             * command-line args with callbacks, in a single header file.
-            * 
+            *
             *
             * @author  &copy; 2012, Serge Lussier (lussier.serge@gmail.com)
             *
@@ -251,7 +251,7 @@ namespace scrat
                             getout:
                                 m_psw = 0;
                                 m_swerr = sw_key;
-                                throw ccoption<T>::Error::Switch;
+                                throw ccoption<T>::error::Switch;
                             }
                         }
                         else {
@@ -273,7 +273,7 @@ namespace scrat
                             }
                         }
                         break;
-                        //case '/': // upcoming '/' support 
+                        //case '/': // upcoming '/' support
                         //    break;
                     default:
                         if (m_psw) {
