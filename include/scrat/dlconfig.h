@@ -27,7 +27,7 @@
 
 # define _decl_objname \
 	public:\
-		const char* class_name() const noexcept;\
+		virtual const char* class_name() const noexcept;\
     private:
 
 # define _object_name(CLASS)\

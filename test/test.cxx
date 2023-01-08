@@ -138,15 +138,13 @@ void test::test_console()
 	widget w = widget(nullptr, WClass::TopLevel);
 	w.set_geometry({{1,1},{4000,4000},50,3});
 	w.set_location({1,1});
-    //w.update();
-    label *lbl = new label(&w, "Hello, scrat::ui!!!");
 
+    label *lbl = new label(&w, "Hello, scrat::ui!!!");
     lbl->set_geometry({1,1, 40,1});
-    //lbl->update();
 
 	scrat::ui::icon* icn = new scrat::ui::icon(lbl, scrat::Icon::Success);
 	icn->set_location({1,0});
-	//icn->update();
+
 	w.draw();
 	w.update();
     //...

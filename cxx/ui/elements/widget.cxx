@@ -54,16 +54,11 @@ result<> widget::update(const rect& r_)
     auto rr = expose(r_);
     rect r = *rr;
 
-    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < ":Geometry: " < color::Yellow < r < color::Reset;
+    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < color::Reset < ":Geometry: " < color::Yellow < r < color::Reset;
     if(!r)
         return rem::rejected;
-    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < " Exposed geometry: " < color::Yellow < r < color::Reset;
+    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < color::Reset < " Exposed geometry: " < color::Yellow < r < color::Reset;
     console::update(_dc,{},r);
-    // for(auto * c : _children)
-    // {
-    //     widget* w = c->to<widget>();
-    //     if(w) w->update();
-    // }
 
     return rem::accepted;
 }
@@ -178,10 +173,17 @@ result<painter&> widget::begin_draw(const rect& r_)
     if(!_dc)
         throw rem::push_exception(source_pffl) < " this widget '" < class_name() < "' has no vdc!!!";
 
-    // _xy is actually relative to immediate parent's location into the back buffer;
-    // iterate parent chaining until the owner of the _dc so we adjust the offset of this child widget:
+    rect r = geometry();
+    if(is_toplevel() || is_floating())
+    {
+        if(r_) r = r & r_;
+        if(!r)
+            throw rem(rem::message, source_pffl) < " skipping " < class_name() < " update: " < geometry();
 
-    auto r = (geometry() + _xy) & _dc->geometry();
+
+    }
+
+
     if(!r)
     {
         _state &= ~(State::Visible);
@@ -205,6 +207,7 @@ result<> widget::end_draw(painter& painter_)
 
 void widget::draw()
 {
+    rem::push_debug(source_pffl) < " class '" < color::Orange3 < this->class_name() < color::Reset <"' geometry:[" < color::Yellow < geometry() < color::Reset < "] :";
     if(!_dc)
         throw rem::push_exception(source_pffl) < " this widget '" < class_name() < "' has no vdc!!!";
     auto& paint = *begin_draw();

@@ -9,6 +9,8 @@
 namespace scrat::ui
 {
 
+class painter;
+
 class SCRAT_API vdc
 {
 	object* _owner = nullptr;
@@ -16,7 +18,7 @@ class SCRAT_API vdc
 	scrat::dim wh;
 	point _location; ///< coords location on the terminal!!!
 	rect _geo = {};
-
+	painter* _painter = nullptr; ///< Will have ONE and Only ONE painter for each instance of VDC.
 	friend class console;
 	friend class painter;
 	_decl_objname
