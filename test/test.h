@@ -8,7 +8,7 @@ class test
 {
 	scrat::object* _object = nullptr;
 public:
-	test();
+	test() = default;
 	~test();
 
 	void run();

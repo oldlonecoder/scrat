@@ -121,9 +121,8 @@ public:
 private:
     config_data _cfg;
 
-
-
 };
+
 class SCRAT_API text
 {
     std::string _d;
