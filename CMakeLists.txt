@@ -39,6 +39,7 @@ add_library(
         cxx/ui/elements/widget.cxx
         cxx/ui/elements/label.cxx
         cxx/ui/elements/icon.cxx
+        cxx/ui/elements/text_input.cxx
         cxx/io/ifd.cxx
         cxx/io/listener.cxx
 )

@@ -44,16 +44,16 @@ static constexpr int8_t Down = -2;
  * @brief Widget ui class enums or'ed flags
  * @author &copy; 2008,2022,2023, Serge Lussier, lussier.serge@gmail.com ( oldlonecoder )
  */
-namespace WClass
+namespace wclass
 {
-using Type = uint16_t;
-static constexpr Type TopLevel 	= 0x0001;
-static constexpr Type Floating 	= 0x0002;
-static constexpr Type Child 	= 0x0004;
-static constexpr Type Parent 	= 0x0008;
-static constexpr Type Caption 	= 0x0010;
-static constexpr Type Frame 	= 0x0020;
-static constexpr Type Input 	= 0x0040;
+using type = uint16_t;
+static constexpr type TopLevel 	= 0x0001;
+static constexpr type Floating 	= 0x0002;
+static constexpr type Child 	= 0x0004;
+static constexpr type Parent 	= 0x0008;
+static constexpr type Caption 	= 0x0010;
+static constexpr type Frame 	= 0x0020;
+static constexpr type Input 	= 0x0040;
 //...
 }
 /**

@@ -22,7 +22,7 @@ widget::widget():object()
     rem::push_debug(source_fnl) < " widget initial cell attribute:" < rem::endl < _attr.details();
 }
 
-widget::widget(object* parent_, WClass::Type f_): object(parent_),
+widget::widget(object* parent_, wclass::type f_): object(parent_),
 _widget_class_bits(f_)
 {
     _attr.set_color(colors::db::data["default"]["widget"][State::Active]);
@@ -30,11 +30,11 @@ _widget_class_bits(f_)
 
     if(parent_)
     {
-        _widget_class_bits |= WClass::Child;
+        _widget_class_bits |= wclass::Child;
         _dc = parent<widget>()->_dc; ///@note Check nullptr Alert!!
     }
     else
-        _widget_class_bits |= WClass::TopLevel;
+        _widget_class_bits |= wclass::TopLevel;
 
     rem::push_debug(source_fnl) < " widget initial cell attribute:" < rem::endl < _attr.details();
 }
@@ -42,7 +42,7 @@ _widget_class_bits(f_)
 
 widget::~widget()
 {
-    if(_widget_class_bits & WClass::TopLevel) delete _dc;
+    if(_widget_class_bits & wclass::TopLevel) delete _dc;
     //...
 }
 
@@ -97,7 +97,7 @@ void widget::set_location(const point& xy_)
     if(!_dc)
         throw rem::push_exception(source_pffl) < " this widget '" < class_name() < "' has no vdc!!!";
     _xy = xy_;
-    if(_widget_class_bits& (WClass::TopLevel | WClass::Floating))
+    if(_widget_class_bits& (wclass::TopLevel | wclass::Floating))
         _dc->set_location(_xy);
      // ...
 }
@@ -107,7 +107,7 @@ result<> widget::setup_backbuffer()
     if(!_wh)
         return rem::rejected;
 
-    if(_widget_class_bits & (WClass::TopLevel | WClass::Floating))
+    if(_widget_class_bits & (wclass::TopLevel | wclass::Floating))
     {
         if(_dc)
             _dc->realloc(_wh);
@@ -119,7 +119,7 @@ result<> widget::setup_backbuffer()
     }
     else
     {
-        if(!(_widget_class_bits & WClass::Child))
+        if(!(_widget_class_bits & wclass::Child))
             return rem::push_error() < " Can't setup widget's back buffer : neither Toplevel|Floating nor child.";
         auto* p = parent<widget>();
         if(!p)
@@ -265,16 +265,16 @@ result<rect> widget::expose(const rect &local_sub_r)
 
 bool widget::is_toplevel()
 {
-    return _widget_class_bits & WClass::TopLevel;
+    return _widget_class_bits & wclass::TopLevel;
 }
 
 bool widget::is_child()
 {
-    return  _widget_class_bits & WClass::Child;
+    return  _widget_class_bits & wclass::Child;
 }
 
 bool widget::is_floating()
 {
-    return  _widget_class_bits & WClass::Floating;
+    return  _widget_class_bits & wclass::Floating;
 }
 }

@@ -6,7 +6,7 @@ namespace scrat::ui
 _object_name(label)
 
 
-label::label(widget *parent_, const std::string &txt_):widget(parent_, parent_ ? WClass::Child:WClass::TopLevel),
+label::label(widget *parent_, const std::string &txt_):widget(parent_, parent_ ? wclass::Child:wclass::TopLevel),
 _text(txt_)
 {
     _attr.set_color(colors::db::data["default"]["label"][State::Normal]);
@@ -15,6 +15,8 @@ _text(txt_)
 
 label::~label()
 {
+    delete _prefix_icon;
+    delete _suffix_icon;
     _text.clear();
 }
 
@@ -37,16 +39,16 @@ void label::draw()
 
 result<> label::set_prefix_icon(Icon::Type c_)
 {
-    return result<>();
+    return  rem::notimplemented;
 }
 
 result<> label::set_suffix_icon(Icon::Type c_)
 {
-    return result<>();
+    return  rem::notimplemented;
 }
 
 result<> label::set_shortkey(char c_)
 {
-    return result<>();
+    return  rem::notimplemented;
 }
 }

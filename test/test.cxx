@@ -135,7 +135,7 @@ void test::test_console()
 	console::init();
 	//console::me() << " Test ...\n\n\n\n";
 
-	widget w = widget(nullptr, WClass::TopLevel);
+	widget w = widget(nullptr, wclass::TopLevel);
 	w.set_geometry({{1,1},{4000,4000},50,3});
 	w.set_location({1,1});
 

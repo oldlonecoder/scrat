@@ -16,8 +16,8 @@ class widget : public object
 {
     _decl_objname
 protected:
-    WClass::Type _widget_class_bits = 0;
-    vdc* _dc = nullptr; ///< point to the instance of the widget's vdc. Whoever is the owner (WClass::Type flags)
+    wclass::type _widget_class_bits = 0;
+    vdc* _dc = nullptr; ///< point to the instance of the widget's vdc. Whoever is the owner (wclass::type flags)
 
     result<> setup_backbuffer(); ///< sous reserve
     dim   _wh; ///< dimensions
@@ -28,7 +28,7 @@ protected:
 
 public:
     widget();
-    widget(object* parent_, WClass::Type class_ = 0);
+    widget(object* parent_, wclass::type class_ = 0);
     ~widget() override;
 
     virtual result<> set_geometry(const dim& wh_);

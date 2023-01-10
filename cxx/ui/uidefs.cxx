@@ -44,6 +44,22 @@ db::themes db::data =
 
                     //...
                 }
+            },
+            {
+                "input-area",
+                {
+                    {State::Active, {color::Grey70, color::Grey30}},    // Keep coherance with widget base
+                    {State::Disable,{color::Grey39, color::Grey35}},
+                    {State::Normal,{color::Grey70, color::Grey30}},
+                    {State::Focus,{color::White, color::Grey30}}
+                }
+            },
+            {
+                "text-input",
+                    {State::Active, {color::Grey70, color::Grey30}},    // Keep coherance with widget base
+                    {State::Disable,{color::Grey39, color::Grey35}},
+                    {State::Normal,{color::Grey70, color::Grey30}},
+                    {State::Focus,{color::White, color::Grey30}}
             }
         }
     }
