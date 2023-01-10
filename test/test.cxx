@@ -5,7 +5,7 @@
 #include <scrat/ui/elements/label.h>
 #include <scrat/ui/elements/icon.h>
 #include <scrat/io/listener.h>
-
+#include <scrat/ui/elements/text_input.h>
 using scrat::rem;
 using scrat::color;
 
@@ -136,15 +136,20 @@ void test::test_console()
 	//console::me() << " Test ...\n\n\n\n";
 
 	widget w = widget(nullptr, wclass::TopLevel);
-	w.set_geometry({{1,1},{4000,4000},50,3});
+	w.set_geometry({{1,1},{4000,4000},50,4});
 	w.set_location({1,1});
 
-    label *lbl = new label(&w, "Hello, scrat::ui!!!");
+    auto *lbl = new label(&w, "Hello, scrat::ui!!!");
     lbl->set_geometry({0,0, 40,1});
 	lbl->set_location({1,1});
 
-	scrat::ui::icon* icn = new scrat::ui::icon(lbl, scrat::Icon::Success);
+	auto* icn = new scrat::ui::icon(lbl, scrat::Icon::PencilDr);
 	icn->set_location({1,0});
+
+    auto* tinput = new scrat::ui::text_input(&w, "enter text here");
+    tinput->set_geometry({0,0, 40,1});
+    tinput->set_location({2,2});
+
 	try{
 		w.draw();
 		w.update();
@@ -161,8 +166,6 @@ void test::test_console()
 	console::terminate();
 	delete lbl;
 	delete icn;
-
-
 }
 
 void test::test_alu()

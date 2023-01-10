@@ -4,6 +4,9 @@
 namespace scrat::ui
 {
 
+_object_name(text_input)
+
+
 text_input::text_input():widget()
 {}
 
@@ -17,6 +20,8 @@ _place_holder(ph_)
     //_suffix_icon = new icon(this, Icon::Warning)
 }
 
+
+
 text_input::~text_input()
 {
     delete _prefix_icon;
@@ -26,7 +31,10 @@ text_input::~text_input()
 
 void text_input::draw() {
     widget::draw();
-
+    painter& paint = *begin_draw();
+    paint.gotoxy({2, 0});
+    paint << _place_holder;
+    end_draw(paint);
 }
 
 result<> text_input::set_shortkey(char c_) {

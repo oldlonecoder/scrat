@@ -9,7 +9,7 @@ namespace scrat::ui
 _object_name(painter)
 
 painter::painter(vdc* parent_, vdc::type def_attr_, rect r_):
-    _dc(parent_), _def_attr(def_attr_), _r(r_)
+_dc(parent_), _def_attr(def_attr_), _r(std::move(r_))
 {
     _cell = *_def_attr;
     rem::push_debug(source_fl) << color::Fuchsia <<  " Receiving Geometry: " << color::Yellow << _r.to_string();
