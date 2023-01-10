@@ -14,15 +14,20 @@ db::themes db::data =
                 "widget",
                 {
                     {State::Active, {color::Grey70,color::Grey35}},
+                    {State::Disable,{color::Grey19, color::Grey35}},    // Keep coherance with widget base
+                    {State::Normal,{color::Grey70,color::Grey35}},      // Keep coherance with widget base
+                    {State::Focus,{color::Red4, color::Grey35}}
+
                     //...
                 }
             },
             {
                 "label",
                 {
-                    {State::Active, {color::CadetBlue2, color::Grey39}},// Active label base coherance with composite/complex ui
+                    {State::Active, {color::Yellow, color::Grey35}},// Active label base coherance with composite/complex ui
                     {State::Disable,{color::Grey19, color::Grey35}},    // Keep coherance with widget base
                     {State::Normal,{color::Grey70,color::Grey35}},      // Keep coherance with widget base
+                    {State::Focus,{color::Grey70, color::Grey35}}
                     //...
                 }
             },
@@ -31,6 +36,7 @@ db::themes db::data =
                 {
                     {State::Active, {color::HotPink4,color::Grey35}},
                     {State::Disable,{color::Grey19, color::Grey35}},    // Keep coherance with widget base
+                    {State::Normal,{color::Grey70,color::Grey35}},
                     {State::Focus,{color::Red4, color::Grey35}}
                 }
             },
@@ -40,27 +46,28 @@ db::themes db::data =
                     {State::Active, {color::Blue1, color::Grey35}},    // Keep coherance with widget base
                     {State::Disable,{color::Grey19, color::Grey35}},
                     {State::Normal,{color::Blue1, color::Grey35}},
-                    {State::Focus,{color::White, color::Grey35}}
+                    {State::Focus,{color::Aquamarine3, color::Grey35}},
+                    {State::Success ,{color::Green5, color::Grey35}}
 
                     //...
                 }
             },
             {
-                "input-area",
+                "input-area", // widget::text_input
                 {
-                    {State::Active, {color::Grey70, color::Grey30}},    // Keep coherance with widget base
-                    {State::Disable,{color::Grey39, color::Grey35}},
-                    {State::Normal,{color::Grey70, color::Grey30}},
-                    {State::Focus,{color::White, color::Grey30}}
+                    {State::Active, {color::Grey39, color::Grey30}},    // Keep coherance with widget base
+                    {State::Disable,{color::Grey37, color::Grey35}},
+                    {State::Normal,{color::Grey35, color::Grey30}},
+                    {State::Focus,{color::Grey35, color::Grey30}}
                 }
             },
             {
-                "text-input",
+                "input-field",
                 {
-                    {State::Active, {color::Grey70, color::Grey30}},    // Keep coherance with widget base
+                    {State::Active, {color::Grey70, color::Grey35}},    // Keep coherance with widget base
                     {State::Disable, {color::Grey39, color::Grey35}},
-                    {State::Normal, {color::Grey70, color::Grey30}},
-                    {State::Focus, {color::White, color::Grey30}}
+                    {State::Normal, {color::Grey70, color::Grey35}},
+                    {State::Focus, {color::White, color::Grey35}}
                 }
             }
         }

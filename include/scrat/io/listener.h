@@ -43,7 +43,6 @@ public:
     result<> pause_ifd(int fd_);
     result<> init();
     result<> shutdown();
-    result<> listen();
 
 
 private:

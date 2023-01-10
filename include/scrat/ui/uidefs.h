@@ -62,7 +62,7 @@ static constexpr type Input 	= 0x0040;
  */
 namespace State
 {
-	using Type = uint8_t;
+	using Type = uint16_t;
 	static constexpr Type Normal  = 0x00;
 	static constexpr Type Disable = 0x01;
 	static constexpr Type Active  = 0x02;
@@ -72,6 +72,8 @@ namespace State
 	static constexpr Type Illegal = 0x20;
     static constexpr Type Invalid = 0x40;
 	static constexpr Type Visible = 0x80;
+    static constexpr Type Success = 0x100;
+
 }
 
 namespace colors

@@ -9,8 +9,8 @@ _object_name(label)
 label::label(widget *parent_, const std::string &txt_):widget(parent_, parent_ ? wclass::Child:wclass::TopLevel),
 _text(txt_)
 {
-    _attr.set_color(colors::db::data["default"]["label"][State::Normal]);
-
+    assign_attributes_components(colors::db::data["default"]["label"]);
+    set_state(State::Active);
 }
 
 label::~label()

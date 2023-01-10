@@ -95,8 +95,8 @@ vdc::type vdc::peek(const point& pt_)
 
 std::string vdc::cell::details()
 {
-   stracc str = "Cell Details%s[Char:'%s%d%s'/Fg:'%s%s%s'/Bg:'%s%s%s']";
-    str << color::White << color::Yellow << (int)ascii() << color::White
+   stracc str = "%s[Char:'%s%d%s'/Fg:'%s%s%s'/Bg:'%s%s%s']";
+    str << color::White <<color::Yellow << (int)ascii() << color::White
         << color::Yellow << textattr::name(fg()) << color::White
         << color::Yellow << textattr::name(bg()) << color::White;
 

@@ -146,9 +146,11 @@ void test::test_console()
 	auto* icn = new scrat::ui::icon(lbl, scrat::Icon::PencilDr);
 	icn->set_location({1,0});
 
-    auto* tinput = new scrat::ui::text_input(&w, "enter text here");
-    tinput->set_geometry({0,0, 40,1});
-    tinput->set_location({2,2});
+    auto* in = new scrat::ui::input_field(&w, {scrat::Icon::PencilDr, scrat::Icon::Success, 0, "Press any key then enter to quit"});
+    in->set_geometry({{},{}, w.width()-2,1});
+    in->set_location({1,2});
+    in->set_state(scrat::ui::State::Active);
+    in->set_state(scrat::ui::State::Success);
 
 	try{
 		w.draw();

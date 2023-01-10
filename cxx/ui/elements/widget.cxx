@@ -14,16 +14,18 @@ _object_name(widget)
 
 
 
-widget::widget():object()
+widget::widget():object(),
+_components_attr(&colors::db::data["default"]["widget"])
 {
     // no flags, no parent. Thus this is set to toplevel widget by default.
     _attr.set_color(colors::db::data["default"]["widget"][State::Active]);
     _attr = ' ';
-    rem::push_debug(source_fnl) < " widget initial cell attribute:" < rem::endl < _attr.details();
+    //rem::push_debug(source_fnl) < " widget initial cell attribute:" < rem::endl < _attr.details();
 }
 
 widget::widget(object* parent_, wclass::type f_): object(parent_),
-_widget_class_bits(f_)
+_widget_class_bits(f_),
+_components_attr(&colors::db::data["default"]["widget"])
 {
     _attr.set_color(colors::db::data["default"]["widget"][State::Active]);
     _attr = ' ';
@@ -36,7 +38,7 @@ _widget_class_bits(f_)
     else
         _widget_class_bits |= wclass::TopLevel;
 
-    rem::push_debug(source_fnl) < " widget initial cell attribute:" < rem::endl < _attr.details();
+    //rem::push_debug(source_fnl) < " widget initial cell attribute:" < rem::endl < _attr.details();
 }
 
 
@@ -54,10 +56,10 @@ result<> widget::update(const rect& r_)
     auto rr = expose(r_);
     rect r = *rr;
 
-    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < color::Reset < ":Geometry: " < color::Yellow < r < color::Reset;
+    //rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < color::Reset < ":Geometry: " < color::Yellow < r < color::Reset;
     if(!r)
         return rem::rejected;
-    rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < color::Reset < " Exposed geometry: " < color::Yellow < r < color::Reset;
+    //rem::push_debug(source_fnl) < color::OrangeRed1 < class_name() < color::Reset < " Exposed geometry: " < color::Yellow < r < color::Reset;
     console::update(_dc,{},r);
 
     return rem::accepted;
@@ -192,7 +194,7 @@ result<painter&> widget::begin_draw(const rect& r_)
             par = par->parent<widget>();
         }
     }
-    rem::push_debug(source_ffl) < " draw Geometry [ " < color::Orange3 < class_name() < color::Reset < "]:" < r < ":";
+    //rem::push_debug(source_ffl) < " draw Geometry [ " < color::Orange3 < class_name() < color::Reset < "]:" < r < ":";
     if(r_)
         r = r & r_;
 
@@ -203,6 +205,7 @@ result<painter&> widget::begin_draw(const rect& r_)
     }
     painter* p = new painter(_dc, &_attr.mem, r);
     p->set_colors(_attr.colors());
+    //rem::push_debug() < color::Orange3 < class_name() < color::Yellow < _attr.details() < color::Reset;
     p->home();
     return *p;
 }
@@ -233,7 +236,7 @@ void widget::draw()
 
 result<rect> widget::expose(const rect &local_sub_r)
 {
-    rem::push_debug() < color::Orange3 < class_name() < color::Reset < " exposed rect " < local_sub_r < ":";
+    //rem::push_debug() < color::Orange3 < class_name() < color::Reset < " exposed rect " < local_sub_r < ":";
     auto r = geometry();
     if(local_sub_r)
     {
@@ -276,5 +279,18 @@ bool widget::is_child()
 bool widget::is_floating()
 {
     return  _widget_class_bits & wclass::Floating;
+}
+
+void widget::set_state(State::Type state_)
+{
+    for(auto *c : _children)
+    {
+        auto* w = c->to<widget>();
+        if(w) w->set_state(state_);
+    }
+
+    auto it = _components_attr->find(state_);
+    if(it == _components_attr->end()) return;
+    _attr.set_color(_components_attr->at(state_));
 }
 }

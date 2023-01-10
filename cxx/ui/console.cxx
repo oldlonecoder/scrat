@@ -276,7 +276,7 @@ void console::draw_vdc(const console::updates_queu& q)
         (*terminal) << ansi::bg(cell.bg()) << ansi::fg(cell.fg());
         point pt = q.r.a;
         pt += {0,y};
-        rem::push_output() < " vdc line#" < y < " " < pt;
+        //rem::push_output(source_ffl) < " vdc line#" < y < " " < pt < '(' < cell.details() < ')';
         auto w_ = q.r.width();
         for(int x = 0; x< w_; x++)
         {
@@ -289,6 +289,7 @@ void console::draw_vdc(const console::updates_queu& q)
                     auto Ic =  cell.icon_id();
                     write(STDOUT_FILENO, Icon::Data[Ic], std::strlen(Icon::Data[Ic]));
                     terminal->gotoxy({q.r.a.x+x+1, q.r.a.y + y});
+                    rem::push_debug(source_pffl) < color::White < "@ " < point{q.r.a.x+x, q.r.a.y + y} < color::White < " Glyph: " < cell.details();
                 }
                 if (cell.mem & vdc::cell::Accent)
                 {

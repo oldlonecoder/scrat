@@ -12,9 +12,11 @@ painter::painter(vdc* parent_, vdc::type def_attr_, rect r_):
 _dc(parent_), _def_attr(def_attr_), _r(std::move(r_))
 {
     _cell = *_def_attr;
-    rem::push_debug(source_fl) << color::Fuchsia <<  " Receiving Geometry: " << color::Yellow << _r.to_string();
     setup_geometry();
     _cell << ' ';
+//    rem::push_debug(source_pffl)
+//    < color::White <  " Receiving Geometry: " < color::Yellow < _r < rem::endl
+//    < color::White <  "    attributes: " < _cell.details();
     //...
 }
 
@@ -38,7 +40,11 @@ painter& painter::operator<<(Icon::Type ic_id_)
 {
     vdc::cell c = _cell;
     *_cursor = (c << ic_id_).mem;
+    c = _cursor;
+    rem::push_debug(source_pffl) < color::White < "cpos(" < color::Yellow < cpos() < color::White < ")::" < c.details() < color::Reset;
     ++_cursor;
+    c = _cell;
+    *_cursor = (c << ' ').mem;
     return *this;
 }
 
@@ -70,7 +76,7 @@ painter& painter::operator<<(const std::string& aStr)
 {
     point pt = cpos();
     auto mem = aStr.begin();
-    rem::push_debug() << "painter <<  \"" << aStr << "\" @" << (std::string)pt << " -> in " << _r.to_string();
+    //rem::push_debug() << "painter <<  \"" << aStr << "\" @" << (std::string)pt << " -> in " << _r.to_string();
     while (mem != aStr.end() && (pt.x <= _r.b.x))
     {
         *_cursor = (_cell << *mem++).mem;
@@ -142,11 +148,11 @@ painter& painter::gotoxy(const point& pt_)
 
     point pt;
     pt += pt_ + _r.a; // + {0,0} by default;
-    rem::push_debug(source_ffl) < " on _dc: @(" < pt_ < "):";
+    //rem::push_debug(source_ffl) < " on _dc: @(" < pt_ < "):";
     if (!_r.in(pt))
         throw rem::push_exception(source_fl) < rem::endl < " : " < (std::string)pt_ < " is out of range in " < _r.to_string();
 
-    rem::push_debug(source_fnl) < color::Yellow < pt < rem::end;
+    //rem::push_debug(source_pffl) < color::White < '@' < color::Yellow < pt < rem::end;
     _cursor = _dc->peek(pt);
     return *this;
 }
@@ -158,13 +164,13 @@ painter& painter::set_colors(const textattr::pair& aSet)
     _cell.set_fg(aSet.fg);
     _cell.set_bg(aSet.bg);
     *_cursor = (* _cursor & ~vdc::cell::CMask) | (_cell.mem & vdc::cell::CMask);
-    rem::push_debug(source_ffl) < _cell.details();
+    //rem::push_debug(source_pffl) < color::White < " new colors:" < _cell.details();
     return *this;
 }
 
 result<> painter::setup_geometry()
 {
-    rem::push_debug(source_ffl) < " painter _dc's '" < color::Chartreuse6 <  "Geometry: " <  _dc->geometry();
+    //rem::push_debug(source_ffl) < " painter _dc's '" < color::Chartreuse6 <  "Geometry: " <  _dc->geometry();
     if(!_r)
         _r = _dc->geometry();
     else
@@ -173,7 +179,7 @@ result<> painter::setup_geometry()
     if (!_r)
         throw rem::push_exception(source_ffl) < ": " < rem::endl < " - Attempt to < Contruct > a painter object on invalid Geometry : " < _r;
 
-    rem::push_debug(source_ffl) < " Configured Geometry:" < color::Yellow < _r < color::Reset < " :";
+    //rem::push_debug(source_pffl) < " Configured Geometry:" < color::Yellow < _r < color::Reset < " :";
     _cursor = _dc->peek(_r.a);
     //rem::push_debug(SourceLocation) <<  VDC::Cell{ *_cursor }.Details();
     return rem::ok;
@@ -186,10 +192,9 @@ painter& painter::clear()
     _cursor = _dc->peek(_r.a);
     _cell << ' ';
     _cell.set_color(vdc::cell(_def_attr).colors());
-    rem::push_debug(source_fl) < _cell.details();
-    rem::push_output() < "Clearing subrect:" < _r;
-    //int Area = _r.Area();
-//    Rem::Output() << "-> " << Color::Yellow << Area << Color::White << " cells in block";
+//    rem::push_debug(source_fl) < _cell.details();
+//    rem::push_output() < "Clearing subrect:" < _r;
+
     for(int y = 0; y< _r.height(); y++)
     {
         gotoxy({ 0,y });
@@ -213,7 +218,7 @@ point painter::cpos()
     auto* B = _dc->mem;
     int dx = static_cast<int>((_cursor - B));
     point Pt = { dx % _dc->width(), dx / _dc->width() };
-    rem::push_debug(source_fl) < " _cursor @" < color::Yellow < (std::string)Pt < color::Reset;
+    //rem::push_debug(source_fl) < " _cursor @" < color::Yellow < (std::string)Pt < color::Reset;
     return Pt;
 }
 

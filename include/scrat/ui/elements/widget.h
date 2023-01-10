@@ -24,6 +24,8 @@ protected:
     point _xy; ///< relative position into the parent's geometry...
     vdc::cell _attr     = ' ';
     State::Type _state  = State::Normal|State::Visible;
+    const colors::db::components* _components_attr;
+
     //painter _paint;
 
 public:
@@ -40,8 +42,15 @@ public:
     virtual rect geometry();
     virtual result<painter&> begin_draw(const rect& r_ = {});
     virtual result<> end_draw(painter& painter_);
-
+    virtual void set_state(State::Type state_);
+    int width() { return _wh.w; }
+    int height() { return _wh.h; }
     virtual void draw();
+    result<> assign_attributes_components(const colors::db::components& _comp)
+    {
+        _components_attr = &_comp;
+        return rem::notimplemented;
+    }
 
 
     result<rect> expose(const rect& local_sub_r = {});

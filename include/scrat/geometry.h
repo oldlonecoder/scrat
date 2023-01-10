@@ -83,9 +83,8 @@ struct SCRAT_API point
 
 struct SCRAT_API dim
 {
-
-	point max;
-	point min;
+    point min;
+    point max;
 	T w = 0;
 	T h = 0;
 
