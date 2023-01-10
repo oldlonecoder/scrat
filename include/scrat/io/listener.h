@@ -30,7 +30,7 @@ class SCRAT_API listener_base: public object
     epoll_event _epoll_event;
     int         _epollfd = -1;
     int         _epollnumfd = -1;
-    bool        _terminate_set = false; /// gtk looooooong naming style...
+    bool        _terminate_set = false;
 
 public:
 
@@ -38,11 +38,19 @@ public:
     virtual ~listener_base();
 
     virtual result<> listen();
+    result<> add_ifd(int fd_, ifd::opt&& opt_);
+    result<> remove_ifd(int fd_);
+    result<> pause_ifd(int fd_);
+    result<> init();
+    result<> shutdown();
+    result<> listen();
+
 
 private:
     //listener_base(object* parent_);
     virtual result<> on_read_ready(ifd&) = 0;
     virtual result<> on_write_ready(ifd&) = 0;
+    virtual result<> on_idle(ifd&) = 0;
 
 };
 
@@ -70,6 +78,11 @@ public:
         _write_delegate = d_;
         return rem::ok;
     }
+    result<> set_idle_delegate(listener::io_delegate d_ )
+    {
+        _write_delegate = d_;
+        return rem::ok;
+    }
 
 
 private:
@@ -79,6 +92,16 @@ private:
         if(_read_delegate)
         {
             if(_obj) return (_obj->*_read_delegate)(if_);
+            return rem::null_ptr;
+        }
+        return rem::notimplemented;
+    }
+
+    result<> on_idle(ifd& if_) override
+    {
+        if(_idle_delegate)
+        {
+            if(_obj) return (_obj->*_idle_delegate)(if_);
             return rem::null_ptr;
         }
         return rem::notimplemented;
@@ -96,10 +119,9 @@ private:
 
     }
 
-
     typename listener::io_delegate _write_delegate = nullptr;
     typename listener::io_delegate _read_delegate = nullptr;
-
+    typename listener::io_delegate _idle_delegate = nullptr;
 };
 
 

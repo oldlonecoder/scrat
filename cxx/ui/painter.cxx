@@ -158,6 +158,7 @@ painter& painter::set_colors(const textattr::pair& aSet)
     _cell.set_fg(aSet.fg);
     _cell.set_bg(aSet.bg);
     *_cursor = (* _cursor & ~vdc::cell::CMask) | (_cell.mem & vdc::cell::CMask);
+    rem::push_debug(source_ffl) < _cell.details();
     return *this;
 }
 
@@ -180,9 +181,11 @@ result<> painter::setup_geometry()
 
 painter& painter::clear()
 {
+    rem::push_debug(source_ffl) < _r;
     auto* CC = _cursor;
     _cursor = _dc->peek(_r.a);
     _cell << ' ';
+    _cell.set_color(vdc::cell(_def_attr).colors());
     rem::push_debug(source_fl) < _cell.details();
     rem::push_output() < "Clearing subrect:" < _r;
     //int Area = _r.Area();

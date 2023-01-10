@@ -30,6 +30,8 @@ void icon::draw()
 {
     widget::draw();
     painter& p = *begin_draw();
+    p.set_bg(_attr.bg());
+    rem::push_debug(source_fnl) < "attributes details:" < _attr.details();
     p << _ic;
     end_draw(p);
 }

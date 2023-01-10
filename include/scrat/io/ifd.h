@@ -30,7 +30,7 @@ struct SCRAT_API ifd final
 
 
     int _fd = -1;
-    struct
+    struct opt
     {
         uint8_t read  : 1; ///< ready to read;
         uint8_t write : 1; ///< ready to write
