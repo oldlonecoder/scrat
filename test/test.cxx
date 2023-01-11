@@ -133,7 +133,7 @@ void test::test_console()
 	//console::me() << " Test ...\n\n\n\n";
 
 	widget w = widget(nullptr, wclass::TopLevel);
-	w.set_geometry({{1,1},{4000,4000},50,4});
+	w.set_geometry({1,1,50,4});
 	w.set_location({1,1});
 
     auto *lbl = new label(&w, "Hello, scrat::ui!!!");

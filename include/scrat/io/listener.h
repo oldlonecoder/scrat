@@ -34,8 +34,8 @@ class SCRAT_API listener_base: public object
 
 public:
 
-    listener_base(object* parent_ = nullptr);
-    virtual ~listener_base();
+    explicit listener_base(object* parent_ = nullptr);
+    ~listener_base() override;
 
     virtual result<> listen();
     result<> add_ifd(int fd_, ifd::opt&& opt_);
@@ -47,9 +47,9 @@ public:
 
 private:
     //listener_base(object* parent_);
-    virtual result<> on_read_ready(ifd&) = 0;
-    virtual result<> on_write_ready(ifd&) = 0;
-    virtual result<> on_idle(ifd&) = 0;
+    virtual result<> on_read_ready(ifd&);
+    virtual result<> on_write_ready(ifd&);
+    virtual result<> on_idle(ifd&);
 
 };
 
@@ -61,7 +61,7 @@ template<typename T> class SCRAT_API listener : public listener_base
 public:
 
     using io_delegate = result<> (T::*)(ifd&);
-    listener(T* parent_): listener_base(parent_){_obj = parent_;}
+    explicit listener(T* parent_): listener_base(parent_){_obj = parent_;}
 
     ~listener() override
     {}

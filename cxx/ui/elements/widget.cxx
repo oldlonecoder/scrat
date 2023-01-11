@@ -283,6 +283,7 @@ bool widget::is_floating()
 
 void widget::set_state(State::Type state_)
 {
+    rem::push_debug(source_ffl) < color::Yellow < class_name() < color::Reset < ':';
     for(auto *c : _children)
     {
         auto* w = c->to<widget>();

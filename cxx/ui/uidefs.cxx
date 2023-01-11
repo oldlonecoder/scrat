@@ -55,10 +55,10 @@ db::themes db::data =
             {
                 "input-area", // widget::text_input
                 {
-                    {State::Active, {color::Grey39, color::Grey30}},    // Keep coherance with widget base
-                    {State::Disable,{color::Grey37, color::Grey35}},
-                    {State::Normal,{color::Grey35, color::Grey30}},
-                    {State::Focus,{color::Grey35, color::Grey30}}
+                    {State::Active, {color::White, color::Grey30}},    // Keep coherance with widget base
+                    {State::Disable,{color::Grey39, color::Grey35}},
+                    {State::Normal,{color::Grey37, color::Grey30}},
+                    {State::Focus,{color::White, color::Grey30}}
                 }
             },
             {

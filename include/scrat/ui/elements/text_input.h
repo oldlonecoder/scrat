@@ -12,7 +12,7 @@ class SCRAT_API text_input : public widget
 {
     int _input_length = 0;
     int _cursor = 0;
-    State::Type _state;
+
     _decl_objname
     std::string _place_holder;
     std::string _text;

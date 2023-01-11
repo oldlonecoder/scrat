@@ -1,9 +1,5 @@
 #include <scrat/io/listener.h>
 
-
-
-
-
 namespace scrat::io
 {
 
@@ -27,7 +23,37 @@ result<> scrat::io::listener_base::listen()
     return rem::notimplemented;
 }
 
+result<> listener_base::add_ifd(int fd_, ifd::opt &&opt_) {
+    return rem::push_exception(source_ffl) < rem::notimplemented < " cannot be used yet...";
+}
 
+result<> listener_base::remove_ifd(int fd_) {
+    return rem::push_exception(source_ffl) < rem::notimplemented < " cannot be used yet...";
+}
+
+result<> listener_base::pause_ifd(int fd_) {
+    return rem::push_exception(source_ffl) < rem::notimplemented < " cannot be used yet...";
+}
+
+result<> listener_base::init() {
+    return rem::push_exception(source_ffl) < rem::notimplemented < " cannot be used yet...";
+}
+
+result<> listener_base::shutdown() {
+    return rem::push_exception(source_ffl) < rem::notimplemented < " cannot be used yet...";
+}
+
+result<> listener_base::on_read_ready(ifd &) {
+    return rem::push_exception(source_ffl) < rem::notimplemented < " cannot be used yet...";
+}
+
+result<> listener_base::on_write_ready(ifd &) {
+    return rem::push_exception(source_ffl) < rem::notimplemented < " cannot be used yet...";
+}
+
+result<> listener_base::on_idle(ifd &) {
+    return rem::push_exception(source_ffl) < rem::notimplemented < " cannot be used yet...";
+}
 
 
 }
