@@ -8,12 +8,20 @@
 #include <scrat/ui/elements/text_input.h>
 using scrat::rem;
 using scrat::color;
+void signal_int(int s)
+{
+    scrat::rem::push_info(source_ffl) < "interrupted by user signal " < color::LightCyan3 < "int";
+    scrat::ui::console::terminate();
+    scrat::rem::clear([](rem& r) { std::cout << r.cc() << '\n'; } );
+    exit(s);
+}
+
 
 
 auto main() -> int {
 
 	test test;
-
+    ::signal(SIGINT, signal_int);
 	test.put_colors();
 	//...
 	test.run();
@@ -42,7 +50,7 @@ void test::run()
 		test_interpret();
 		test_console();
 		test_alu();
-		test_io_listener();
+
 	}
 	catch (std::exception e)
 	{
@@ -53,8 +61,6 @@ void test::run()
 void test::texattr()
 {
 	scrat::attr<scrat::textattr::format::ansi256> attr;
-
-
 }
 
 void test::test_dimension()
@@ -162,6 +168,7 @@ void test::test_console()
 	console::me().gotoxy({1, 6});
 	console::me() << scrat::Icon::PencilDr <<  "Enter anykey + " << scrat::Icon::KeyEnter << " :";
     std::cin >> c;
+    test_iolistener();
 	console::terminate();
 	delete lbl;
 	delete icn;
@@ -178,43 +185,34 @@ void test::test_alu()
 	rem::push_info() < "1/3=" < (int)1/(int)3;
 }
 
-class test_listener : public scrat::object
+void test::test_iolistener()
 {
-
-public:
-	scrat::io::listener<test_listener>* listener = nullptr;
-
-
-	test_listener(){
-		listener = new scrat::io::listener<test_listener>(this);
-		listener->set_read_delegate(&test_listener::_read);
-		listener->set_write_delegate(&test_listener::_write);
-
-	}
-
-	~test_listener()
-	{
-		delete listener;
-	}
-private:
-	scrat::result<> _read(scrat::io::ifd& if_)
-	{
-		scrat::rem::push_debug(source_fnl) < " here we are... :)";
-		return rem::accepted;
-	}
-
-	scrat::result<> _write(scrat::io::ifd& if_)
-	{
-		scrat::rem::push_debug(source_fnl) < " here we are... :)";
-		return rem::accepted;
-	}
-
-};
-
-void test::test_io_listener()
-{
-	test_listener l;
-	l.listener->listen();
-	//...
+    using namespace scrat;
+    io::listener l(nullptr, 500);
+    l.init();
+    auto R = l.add_ifd(STDIN_FILENO, io::ifd::O_READ|io::ifd::I_AUTOFILL);
+    auto i = l.query_fd(0);
+    i->read_signal.connect(this, &test::key_in);
+    std::cout << " Starting the listener:\n";
+    R = l.start();
+    // Exited the loop.
+    l.shutdown(); // No effect on descriptor lower than 3.
 }
+
+scrat::result<> test::key_in(scrat::io::ifd &ifd)
+{
+    rem::push_debug(source_ffl) < color::Yellow  < ifd.pksize < " bytes in terminal input queu:";
+    scrat::stracc str = "key_in[";
+    str << ifd.pksize << "] : ";
+    for(int x = 0; x<= ifd.pksize; x++)
+    {
+        auto c = *(ifd.internal_buffer + x);
+        if(c == 'q') return rem::push_status(source_ffl) < "returning a rem message for quitting";
+        str << "[%d]" << *(ifd.internal_buffer + x);
+    }
+    rem::push_info(source_ffl) < str();
+    rem::push_debug(source_ffl) < color::LightCyan3 < str() < color::Reset < " Ending brutally: shutting down the listener: ";
+    return rem::end;
+}
+
 

@@ -1,6 +1,7 @@
 #pragma once
 
-
+#ifndef CMDARG_STATIC_GUARD
+#define CMDARG_STATIC_GUARD
 /*
 Standalone commandline options and arguments header only;
 
@@ -19,6 +20,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+
+ //------------------------note ------------------------
+ https://stackoverflow.com/questions/2738292/how-to-deal-with-recursive-dependencies-between-static-libraries-using-the-binut
+
+ When there are multiple libraries
+ involved and the mutual dependencies are more complex.
+ To sort out the problems ld provides --start-group archives --end-group.
+
+In your particular case:
+
+g++ test_obj.o --start-group -lA -lB --end-group -o test
+
+
 */
 
 
@@ -57,7 +72,7 @@ namespace scrat
         };
 
 
-        auto token_t::input(const std::string& data)
+        inline auto token_t::input(const std::string& data)
         {
             std::string token = "";
             std::string::const_iterator s, e, i;
@@ -79,7 +94,7 @@ namespace scrat
 
 
 
-        std::string token_t::operator[](int i)
+        inline std::string token_t::operator[](int i)
         {
 
             if (i < 0 || i >= s_tokens.size()) return "";
@@ -87,7 +102,7 @@ namespace scrat
 
         }
 
-        token_t::token_t(char sep)
+        inline token_t::token_t(char sep)
         {
             this->sep = sep;
         }
@@ -363,3 +378,4 @@ namespace scrat
 
 } // namespace tea
 
+#endif

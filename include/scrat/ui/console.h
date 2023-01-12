@@ -6,11 +6,30 @@
 #include <map>
 #include <scrat/ui/uidefs.h>
 #include <mutex>
-
+#include <termios.h>
+#include <unistd.h>
 
 
 namespace scrat::ui
 {
+//------------------------------------------------------------------------------------------------
+//        from https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html
+
+//#include <termios.h>
+//#include <unistd.h>
+//void enableRawMode() {
+//    struct termios raw;
+//    tcgetattr(STDIN_FILENO, &raw);
+//    raw.c_lflag &= ~(ECHO);
+//    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+//}
+//int main() {
+//    enableRawMode();
+//    char c;
+//    while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q');
+//    return 0;
+//}
+//------------------------------------------------------------------------------------------------
 class SCRAT_API console : object
 {
     _decl_objname
@@ -20,6 +39,7 @@ class SCRAT_API console : object
     static std::mutex io_mtx;
     static std::mutex updates_mtx;
     bool get_term_size();
+    termios raw,con;
     console();
 public:
 

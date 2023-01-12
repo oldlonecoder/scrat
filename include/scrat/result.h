@@ -44,6 +44,7 @@ namespace scrat
 				fail = r.fail;
 			else
 				value = r.value;
+
 		}
 
 
@@ -64,7 +65,7 @@ namespace scrat
 				fail = r.fail;
 			else
 				value = r.value;
-
+            return *this;
 		}
 
 		result operator=(rem& r)

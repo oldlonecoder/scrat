@@ -3,6 +3,7 @@
 #include <scrat/textattr>
 #include <scrat/result>
 #include <scrat/object>
+#include <scrat/io/listener.h>
 
 class test
 {
@@ -19,8 +20,12 @@ public:
 	void test_interpret();
 	void test_console();
 	void test_alu();
-	void test_io_listener();
+
+    void test_iolistener();
 
 	scrat::result<scrat::object*> test_result();
+    scrat::result<> key_in(scrat::io::ifd& ifd);
+
+
 };
 

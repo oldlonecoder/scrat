@@ -11,7 +11,7 @@ message("source dir: " "${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_library(
         ${PROJECT_NAME}
-        SHARED
+        STATIC
         cxx/textattr.cxx
         cxx/geometry.cxx
         cxx/object.cxx
@@ -42,7 +42,7 @@ add_library(
         cxx/ui/elements/text_input.cxx
         cxx/io/ifd.cxx
         cxx/io/listener.cxx
-)
+        include/scrat/scrat_signals.h)
 
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC "${TargetName}_DEBUG=$<CONFIG:Debug>")

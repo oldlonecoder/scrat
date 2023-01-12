@@ -81,6 +81,16 @@ result<> console::init()
     terminal->gotoxy({});
     console::crs_hide();
 
+    tcgetattr(STDIN_FILENO, &terminal->con);
+    terminal->raw = terminal->con;
+    //terminal->raw.c_iflag &= ~(IGNBRK | BRKINT | PARMRK);
+    terminal->raw.c_iflag &= ~(PARMRK);
+    terminal->raw.c_lflag &= ~(ICANON | ECHO | IEXTEN | TOSTOP);
+    terminal->raw.c_cc[VMIN] = 0;
+    terminal->raw.c_cc[VTIME] = 0;
+    terminal->raw.c_cc[VSTART] = 0;
+    terminal->raw.c_cc[VSTOP] = 0;
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &terminal->raw);
     //... To be continued
 
     return rem::ok;
@@ -334,6 +344,7 @@ void console::terminate()
 {
     std::cout << "\033[0m\033[?1049l";
     console::updates.clear();
+
     crs_show();
 }
 

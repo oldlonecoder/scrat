@@ -121,11 +121,18 @@ static std::unordered_map<rem::code, std::string_view> _codes_ =
 
 static std::map<rem::ctype, const char*> _Icons_ =
 {
-	{rem::fatal, Icon::CDeadHead},
-	{rem::err, Icon::CErr1},
-	{rem::warning, Icon::CWarning},
-	{rem::info, Icon::CInfo},
-	{rem::debug, Icon::CBug},
+	{rem::fatal,    Icon::CDeadHead},
+	{rem::err,      Icon::CErr1},
+	{rem::warning,  Icon::CWarning},
+	{rem::info,     Icon::CInfo},
+	{rem::debug,    Icon::CBug},
+    {rem::except,   Icon::CBolt},
+    {rem::message,  Icon::CSpinArrowSpin0},
+    {rem::output,   ""},
+    {rem::comment,  Icon::CArrowDheadRight},
+    {rem::syntax,   Icon::CArch},
+    {rem::status,   Icon::CFlag},
+    {rem::test,     Icon::CFlag},
 
 	//...
 };
