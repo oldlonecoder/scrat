@@ -1,0 +1,42 @@
+digraph arithmetic_expressionree {
+ratio=compress; ranksep=.55; size = "6.5,6.5"; bgcolor="#606060"; 
+    node [fontname="JetBrainsMono NF", fontsize=18, fontcolor="#ff500f"];
+    label = < <u> arithmetic expresion ast : </u> <br/> <br/>A=42; x = 42/4 + 5(3+4*3/5+34) - 42 d = 12;>; fontsize = 16; fontcolor="#00d787"
+    xioNode0x55f3fc889990 [shape=none, label="="]
+    xioNode0x55f3fc889600 [shape=none, label="x"]
+    xioNode0x55f3fc8a2060 [shape=none, label="-"]
+    xioNode0x55f3fc899f40 [shape=none, label="+"]
+    xioNode0x55f3fc8966d0 [shape=none, label="/"]
+    xioNode0x55f3fc895f70 [shape=none, label="A"]
+    xioNode0x55f3fc8974e0 [shape=none, label="4"]
+    xioNode0x55f3fc89ba90 [shape=none, label="*"]
+    xioNode0x55f3fc89b210 [shape=none, label="5"]
+    xioNode0x55f3fc89f9e0 [shape=none, label="+"]
+    xioNode0x55f3fc8a2bf0 [shape=none, label="+"]
+    xioNode0x55f3fc89d300 [shape=none, label="3"]
+    xioNode0x55f3fc89e0c0 [shape=none, label="/"]
+    xioNode0x55f3fc8a4250 [shape=none, label="*"]
+    xioNode0x55f3fc8a3930 [shape=none, label="4"]
+    xioNode0x55f3fc89daa0 [shape=none, label="3"]
+    xioNode0x55f3fc89f0c0 [shape=none, label="5"]
+    xioNode0x55f3fc8a0d00 [shape=none, label="34"]
+    xioNode0x55f3fc8afb90 [shape=none, label="A"]
+    xioNode0x55f3fc889990 -> xioNode0x55f3fc889600 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc889990 -> xioNode0x55f3fc8a2060 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc8a2060 -> xioNode0x55f3fc899f40 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc899f40 -> xioNode0x55f3fc8966d0 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc8966d0 -> xioNode0x55f3fc895f70 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc8966d0 -> xioNode0x55f3fc8974e0 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc899f40 -> xioNode0x55f3fc89ba90 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc89ba90 -> xioNode0x55f3fc89b210 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc89ba90 -> xioNode0x55f3fc89f9e0 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc89f9e0 -> xioNode0x55f3fc8a2bf0 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc8a2bf0 -> xioNode0x55f3fc89d300 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc8a2bf0 -> xioNode0x55f3fc89e0c0 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc89e0c0 -> xioNode0x55f3fc8a4250 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc8a4250 -> xioNode0x55f3fc8a3930 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc8a4250 -> xioNode0x55f3fc89daa0 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc89e0c0 -> xioNode0x55f3fc89f0c0 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc89f9e0 -> xioNode0x55f3fc8a0d00 [dir = none, color="#A07060", penwidth=5];
+    xioNode0x55f3fc8a2060 -> xioNode0x55f3fc8afb90 [dir = none, color="#A07060", penwidth=5];
+}
