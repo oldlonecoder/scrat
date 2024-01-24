@@ -1,5 +1,5 @@
 
-# scrat :  { Script Runtime Application Terminal }
+# scrat :  { Scripting Runtime Application Terminology }
 
 ---
 
