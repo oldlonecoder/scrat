@@ -23,10 +23,10 @@
 #   define _CRT_SECURE_NO_WARNINGS
 #   define _SCL_SECURE_NO_WARNINGS
 #   define NOMINMAX
-#   ifdef SPP_EXPORTS
-#       define SPP_EXPORT __declspec(dllexport)
+#   ifdef SCRAT_EXPORTS
+#       define SCRAT_API __declspec(dllexport)
 #   else
-#       define SPP_EXPORT __declspec(dllimport)
+#       define SCRAT_API __declspec(dllimport)
 #   endif
 
 #   include <Windows.H> // Must be included before anything else
@@ -36,16 +36,37 @@
 
 #   define __PRETTY_FUNCTION__ __FUNCSIG__
 #else
-#       define SPP_EXPORT
+#       define SCRAT_API
 #endif
 
 //---------------------------------------------
 #include <cstdint>
 #include <thread>
+
+/*
+ *
+ * Token Data
+ * ----------
+ * Required post-lexical analyse informations that the "compiler/parsers need:
+ * Type             { uint64_t }
+ * Semantic Type    { uint64_t }
+ * Mnemonic         { uint16_t }
+ * Flags            { Value; VMul; U (Single Utf-8 symbol); }
+ *
+ *
+ * Ion Relational Data with Tokens:
+ * ---------------
+ * Required Runtime Data informations  that Each Ion ( Instruction Object Node ) Need to Execute and report.
+ * Source Location  { Line; Column; Offset; BeginPtr; EndPtr; Length }
+ *
+ * LS (post semantic analyze(compiler) assignable left operand);
+ */
+
+
+
+
 // This project depends on:
 // #include <Book.C++/Book.H>
-
-
 
 // // --  Basic pseudo reflexion macros : --
 // #ifndef CLASSNAME

@@ -16,8 +16,13 @@ SET(FRAMEWORK_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 add_library(
     ${TargetName}
     SHARED
-    include/${TargetName}/exports.scrat.h              #global framework-wide macros definitions and dll export and import macros for MSVC.
-    #include/${TargetName}/types.scrat.h                impl/types.scrat.cxx
+    include/${TargetName}/exports.scrat.h               #global framework-wide macros definitions and dll export and import macros for MSVC.
+    include/${TargetName}/rt/Components.scrat.h impl/rt/Components.scrat.cxx
+    include/scrat/rt/TToken.h impl/rt/TToken.cxx
+    include/scrat/Compiler/Lang/TokenTable.h impl/Compiler/Lang/TokenTable.cxx impl/Compiler/Lang/Tokens.Scrat.Table.cxx
+    impl/Compiler/TLexer.cxx
+    include/scrat/Compiler/TLexer.h
+
     #include/${TargetName}/Alu.h                        impl/Alu.cxx
     #include/${TargetName}/Token.scrat.h                impl/Token.scrat.cxx
     #include/${TargetName}/Compiler/Lexer.h             impl/Compiler/Lexer.scrat.cxx
