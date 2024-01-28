@@ -41,7 +41,7 @@ public:
     TToken Scan(const char* C);
 
     [[maybe_unused]] virtual size_t DeclareTable();
-
+    TToken::List& Tokens() { return Ref; }
 };
 
 } // Lang

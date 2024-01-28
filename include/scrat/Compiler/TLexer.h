@@ -20,7 +20,7 @@
 //#ifndef SCRAT_TLEXER_H
 //#define SCRAT_TLEXER_H
 #include "scrat/Compiler/Lang/TokenTable.h"
-#include <AppBook/Book/AppBook.h>
+#include <AppBook/Util/TextCursor.h>
 
 
 #include <map>
@@ -30,17 +30,18 @@ namespace scrat
 
 class SCRAT_API TLexer
 {
-    TToken::List* Ref{nullptr};
 
+    Book::TextCursor  Text{};
 public:
 
     struct SCRAT_API TConfig
     {
-        Book::TextCursor  CText{};
-        Lang::TTokenTable* RefTable{nullptr};
-        explicit operator bool() const { return !CText.Empty() && RefTable; };
+        std::string_view Source;
+        Lang::TTokenTable* TokenTable{nullptr};
+        explicit operator bool() const { return !Text.Empty() && TokenTable; };
     };
 
+    TLexer::TConfig Source;
 
     struct NumScanner
     {
@@ -57,8 +58,9 @@ public:
     TLexer() =default;
     ~TLexer() = default;
 
-    TToken::List& Tokens(){ return *Ref; }
+    [[maybe_unused]] [[nodiscard]] TToken::List& Tokens();
 
+    Book::Result operator()(TLexer::TConfig Data);
 
 };
 

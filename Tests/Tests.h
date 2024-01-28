@@ -17,6 +17,7 @@
 #pragma once
 
 #include "scrat/Compiler/Lang/TokenTable.h"
+#include <AppBook/Util/Delegate.h>
 
 //#ifndef SCRAT_TESTS_H
 //#define SCRAT_TESTS_H
@@ -39,8 +40,24 @@ public:
 };
 
 
-class Tests
+
+/*!
+ * @brief
+ */
+class Test : public Util::Object
 {
+public:
+
+    enum ConfigOption
+    {
+
+    };
+
+    Test(Test* ParentTest, const std::string& Name);
+    ~Test() override;
+
+    virtual Book::Result Run(int argc, char** argv);
+
 
 };
 
