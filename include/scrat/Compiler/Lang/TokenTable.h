@@ -23,9 +23,7 @@
 //#ifndef SCRAT_TOKENTABLE_H
 //#define SCRAT_TOKENTABLE_H
 
-namespace scrat
-{
-namespace Lang
+namespace scrat::Lang
 {
 
 class SCRAT_API TTokenTable : public Util::Object
@@ -44,7 +42,6 @@ public:
     TToken::List& Tokens() { return Ref; }
 };
 
-} // Lang
-} // scrat
+} // scrat::Lang
 
 //#endif //SCRAT_TOKENTABLE_H

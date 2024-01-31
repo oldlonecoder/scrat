@@ -57,7 +57,7 @@
  * Ion Relational Data with Tokens:
  * ---------------
  * Required Runtime Data informations  that Each Ion ( Instruction Object Node ) Need to Execute and report.
- * Source Location  { Line; Column; Offset; BeginPtr; EndPtr; Length }
+ * Config Location  { Line; Column; Offset; BeginPtr; EndPtr; Length }
  *
  * LS (post semantic analyze(compiler) assignable left operand);
  */

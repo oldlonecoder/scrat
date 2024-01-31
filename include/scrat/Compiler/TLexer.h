@@ -38,21 +38,25 @@ public:
     {
         std::string_view Source;
         Lang::TTokenTable* TokenTable{nullptr};
-        explicit operator bool() const { return !Text.Empty() && TokenTable; };
+        explicit operator bool() const { return !Source.empty() && TokenTable; };
     };
 
-    TLexer::TConfig Source;
+
 
     struct NumScanner
     {
         using CPos = std::string_view::iterator;
+
+        std::string_view Seq{};
         enum NumBase
         {
-            Unset=0, Bina=1, Octo=2, Deci=3, Hexa=4,
+            Unset=0, Binary=1, Octal=2, Decimal=3, Hexadecimal=4,
         }Base{Unset};
 
         bool Real{false};
         CPos Begin, Cur, End;
+
+        Book::Result operator()(NumScanner::CPos It);
 
     };
     TLexer() =default;
@@ -60,7 +64,11 @@ public:
 
     [[maybe_unused]] [[nodiscard]] TToken::List& Tokens();
 
-    Book::Result operator()(TLexer::TConfig Data);
+    Book::Result operator()();
+    TLexer::TConfig& Config() { return mConfig; }
+
+private:
+    TLexer::TConfig mConfig;
 
 };
 

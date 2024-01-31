@@ -7,6 +7,8 @@
 #include <AppBook/Book/StmlText.h>
 
 #include <csignal>
+#include "scrat/Compiler/TLexer.h"
+
 
 namespace test
 {
@@ -16,6 +18,13 @@ size_t MyConfig::DeclareTable()
 {
     return TTokenTable::DeclareTable();
 }
+
+MyConfig::MyConfig(Util::Object *ParenObj, const std::string &ID) : TTokenTable(ParenObj, ID)
+{
+    //TTokenTable::DeclareTable();
+}
+
+
 } // test
 
 
@@ -80,15 +89,23 @@ R"(
         auto c = ml_description << Livre.Descriptions >> head;
         if(c != Book::Enums::Code::Success)
             std::cerr << " text processing failed.";
+
         auto & SppDev= AppBook::CreateSection("scrat.dev");
         SppDev.Open().CreateSectionContents("TextCursor.tests");
 
         Livre["scrat.dev"]["TextCursor.tests"];
-
         AppBook::Out() << Book::Enums::Fn::Endl << head;
 
-        if(R != Book::Action::Continue)
-            AppBook::Message() << " Interpreter tests failed...";
+        test::MyConfig Conf(nullptr,"My Config");
+        scrat::TLexer Lexer;
+        Lexer.Config() =
+        {
+            .Source     = "145.0333",
+            .TokenTable = &Conf,
+        };
+
+        auto R = Lexer();
+        AppBook::Debug() << R;
 
     }
     catch(AppBook::Exception& be)

@@ -18,49 +18,35 @@
 
 #include "scrat/Compiler/Lang/TokenTable.h"
 #include <AppBook/Util/Delegate.h>
+#include <AppBook/Book/Tests/Test.h>
+
 
 //#ifndef SCRAT_TESTS_H
 //#define SCRAT_TESTS_H
-
-
-
-
-
-
 namespace test
 {
-
 
 class MyConfig : public scrat::Lang::TTokenTable
 {
 public:
+    MyConfig(Util::Object* ParenObj, const std::string& ID);
+    ~MyConfig() override = default;
+
     size_t DeclareTable() override;
 
 
 };
 
+}
 
+//class Test : public Book::Test
+//{
+//    //...
+//    MyConfig Config;
+//
+//public:
+//    //...
+//};
 
-/*!
- * @brief
- */
-class Test : public Util::Object
-{
-public:
-
-    enum ConfigOption
-    {
-
-    };
-
-    Test(Test* ParentTest, const std::string& Name);
-    ~Test() override;
-
-    virtual Book::Result Run(int argc, char** argv);
-
-
-};
-
-} // test
 
 //#endif //SCRAT_TESTS_H

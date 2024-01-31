@@ -30,4 +30,7 @@ My personal c++ not modern way to experiment coding a machineless scripting tool
 - <h5>scrat::Lang::Grammar</h5>  Testing, Exploring, Experimenting  the "Scrat language" Grammar in a unique and particular non-std way.
 ---
 - <h5>scrat::Interpreter</h5>  The scrat Interpreter ...
---- ...
+--- 
+
+scrat is using my other personnal c++ shared library named [AppBook](https://github/com/oldlonecoder/AppBook).
+

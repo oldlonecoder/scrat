@@ -7,17 +7,17 @@
 namespace scrat
 {
 
-std::string TToken::TLocation::operator()() const
+std::string_view TToken::TLocation::operator()() const
 {
-    return {};
+    return {Begin,End};
 }
 
 [[maybe_unused]] std::string TToken::TLocation::Position() const
 {
-    return {};
+    StrAcc Txt = "%d,%d";
+
+    return { (Txt << Line << Column)() };
 }
-
-
 
 
 } // scrat

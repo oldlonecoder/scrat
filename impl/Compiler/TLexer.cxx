@@ -6,25 +6,50 @@
 
 namespace scrat
 {
-Book::Result TLexer::operator()(TLexer::TConfig Data)
+Book::Result TLexer::operator()()
 {
-    Source = Data; // Should discard Source.Source.
-    Text = Source.Source;
+
+    Text = mConfig.Source;
 
     // - Start testing the AppBook::TextCursor:
     // ------------------------------------
-
-    auto c = Text();
-
-
-    return Book::Result::Ok;
+    AppBook::Debug() << " Source: " << Text.Text;
+    return Book::Result::Success;
 }
 
 TToken::List &TLexer::Tokens()
 {
-    if(!Source.TokenTable)
+    if(!mConfig.TokenTable)
         throw AppBook::Exception() [AppBook::Fatal() << "Attempt to get the tokens stream from null Tokens Table."];
 
-    return Source.TokenTable->Tokens();
+    return mConfig.TokenTable->Tokens();
+}
+
+Book::Result TLexer::NumScanner::operator()(TLexer::NumScanner::CPos Start)
+{
+    CPos A = Start;
+    Loop:
+    while(std::isdigit(*A)) ++A;
+    if(*A == '.')
+    {
+        if (Real)
+        {
+            Seq = {Start,A};
+            goto SeqEnd;
+        }
+        Real = true;
+        goto Loop;
+    }
+SeqEnd:
+
+    if(Real)
+    {
+
+    }
+
+
+
+
+    return Book::Result::Ok;
 }
 } // scrat

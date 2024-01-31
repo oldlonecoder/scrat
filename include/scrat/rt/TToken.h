@@ -20,6 +20,7 @@
 //#ifndef SCRAT_TTOKEN_H
 //#define SCRAT_TTOKEN_H
 #include "scrat/rt/Components.scrat.h"
+#include <string_view>
 
 namespace scrat
 {
@@ -29,22 +30,21 @@ struct SCRAT_API TToken
     using List = std::vector<TToken>;
     using Iterator  = TToken::List::iterator;
     using CIterator = TToken::List::const_iterator;
+    using SVIterator  = std::string_view::iterator;
 
     Type::T     Prim = Type::Null;
     Type::T     Sem = Type::Null;
     Mnemonic    M = Mnemonic::Noop;
-
     Oper::T     D = Oper::Identifier;
-
     struct SCRAT_API TLocation
     {
         [[maybe_unused]] size_t Line{0};
         [[maybe_unused]] size_t Column{0};
         [[maybe_unused]] size_t Offset{0};
         [[maybe_unused]] size_t Length{0};
-        const char* Begin{nullptr};
-        const char* End{nullptr};
-        std::string operator()() const;
+        SVIterator Begin{nullptr};
+        SVIterator End{nullptr};
+        std::string_view operator()() const;
         [[maybe_unused]] [[nodiscard]] std::string Position() const;
     }Loc;
 
@@ -69,7 +69,7 @@ struct SCRAT_API TToken
         return Sem || Sem_;
     }
 
-    [[nodiscard]] std::string Text() const
+    [[nodiscard]] std::string_view Text() const
     {
         if ((Flags.M) && (M == Mnemonic::Mul)) return Lexem::Multiply; // Overwrite source location.
         return Loc();
