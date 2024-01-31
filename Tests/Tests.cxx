@@ -38,7 +38,7 @@ void SigInt(int s )
 {
     //rem::push_interrupted() << " Dump messages stream and exit:";
     //rem::clear(nullptr);
-    std::cerr << " sig interrupt caugh...\n";
+    std::cerr << " sig break caught...\n";
     AppBook::Close();
     exit(3);
 }
@@ -56,7 +56,7 @@ void SigAbort(int s)
 {
     //rem::push_aborted() << " Dump messages stream and exit:";
     //rem::clear(nullptr);
-    std::cerr << s << '\n';
+    std::cerr << "abort signal caught...\n" << '\n';
     AppBook::Close();
     exit(127);
 }
@@ -100,7 +100,9 @@ R"(
         scrat::TLexer Lexer;
         Lexer.Config() =
         {
-            .Source     = "145.0333",
+            .Source     = R"(
+                                145.0333
+)",
             .TokenTable = &Conf,
         };
 

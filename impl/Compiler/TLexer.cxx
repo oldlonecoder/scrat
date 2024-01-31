@@ -14,6 +14,13 @@ Book::Result TLexer::operator()()
     // - Start testing the AppBook::TextCursor:
     // ------------------------------------
     AppBook::Debug() << " Source: " << Text.Text;
+    AppBook::Test() << "Invoke TextCursor::operator ++():";
+    Text++;
+    auto Loc = Text.Sync();
+    AppBook::Debug() << " Sync'ed...";
+    std::string Str;
+    Loc >> Str;
+    AppBook::Debug() << Str;
     return Book::Result::Success;
 }
 
