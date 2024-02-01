@@ -101,7 +101,7 @@ R"(
         Lexer.Config() =
         {
             .Source     = R"(
-                                145.0333
+                                0xAF00FFE1
 )",
             .TokenTable = &Conf,
         };

@@ -45,19 +45,33 @@ public:
 
     struct NumScanner
     {
-        using CPos = std::string_view::iterator;
 
         std::string_view Seq{};
+        Book::TextCursor Text{};
+        float N{.0f};
+        scrat::Type::T Scale { scrat::Type::Null };
+
+
         enum NumBase
         {
             Unset=0, Binary=1, Octal=2, Decimal=3, Hexadecimal=4,
         }Base{Unset};
 
         bool Real{false};
-        CPos Begin, Cur, End;
 
-        Book::Result operator()(NumScanner::CPos It);
+        NumScanner() = default;
+        NumScanner(const Book::TextCursor& View);
 
+        ~NumScanner() = default;
+        Book::Result operator()();
+
+
+        Book::Result Base2();
+        Book::Result Base8();
+        Book::Result Base10();
+        Book::Result Base16();
+
+        void Sign();
     };
     TLexer() =default;
     ~TLexer() = default;
@@ -68,6 +82,22 @@ public:
     TLexer::TConfig& Config() { return mConfig; }
 
 private:
+
+
+    Book::Result  ScanLitteral(TToken& Token); // Number string; comments
+    Book::Result  InputBinary(TToken& Token);
+    Book::Result  InpputUnary(TToken& Token);
+    Book::Result  InpputPrefix(TToken& Token);
+    Book::Result  InpputPostfix(TToken& Token);
+    Book::Result  InputKeyword(TToken& Token);
+    Book::Result  InputPunctuation(TToken& Token);
+    Book::Result  InputOpenPair(TToken& Token);
+    Book::Result  InputClosingPair(TToken& Token);
+
+
+
+
+
     TLexer::TConfig mConfig;
 
 };

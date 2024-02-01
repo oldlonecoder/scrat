@@ -40,6 +40,7 @@ namespace scrat::Lang
             .Prim = Type::OpenPair,
             .Sem = Type::Binary|Type::Operator|Type::OpenPair|Type::Punc,
             .M     = Mnemonic::OpenAbsOp, // |< x+1 >|;
+            //                               ~~
             //                               ^
             .D     = Oper::Paranthese,
             .Loc   = {.Begin = Lexem::AbsBegin },
@@ -49,7 +50,8 @@ namespace scrat::Lang
             .Prim = Type::ClosePair,
             .Sem = Type::Binary|Type::Operator|Type::OpenPair|Type::Punc,
             .M     = Mnemonic::CloseAbsOp, // |< x+1 >|;
-            //                               ^
+            //                                       ~~
+            //                                       ^
             .D     = Oper::Paranthese,
             .Loc   = {.Begin = Lexem::AbsEnd },
             .Flags = { .V = 1 }

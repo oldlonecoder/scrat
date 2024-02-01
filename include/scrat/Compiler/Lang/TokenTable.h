@@ -29,6 +29,8 @@ namespace scrat::Lang
 class SCRAT_API TTokenTable : public Util::Object
 {
     TToken::List Ref;
+    TToken::List Product;
+
 
 public:
 
