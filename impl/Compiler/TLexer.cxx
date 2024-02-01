@@ -125,7 +125,7 @@ Book::Result TLexer::NumScanner::Base2()
 Book::Result TLexer::NumScanner::Base8()
 {
 
-    auto A = C;
+    auto A = Text();
 
     return Book::Result::Ok;
 }
