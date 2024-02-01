@@ -17,10 +17,9 @@ Book::Result TLexer::operator()()
     AppBook::Test() << "Invoke TextCursor::operator ++():";
     Text++;
     auto Loc = Text.Sync();
-    AppBook::Debug() << " Sync'ed...";
     std::string Str;
-    Loc >> Str;
-    AppBook::Debug() << Str;
+    AppBook::Debug() << " Sync'ed...: " << (Loc >> Str);
+    AppBook::Debug() << Color::Yellow << Str;
     return Book::Result::Success;
 }
 
