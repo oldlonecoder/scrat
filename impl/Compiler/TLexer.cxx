@@ -18,8 +18,8 @@ Book::Result TLexer::operator()()
     Text++;
     auto Loc = Text.Sync();
     std::string Str;
-    AppBook::Debug() << " Sync'ed...: " << (Loc >> Str);
-    AppBook::Debug() << Color::Yellow << Str;
+
+    AppBook::Debug() << "Offset: " << Color::Yellow << (Loc >> Str).Offset << Color::Reset << ", " << Color::Yellow << Str;
 
     NumScanner Num{Text};
     if(Num() != Book::Result::Accepted)
@@ -103,7 +103,7 @@ Book::Result TLexer::NumScanner::operator()()
     if(Real)
         return Book::Result::Accepted;
 
-    if(N < 0)
+    if(N < 0){}
 
     return Book::Result::Accepted;
 }
@@ -119,26 +119,47 @@ Book::Result TLexer::NumScanner::Base2()
     // 11010101'01010101'01010101'01010101'01001010B
     // 11010101 01010101 01010101 01010101 01001010b
 
-    return Book::Result::Ok;
+    return Book::Result::Accepted;
 }
 
+
+
+/*!
+ * @brief
+ * @return
+ *
+ * @note {wiki:Octal ) ..."For example, the literal 73 (base 8) might be represented as 073, o73, q73, 0o73, (\73)-removed from my handling, @73, &73, $73 or 73o in various languages."
+ *
+ */
 Book::Result TLexer::NumScanner::Base8()
 {
-
     auto A = Text();
 
-    return Book::Result::Ok;
+    return Book::Result::Accepted;
 }
 
 Book::Result TLexer::NumScanner::Base10()
 {
+    auto Cur = Text(); // Get the current iterrator value...
+    while(!Text.Eof() && std::isdigit(*Cur)) ++Cur;
+    if(Text.Eof())
+    {
+        if(Cur > Text())
+        {
+            Seq = {Text(), Cur};
+            Base = Decimal;
+            StrAcc(Seq) >> N;
+            return Book::Result::Accepted;
+        }
+        return Book::Result::Rejected;
+    }
 
-    return Book::Result::Ok;
+    return Book::Result::Accepted;
 }
 
 Book::Result TLexer::NumScanner::Base16()
 {
-    return Book::Result::Ok;
+    return Book::Result::Accepted;
 }
 
 void TLexer::NumScanner::Sign()
