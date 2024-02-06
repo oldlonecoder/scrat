@@ -93,32 +93,53 @@ Book::Result TLexer::InputClosingPair(TToken &Token)
 Book::Result TLexer::NumScanner::operator()()
 {
     Sign();
-    if(Base10() != Book::Result::Accepted)
+    if(Base2() != Book::Result::Accepted)
         if(Base16() != Book::Result::Accepted)
             if(Base8() != Book::Result::Accepted)
-                if(Base2() != Book::Result::Accepted)
+                if(Base10() != Book::Result::Accepted)
                     return Book::Result::Rejected;
 
     // Numeric Base, N and Seq sub_view string are  all set :
-    if(Real)
-        return Book::Result::Accepted;
-
-    if(N < 0){}
-
     return Book::Result::Accepted;
 }
 
 Book::Result TLexer::NumScanner::Base2()
 {
 
-    // 0b11010101010101010101010101010101010
-    // 0b1101'0101'0101'0101'0101'0101'0101'0101'0100'1010
-    // 0b1101 0101 0101 0101 0101 0101 0101 0101 0100'1010
-    // 0b/0B11010101 01010101 01010101 01010101 01001010
-    // b/B11010101'01010101'01010101'01010101'01001010
-    // 11010101'01010101'01010101'01010101'01001010B
-    // 11010101 01010101 01010101 01010101 01001010b
+    // 0b11010101010101010101010101010101010                --> Parsed
+    // 0b1101'0101'0101'''''0101''''0101'0101'''0101'0101'0100'1010  --> Parsed
+    // 0b1101 0101 0101 0101 0101 0101 0101 0101 0100'1010  --> Parsed
+    // 0b/0B11010101 01010101 01010101 01010101 01001010    --> Parsed
+    // 11010101'01010101'01010101'01010101'01001010B        --> Not Parsed Yet
+    // 11010101 01010101 01010101 01010101 01001010b        --> Not Parsed Yet
 
+
+    auto A = Text();
+    StrAcc Buf;
+    Base = Binary;
+    if(std::toupper(*A) == 'B')
+        ++A;
+    else
+    {
+        if(*A == '0')
+        {
+            if(std::toupper(*(A+1)) == 'B')
+                A += 2;
+        }
+    }
+
+    while(!Text.Eof() && std::isdigit(*A))
+    {
+        if(*A == '`'){ ++A; continue; }
+        if(*A>='2') return Book::Result::Rejected;
+
+        Buf << *A++;
+
+    }
+    if(A==Text()) return Book::Result::Rejected;
+    Seq = {Text(), --A};
+    Buf >> N;
+    UpdateScale();
     return Book::Result::Accepted;
 }
 
@@ -134,33 +155,98 @@ Book::Result TLexer::NumScanner::Base2()
 Book::Result TLexer::NumScanner::Base8()
 {
     auto A = Text();
+    StrAcc Buf;
+    Base = Octal;
+
+    std::string_view Prefixes = "oOq@$&";
+
+    if(*A == '0') ++A;
+    if(auto pos = Prefixes.find(*A) != std::string_view::npos ) ++A;
+    else Buf <<*A;
+
+
+    while(!Text.Eof() && std::isdigit(*A) && *A <= '7')
+    {
+        Buf << *A++;
+    }
+    if(*A >= '7') return Book::Result::Rejected;
+
+    Buf >>N;
+    UpdateScale();
 
     return Book::Result::Accepted;
 }
 
+
+
+/*!
+ * @brief Process Base10 litteral numeric.
+ * @return Accepted: view sequence accepted and converted to base 10 numeric litteral seq.
+ *         Rejected if not.
+ */
 Book::Result TLexer::NumScanner::Base10()
 {
     auto Cur = Text(); // Get the current iterrator value...
-    while(!Text.Eof() && std::isdigit(*Cur)) ++Cur;
-    if(Text.Eof())
+    Base = Decimal;
+    if(!std::isdigit(*Cur) ) return Book::Result::Rejected;
+
+    StrAcc Buf;
+    while(!Text.Eof() && std::isdigit(*Cur))
     {
-        if(Cur > Text())
+        if(*Cur == '`') { ++Cur;continue; }
+        if((*Cur == '.') || (*Cur == ','))
         {
-            Seq = {Text(), Cur};
-            Base = Decimal;
-            StrAcc(Seq) >> N;
-            return Book::Result::Accepted;
+            if(Real) break;
+            Real = true;
+            continue;
         }
-        return Book::Result::Rejected;
+        Scale = Type::I8;
+        //Base = *Cur <= '7' ? Octal : Decimal;
+        Buf << *Cur ++;
+    }
+    if(Cur == Text.B) return Book::Result::Rejected;
+    Seq = {Text(),Cur-1};
+    Buf >> N;
+    if(Real)
+    {
+        Scale = Type::Float | (( N <= 2147483648.0f) ? Type::Float | Type::F32 : Type::F64);
+
+        return Book::Result::Accepted;
     }
 
+    UpdateScale();
     return Book::Result::Accepted;
 }
 
 Book::Result TLexer::NumScanner::Base16()
 {
+    auto A = Text();
+    StrAcc Buf;
+    Base = Binary;
+    if(std::toupper(*A) == 'X')
+        ++A;
+    else
+    {
+        if(*A == '0')
+        {
+            if(std::toupper(*(A+1)) == 'X')
+                A += 2;
+        }
+    }
+
+    while(!Text.Eof() && std::isxdigit(*A))
+    {
+        Buf << *A++;
+        if(*A == '`'){ ++A; continue; }
+    }
+    if(A==Text()) return Book::Result::Rejected;
+    Seq = {Text(), --A};
+    Buf >> N;
+    UpdateScale();
     return Book::Result::Accepted;
 }
+
+
 
 void TLexer::NumScanner::Sign()
 {
@@ -176,6 +262,19 @@ void TLexer::NumScanner::Sign()
 TLexer::NumScanner::NumScanner(const Book::TextCursor &View)
 {
     Text = View;
+}
+
+void TLexer::NumScanner::UpdateScale()
+{
+    if(Real) return;
+
+    Scale |= (N <= 127) ? Type::I8 :
+            (N <= 255) ? Type::U8 :
+            (N <= 32767) ? Type::I16 :
+            (N <= 65535) ? Type::U16 :
+            (N <= 2147483648) ? Type::I32 :
+            (N <= 1.84467440737e+19) ? Type::I64 : Type::U64;
+
 }
 
 

@@ -48,7 +48,7 @@ public:
 
         std::string_view Seq{};
         Book::TextCursor Text{};
-        float N{.0f};
+        double N{.0f};
         scrat::Type::T Scale { scrat::Type::Null };
 
 
@@ -57,6 +57,7 @@ public:
             Unset=0, Binary=1, Octal=2, Decimal=3, Hexadecimal=4,
         }Base{Unset};
 
+        void UpdateScale();
         bool Real{false};
 
         NumScanner() = default;
