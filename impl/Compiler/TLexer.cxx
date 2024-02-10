@@ -123,8 +123,9 @@ Book::Result TLexer::NumScanner::Base2()
     {
         if(*A == '0')
         {
-            if(std::toupper(*(A+1)) == 'B')
-                A += 2;
+            ++A;
+            if(std::toupper(*A) == 'B')
+                A++;
         }
     }
 
@@ -132,10 +133,9 @@ Book::Result TLexer::NumScanner::Base2()
     {
         if(*A == '`'){ ++A; continue; }
         if(*A>='2') return Book::Result::Rejected;
-
         Buf << *A++;
-
     }
+
     if(A==Text()) return Book::Result::Rejected;
     Seq = {Text(), --A};
     Buf >> N;
@@ -162,7 +162,6 @@ Book::Result TLexer::NumScanner::Base8()
 
     if(auto pos = Prefixes.find(*A) != std::string_view::npos ) ++A;
     else Buf <<*A;
-
 
     while(!Text.Eof() && std::isdigit(*A) && *A <= '7')
     {
