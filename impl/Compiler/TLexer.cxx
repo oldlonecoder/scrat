@@ -160,7 +160,6 @@ Book::Result TLexer::NumScanner::Base8()
 
     std::string_view Prefixes = "oOq@$&";
 
-    if(*A == '0') ++A;
     if(auto pos = Prefixes.find(*A) != std::string_view::npos ) ++A;
     else Buf <<*A;
 
@@ -170,8 +169,9 @@ Book::Result TLexer::NumScanner::Base8()
         Buf << *A++;
     }
     if(*A >= '7') return Book::Result::Rejected;
+    Seq = {Text(), --A};
 
-    Buf >>N;
+    Buf >> N;
     UpdateScale();
 
     return Book::Result::Accepted;
