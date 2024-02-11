@@ -160,7 +160,7 @@ Book::Result TLexer::NumScanner::Base8()
 
     std::string_view Prefixes = "oOq@$&";
 
-    if(auto pos = Prefixes.find(*A) != std::string_view::npos ) ++A;
+    if(Prefixes.find(*A) != std::string_view::npos ) ++A;
     else Buf <<*A;
 
     while(!Text.Eof() && std::isdigit(*A) && *A <= '7')
